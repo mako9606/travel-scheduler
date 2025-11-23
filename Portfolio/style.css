@@ -1,0 +1,33 @@
+body{
+    text-align: center;
+    color: #592d13;
+}
+
+p{
+    line-height: 1.75;
+}
+.btn{
+   padding: 12px 24px;
+   text-decoration: none;
+   display: inline-block;
+   background-color: #ffa158ff; 
+   color: #592d13;
+   border-radius: 5px;
+   font-size: 20px;
+   font-weight: bold;
+}
+
+.btn:hover{
+    background-color: #ff8c3a;
+}
+
+.btn:active{
+    background-color: #ff8c3a;
+    transform: scale(0.97);
+}
+
+.links{
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
