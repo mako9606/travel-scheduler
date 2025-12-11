@@ -1,12 +1,26 @@
 <haed>
+<!-- 画面設計図　スライド3 -->
+<title>アカウント登録画面（初期設定）</title>
 
-<title>アカウント登録画面</title>
-
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'auth_app/signup.css' %}">
 </head>
 
 <body>
-    <h1>アカウント登録</h1>
+    <div class="login-title">アカウント登録</div>
 
-    <a href="{% url 'auth_app:home' %}" class="btn-second">完了</a>
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+        <label>アカウント名</label>
+        <input type-"text" name="usrname" placeholder="アカウント名 入力">
+        <label>メールアドレス</label>
+        <input type="email" name="email" placeholder="メールアドレス 入力">
+        <label>パスワード</label>
+        <input type="password" name="password" placeholder="********">
+        <label>パスワード再入力</label>
+        <input type="password" name="password_confirm" placeholder="********">
+    </form>
+
+    <a href="{% url 'auth_app:home' %}" class="btn">完了</a>
 
 </body>
