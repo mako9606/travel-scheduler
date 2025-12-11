@@ -7,20 +7,22 @@
 </head>
 
 <body>
+
     <div class="login-title">アカウント登録</div>
 
     <form method="POST" class="form-container">
         {% csrf_token %}
         <label>アカウント名</label>
-        <input type-"text" name="usrname" placeholder="アカウント名 入力">
+        <input type="text" name="usrname" placeholder="アカウント名 入力">
         <label>メールアドレス</label>
         <input type="email" name="email" placeholder="メールアドレス 入力">
         <label>パスワード</label>
         <input type="password" name="password" placeholder="********">
         <label>パスワード再入力</label>
         <input type="password" name="password_confirm" placeholder="********">
-    </form>
 
-    <a href="{% url 'auth_app:home' %}" class="btn">完了</a>
+        <a href="{% url 'auth_app:home' %}" class="btn">完了</a>
+
+    </form>
 
 </body>
