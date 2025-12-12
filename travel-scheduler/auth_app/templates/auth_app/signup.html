@@ -13,13 +13,13 @@
     <form method="POST" class="form-container">
         {% csrf_token %}
         <label>アカウント名</label>
-        <input type="text" name="usrname" placeholder="アカウント名 入力">
+        <input type="text" name="usrname" placeholder="アカウント名 入力" required>
         <label>メールアドレス</label>
-        <input type="email" name="email" placeholder="メールアドレス 入力">
+        <input type="email" name="email" placeholder="メールアドレス 入力" required>
         <label>パスワード</label>
-        <input type="password" name="password" placeholder="********">
+        <input type="password" name="password" placeholder="********" required>
         <label>パスワード再入力</label>
-        <input type="password" name="password_confirm" placeholder="********">
+        <input type="password" name="password_confirm" placeholder="********" required>
 
         <a href="{% url 'auth_app:home' %}" class="btn">完了</a>
 
