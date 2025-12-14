@@ -14,11 +14,11 @@
         {% csrf_token %}
 
         <label>アカウント名</label>
-        <input type="text" name="username"  value="{{ user.username }}" placeholder="アカウント名">
+        {{ form.username }}
         <label>メールアドレス</label>
-        <input type="email" name="email" value="{{ user.email }}" placeholder="メールアドレス">
-
-        <a href="{% url 'account' %}" class="btn">完了</a>
+        {{ form.email }}
+        
+        <button type="submit" class="btn">完了</button>
 
     </form>
 

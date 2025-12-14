@@ -43,7 +43,7 @@ input[type="email"]{
     box-sizing: border-box;
 }
 
-.btn{
+.button{
    padding: 10px 20px;
    text-decoration: none;
    display: block;
@@ -58,7 +58,7 @@ input[type="email"]{
 }
 
 /* クリック・タップした瞬間 に適用される状態 */
-.btn:active{
+.button:active{
     background-color: #ff8c3a;
     transform: scale(0.97);
     border: 2px solid #592d13;
