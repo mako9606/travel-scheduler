@@ -17,9 +17,24 @@
         {{ form.username }}
         <label>メールアドレス</label>
         {{ form.email }}
-        
+
         <button type="submit" class="btn">完了</button>
 
     </form>
 
+<!-- モーダル表示 -->    
+    {% if show_modal %}
+        <div class="modal-overlay">
+            <div class="modal-box">
+
+                <!-- × ボタン（アカウント画面へ） -->
+                <a href="{% url 'account' %}" class="modal-close">×</a>
+
+                <p class="modal-message">
+                    アカウント名 メールアドレスを 更新しました。
+                </p>
+
+            </div>
+        </div>        
+    {% endif %}  
 </body>

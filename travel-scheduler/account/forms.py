@@ -6,8 +6,8 @@ User = get_user_model()
 class AccountEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fieids = ["username", "email"]
-        ladels = {
+        fields = ["username", "email"]
+        labels = {
             "username" : "アカウント名",
             "email" : "メールアドレス",
         }
