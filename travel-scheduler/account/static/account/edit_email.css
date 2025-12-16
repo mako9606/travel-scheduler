@@ -68,7 +68,7 @@ input[type="email"]{
 .modal-overlay{
     position: fixed;
     inset: 0;
-    background: #f7f7f7ff(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,12 +76,13 @@ input[type="email"]{
 }
 
 .modal-box{
-    background: #fff;
+    background: #f7f7f7;
     padding: 30px 20px;
     width: 90%;
     max-width: 320px;
     text-align: center;
     position: relative;
+    border-color: #592d13;
 }
 
 .modal-message{
