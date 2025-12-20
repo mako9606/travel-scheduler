@@ -1,0 +1,62 @@
+/* タイトルの緑背景 */
+.login-title {
+    background: #b7d2b1ff;
+    padding: 10px;
+    color: #447d37;
+    font-size: 20px;
+    font-weight: bold;
+    width: 90%;
+    max-width: 380px;
+    margin: 20px auto 10px auto;
+    box-sizing: border-box;
+}
+
+.form-container{
+    width: 90%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+body{
+    text-align: left;
+    font-size: 17px;
+    color: #592d13;
+    background-color: #f7f7f7ff;
+    display: block;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+label{
+    display: block;
+    font-size: 16px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+/* モーダル表示風 */
+.modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-box{
+    background: #f7f7f7;
+    padding: 30px 20px;
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+    position: relative;
+    border-color: #592d13;
+}
+
+.modal-message{
+    font-size: 16px;
+    color: #592d13;
+    margin: 20px 0;
+}

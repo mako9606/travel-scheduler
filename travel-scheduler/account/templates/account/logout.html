@@ -1,12 +1,21 @@
-<haed>
+<head>
+<!-- 画面設計図　スライド39 -->
+<title>ログアウト画面</title>
 
-<title>ログアウト</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'account/logout.css' %}">
 
 </head>
 
 <body>
-    <h1>ログアウト画面</h1>
+    <div class="login-title">アカウント</div>
+    
+    <div class="modal-overlay">
+        <div class="form-container modal-box">
 
-    <p>あとでちゃんと作る</p>
-
+            <p class="modal-message">
+                ログアウトしますか？
+            </p>
+        </div>
+    </div>
 </body>
