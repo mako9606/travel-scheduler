@@ -1,4 +1,4 @@
-<haed>
+<head>
 
 <title>アカウント</title>
 
@@ -8,8 +8,8 @@
     <h1>アカウント画面</h1>
 
     <br>ホーム画面表示</br>
-    <a href="{% url 'edit_email' %}" class="btn-second">メールアドレス編集</a>
-    <a href="{% url 'change_password' %}" class="btn-second">パスワード編集</a>
-    <a href="{% url 'logout' %}" class="btn-second">ログアウト</a>
+    <a href="{% url 'account:edit_email' %}" class="btn-second">メールアドレス編集</a>
+    <a href="{% url 'account:change_password' %}" class="btn-second">パスワード編集</a>
+    <a href="{% url 'account:logout' %}" class="btn-second">ログアウト</a>
 
 </body>
