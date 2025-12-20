@@ -60,3 +60,30 @@ label{
     color: #592d13;
     margin: 20px 0;
 }
+
+.logout-actions{
+    border-top: 1px solid #592d13;
+    margin-top: 20px;
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+}
+
+.btn-logout,
+.btn-cancel{
+    font-size: 16px;
+    color: #592d13;
+    margin: 20px 0;
+    cursor: pointer; 
+}
+
+/* 文字の主張 */
+.btn-logout{
+    font-weight: bold;
+}
+
+.btn-cancel{
+    font-weight: normal;
+}

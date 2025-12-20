@@ -13,9 +13,19 @@
     <div class="modal-overlay">
         <div class="form-container modal-box">
 
-            <p class="modal-message">
-                ログアウトしますか？
-            </p>
+            <p class="modal-message"> ログアウトしますか？</p>
+            
+            <div class="logout-actions">
+                <form method="POST" action="{% url 'account/logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout">
+                        ログアウト
+                    </button>
+                </form>    
+
+
+            <a href="{% url 'account:account' %}" class="btn-cancel">戻る</a>
         </div>
     </div>
+    
 </body>
