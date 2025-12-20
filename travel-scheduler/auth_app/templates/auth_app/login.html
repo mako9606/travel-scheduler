@@ -1,4 +1,4 @@
-<haed>
+<head>
 <!-- 画面設計図　スライド２ -->
     <title>ログイン画面</title>
 
@@ -9,17 +9,26 @@
 <body>
     <div class="login-title">ログイン</div>
 
-    <form method="POST" class="form-container">
+    <form method="POST" action="{% url 'auth_app:login' %}">
         {% csrf_token %}
 
-        <label>メールアドレス</label>
-        <input type="email" name="username" placeholder="メールアドレス 入力" required>
-        <label>パスワード</label>
-        <input type="password" name="password" placeholder="********">
+        <input type="hidden"
+               name="{{ redirect_field_name }}"
+               value="{{ redirect_field_value }}">
+        
+        {{ form.non_field_errors }}    
+
+        <label>{{ form.username.label }}</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+
+        <label>{{ form.password.label }}</label>
+        {{ form.password }}
+        {{ form.password.errors }}
 
         <a href="#" class="forgot">パスワード忘れた方</a>
 
-        <button class="btn" tpye="submit">ログイン</button>
+        <button class="btn" type="submit">ログイン</button>
         <a href="{% url 'auth_app:signup' %}" class="btn">アカウント登録</a>
     </form>
 

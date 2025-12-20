@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.contrib.auth import update_session_auth_hash
 
 from .forms import AccountEditForm
 
@@ -59,9 +60,15 @@ def change_password(request):
         #パスワード更新    
         request.user.set_password(new_password)
         request.user.save()
-        
-        return redirect("password_complete")
+        update_session_auth_hash(request, request.user)
+        return redirect("account:password_complete")
     
     return render(request, "account/change_password.html")
+
+#パスワード再設定完了画面
+@login_required
+def password_complete(request):
+    return render(request, 'account/password_complete.html')
+
             
             
