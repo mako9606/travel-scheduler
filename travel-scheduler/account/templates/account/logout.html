@@ -16,7 +16,7 @@
             <p class="modal-message"> ログアウトしますか？</p>
             
             <div class="logout-actions">
-                <form method="POST" action="{% url 'account/logout' %}">
+                <form method="POST" action="{% url 'account:logout_execute' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn-logout">
                         ログアウト
@@ -27,5 +27,5 @@
             <a href="{% url 'account:account' %}" class="btn-cancel">戻る</a>
         </div>
     </div>
-    
+
 </body>

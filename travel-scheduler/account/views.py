@@ -6,13 +6,9 @@ from django.contrib.auth import update_session_auth_hash
 
 from .forms import AccountEditForm
 
-# Create your views here.
+
 def account(request):
     return render(request, 'account/account.html')
-
-def logout(request):
-    return render(request, 'account/logout.html')
-
 
 
 #アカウント更新画面　モーダル表示
@@ -65,10 +61,14 @@ def change_password(request):
     
     return render(request, "account/change_password.html")
 
+
 #パスワード再設定完了画面
 @login_required
 def password_complete(request):
     return render(request, 'account/password_complete.html')
 
-            
-            
+
+#ログアウト画面
+@login_required            
+def logout(request):
+    return render(request, 'account/logout.html')            
