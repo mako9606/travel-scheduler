@@ -23,7 +23,7 @@
         {{ form.password }}
         {{ form.password.errors }}
 
-        <a href="{% url 'account:form.password_reset %}" class="forgot">パスワード忘れた方</a>
+        <a href="{% url 'account:password_reset' %}" class="forgot">パスワード忘れた方</a>
 
         <button class="btn" type="submit">ログイン</button>
         <a href="{% url 'auth_app:signup' %}" class="btn">アカウント登録</a>

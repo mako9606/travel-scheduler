@@ -132,3 +132,5 @@ LOGIN_REDIRECT_URL = 'auth_app:home'
 LOGOUT_REDIRECT_URL = 'auth_app:login'
 
 LOGIN_URL = 'auth_app:login'
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
