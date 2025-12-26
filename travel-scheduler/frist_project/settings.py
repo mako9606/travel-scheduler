@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'Portfolio.portfolio_app', 
     'auth_app',
     'account',
+    'plans',
 ]
 
 MIDDLEWARE = [
