@@ -1,5 +1,5 @@
 /* タイトルの緑背景 */
-.login-title {
+.page-title {
     background: #b7d2b1ff;
     padding: 10px;
     color: #447d37;
@@ -34,10 +34,18 @@ label{
     margin-bottom: 5px;
 }
 
-.button{
+.plan-list{
+    max-width: 360px;
+    margin: 0 auto;
+    padding:  16px;
+}
+
+.add-btn{
    padding: 10px 20px;
    text-decoration: none;
-   display: block;
+   display: flex;
+   align-items: center;
+   justify-content: center;
    background-color: #ffa158ff; 
    border: 2px solid #592d13;
    color: #592d13;
@@ -45,7 +53,18 @@ label{
    font-size: 16px;
    font-weight: bold;
    margin-top: 12px;
-   width: fit-content;
+
+  /* ボタンの丸　*/
+   width: 56px;
+   height: 56px;
+   border-radius: 50%;
+
+  /*　画面内固定　*/
+   position: fixed;
+   bottom: 24px;
+   right: 24px;
+
+
 }
 
 /* クリック・タップした瞬間 に適用される状態 */
