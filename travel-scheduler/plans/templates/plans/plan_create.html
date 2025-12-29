@@ -1,0 +1,69 @@
+<head>
+<!-- 画面設計図　スライド9 -->
+    <title>新規プラン設定画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'plans/plan_create.css' %}">
+</head>
+
+<body>
+
+    <div class="page-title"></div>
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+        
+        <label>旅行タイトル</label>
+        {{ form.plan_name }}
+
+        <!-- <label>出発日</label>
+        {{ form.start_date }}
+        <label>帰宅日</label>
+        {{ form.start_date }} -->
+
+        <div class="date-row">
+        <label>出発日</label>
+        <select name="start_year">
+            <option value="">年</option>
+            <option>2025</option>
+            <option>2026</option>
+            <option>2027</option>
+        </select>
+
+        <select name="start_month">
+            <option value="">月</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
+
+        <select name="start_day">
+            <option value="">日</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
+
+        <label>帰宅日</label>        
+        <select name="end_year">
+            <option value="">年</option>
+            <option>2025</option>
+            <option>2026</option>
+        </select>
+
+        <select name="end_month">
+            <option value="">月</option>
+            <option>1</option>
+            <option>2</option>
+        </select>
+
+        <select name="end_day">
+            <option value="">日</option>
+            <option>1</option>
+            <option>2</option>
+        </select>
+        </div>
+
+        <a href='#' class="btn">完了</a>
+
+    </form>
+</body>    
