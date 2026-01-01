@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.views import View
+from django.views.generic import DeleteView
 
 #from .models import Plan
 
@@ -26,4 +27,14 @@ def plan_list(request):
      
 class PlanCreateView(View):
     def get(self, request):
-        return render(request, "plans/plan_create.html")     
+        return render(request, "plans/plan_create.html")
+    
+    
+#class PlanDetailView(DeleteView):
+    #model = Plan
+    #template_name = "plans/plan_detail.html"
+#↑models.py作成したら使って↓を消す
+
+class PlanDetailView(View):
+    def get(self, request):
+        return render(request, "plans/plan_detail.html")

@@ -7,6 +7,38 @@
 </head>
 
 <body>
+    <div class="page-title"></div>
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+        
+        <div class="detail-item">
+            <p>旅行タイトル</p>
+            <p>{{ object.plan_name }}</P>
+        </div>
 
+        <div class="detail-item">
+            <p>出発日</p>
+            <p>{{ object.start_date }}</P>
+        </div>
 
+        <div class="detail-item">
+            <p>帰宅日</p>
+            <p>{{ object.end_date }}</P>
+        </div>
+
+        <div class="detail-item">
+            <p>予定費用</p>
+        </div>
+
+        <div class="detail-item">
+            <p>実際費用</p>
+        </div>
+
+        <div class="detail-item">
+            <p>メンバーとの共有</p>
+        </div>
+
+        <a href="#" class="member_add">メンバーを追加する</a>
+
+        <a href="#" class="btn">編集</a>
 </body>    
