@@ -1,5 +1,5 @@
 <head>
-<!-- 画面設計図　スライド10 -->
+<!-- 画面設計図　スライド10~34 -->
     <title>プラン詳細画面（詳細情報）</title>
 
     {% load static %}
@@ -7,38 +7,54 @@
 </head>
 
 <body>
-    <div class="page-title"></div>
+    <div class="page-title">☆☆旅行</div>
     <form method="POST" class="form-container">
         {% csrf_token %}
+
+        <div class="tab-menu">
+            <button>メモ</button>
+            <button>〇/〇</button>
+            <button>詳細情報</button>
+            <button>map</button>
+            <button>費用</button>
+        </div>    
         
-        <div class="detail-item">
+        <!-- 画面設計図　スライド10 プラン詳細画面（詳細情報） -->
+        <div class="tab-content tab-detail">
             <p>旅行タイトル</p>
             <p>{{ object.plan_name }}</P>
-        </div>
 
-        <div class="detail-item">
             <p>出発日</p>
             <p>{{ object.start_date }}</P>
-        </div>
 
-        <div class="detail-item">
             <p>帰宅日</p>
             <p>{{ object.end_date }}</P>
-        </div>
 
-        <div class="detail-item">
             <p>予定費用</p>
-        </div>
 
-        <div class="detail-item">
             <p>実際費用</p>
-        </div>
 
-        <div class="detail-item">
             <p>メンバーとの共有</p>
+
+            <a href="#" class="member-add">メンバーを追加する</a>
+
+            <a href="#" class="edit-btn">編集</a>
+        </div>
+        
+        <!-- 画面設計図　スライド16 プラン詳細画面（メモ）-->
+        <div class="tab-content tab-memo">
         </div>
 
-        <a href="#" class="member_add">メンバーを追加する</a>
+        <!-- 画面設計図　スライド18 プラン詳細画面（1日詳細）-->
+        <div class="tab-content tab-schedule">
+        </div>
 
-        <a href="#" class="btn">編集</a>
+        <!-- 画面設計図　スライド29 プラン詳細画面（MAP）-->
+        <div class="tab-content tab-map">
+        </div>    
+         
+        <!-- 画面設計図　スライド32 プラン詳細画面（費用）-->
+        <div class="tab-content tab-cost">
+        </div>
+
 </body>    
