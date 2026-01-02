@@ -34,12 +34,55 @@ label{
     margin-bottom: 5px;
 }
 
-.detail-item{
-    color: #592d13;
-    font-size: 17px;
+/* タブ全体 */
+.tab-menu{
+    display: flex;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 12px;
 }
 
-.btn{
+/* 各タブ */
+.tab-btn{
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    background: white;
+    border-bottom: none;
+    font-size: 14px;
+    cursor: pointer;
+    margin-right: 4px;
+}
+
+/* 各タブ   クリック・タップした瞬間 に適用される状態 */
+.tab-btn.active{
+    border-bottom: none;
+    font-weight: bold;
+    transform: scale(0.97);
+    border-bottom: 2px solid white;
+}
+
+/* タブの中身 */
+.tab-content{
+    display: none;
+    padding: 16px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+/* タブの中身  クリック・タップした瞬間 に適用される状態*/
+.tab-content.active{
+    display: block;
+    transform: scale(0.97);
+}
+
+/* メンバーを追加するのリンク */
+.member-add{
+    text-align: right;
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.edit-btn{
    padding: 10px 20px;
    text-decoration: none;
    display: block;
@@ -54,16 +97,9 @@ label{
 }
 
 /* クリック・タップした瞬間 に適用される状態 */
-.btn:active{
+.edit-btn:active{
     background-color: #ff8c3a;
     transform: scale(0.97);
     border: 2px solid #592d13;
 }
 
-/* メンバーを追加するのリンク */
-.member_add{
-    text-align: right;
-    display: block;
-    margin-top: 10px;
-    font-size: 14px;
-}

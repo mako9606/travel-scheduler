@@ -7,16 +7,20 @@
 </head>
 
 <body>
-    <div class="page-title">☆☆旅行</div>
+    <div class="page-title">{{ object.plan_name }}</div>
     <form method="POST" class="form-container">
         {% csrf_token %}
 
         <div class="tab-menu">
-            <button>メモ</button>
-            <button>〇/〇</button>
-            <button>詳細情報</button>
-            <button>map</button>
-            <button>費用</button>
+            <button class="tab-btn">メモ</button>
+
+            {% for day in date_list %} 
+            <button class="tab-btn">{{ day }}</button>
+            {% endfor %}
+            
+            <button class="tab-btn">詳細情報</button>
+            <button class="tab-btn">map</button>
+            <button class="tab-btn">費用</button>
         </div>    
         
         <!-- 画面設計図　スライド10 プラン詳細画面（詳細情報） -->
