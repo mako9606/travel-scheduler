@@ -37,8 +37,7 @@ label{
 /* タブ全体 */
 .tab-menu{
     display: flex;
-    border-bottom: 2px solid #ccc;
-    margin-bottom: 12px;
+    margin-bottom: 0;
 }
 
 /* 各タブ */
@@ -46,7 +45,7 @@ label{
     padding: 10px 14px;
     border: 1px solid #ccc;
     background: white;
-    border-bottom: none;
+    border-bottom: 2px solid #ccc;  /* 非選択は下線を表示する */
     font-size: 14px;
     cursor: pointer;
     margin-right: 4px;
@@ -54,7 +53,6 @@ label{
 
 /* 各タブ   クリック・タップした瞬間 に適用される状態 */
 .tab-btn.active{
-    border-bottom: none;
     font-weight: bold;
     transform: scale(0.97);
     border-bottom: 2px solid white;

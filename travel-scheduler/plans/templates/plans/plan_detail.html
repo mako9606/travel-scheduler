@@ -12,19 +12,19 @@
         {% csrf_token %}
 
         <div class="tab-menu">
-            <button class="tab-btn">メモ</button>
+            <button class="tab-btn active">メモ</button>
 
             {% for day in date_list %} 
-            <button class="tab-btn">{{ day }}</button>
+            <button class="tab-btn active">{{ day }}</button>
             {% endfor %}
             
-            <button class="tab-btn">詳細情報</button>
-            <button class="tab-btn">map</button>
-            <button class="tab-btn">費用</button>
+            <button class="tab-btn active">詳細情報</button>
+            <button class="tab-btn active">map</button>
+            <button class="tab-btn active">費用</button>
         </div>    
         
         <!-- 画面設計図　スライド10 プラン詳細画面（詳細情報） -->
-        <div class="tab-content tab-detail">
+        <div class="tab-content tab-detail active">
             <p>旅行タイトル</p>
             <p>{{ object.plan_name }}</P>
 
@@ -60,5 +60,9 @@
         <!-- 画面設計図　スライド32 プラン詳細画面（費用）-->
         <div class="tab-content tab-cost">
         </div>
+    </form>
+
+
+
 
 </body>    

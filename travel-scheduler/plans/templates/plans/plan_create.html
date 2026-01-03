@@ -11,14 +11,19 @@
     <div class="page-title"></div>
     <form method="POST" class="form-container">
         {% csrf_token %}
-        
-        <label>旅行タイトル</label>
+
+        <!-- ↓modelsができたらここを開放して、下の部分を消す -->
+
+        <!-- <label>旅行タイトル</label>
         {{ form.plan_name }}
 
-        <!-- <label>出発日</label>
+        <label>出発日</label>
         {{ form.start_date }}
         <label>帰宅日</label>
         {{ form.start_date }} -->
+
+        <label>旅行タイトル</label>
+        <input type="text" name="text" placeholder="旅行タイトル 入力" required>
 
         <div class="date-row">
         <label>出発日</label>
