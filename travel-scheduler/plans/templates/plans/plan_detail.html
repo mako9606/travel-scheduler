@@ -12,19 +12,19 @@
         {% csrf_token %}
 
         <div class="tab-menu">
-            <button class="tab-btn active">メモ</button>
+            <button type="button" class="tab-btn" data-target=".tab-memo">メモ</button>
 
             {% for day in date_list %} 
             <button class="tab-btn active">{{ day }}</button>
             {% endfor %}
             
-            <button class="tab-btn active">詳細情報</button>
-            <button class="tab-btn active">map</button>
-            <button class="tab-btn active">費用</button>
+            <button type="button" class="tab-btn" data-target=".tab-detail">詳細情報</button>
+            <button type="button" class="tab-btn" data-target=".tab-map">map</button>
+            <button type="button" class="tab-btn" data-target=".tab-cost">費用</button>
         </div>    
         
         <!-- 画面設計図　スライド10 プラン詳細画面（詳細情報） -->
-        <div class="tab-content tab-detail active">
+        <div class="tab-content tab-detail">
             <p>旅行タイトル</p>
             <p>{{ object.plan_name }}</P>
 
@@ -62,7 +62,20 @@
         </div>
     </form>
 
+    <script>
+        document.querySelectorAll('.tab-btn').forEach((btn) =>{
+            btn.addEventListener('click', () => {
 
-
+                <!--タブの切り替え-->
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                <!--タブの中身　切り替え-->
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); 
+                const target = btn.dataset.target;
+                document.querySelector(target).classList.add('active');
+            });
+        });
+    </script>
 
 </body>    

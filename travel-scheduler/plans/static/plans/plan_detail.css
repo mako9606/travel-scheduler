@@ -43,7 +43,6 @@ label{
 /* 各タブ */
 .tab-btn{
     padding: 10px 14px;
-    border: 1px solid #ccc;
     background: white;
     border-bottom: 2px solid #ccc;  /* 非選択は下線を表示する */
     font-size: 14px;
@@ -54,8 +53,8 @@ label{
 /* 各タブ   クリック・タップした瞬間 に適用される状態 */
 .tab-btn.active{
     font-weight: bold;
-    transform: scale(0.97);
     border-bottom: 2px solid white;
+    z-index: 2;
 }
 
 /* タブの中身 */
@@ -64,12 +63,12 @@ label{
     padding: 16px;
     border: 1px solid #ccc;
     border-top: none;
+    margin-top: -2px;
 }
 
 /* タブの中身  クリック・タップした瞬間 に適用される状態*/
 .tab-content.active{
     display: block;
-    transform: scale(0.97);
 }
 
 /* メンバーを追加するのリンク */

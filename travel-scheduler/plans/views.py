@@ -5,7 +5,7 @@ from django.views.generic import CreateView
 from django.views import View
 from django.views.generic import DeleteView
 
-from datetime import timedelta
+from datetime import date, timedelta
 
 #from .models import Plan
 
@@ -48,12 +48,14 @@ def plan_detail(request):
     end = date(2025, 1, 3)
     
     date_list = []
-    d = start
-    while d <= end:
-        date_list.append(d.strftime('%-m/%-d'))
-        d += timedelta(days=1)
+    current = start_date
+    while current <= end_date:
+        date_list.append(current)
+        current += timedelta(days=1)
         
-    return render(request, "plans/plan_create.html",{
-        "date_list": date_list,
-    })    
+    context = {
+        "date_list": dete_list,
+    }    
+        
+    return render(request, "plans/plan_create.html",context)    
     
