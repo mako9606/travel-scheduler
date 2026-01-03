@@ -15,7 +15,9 @@
             <button type="button" class="tab-btn" data-target=".tab-memo">メモ</button>
 
             {% for day in date_list %} 
-            <button class="tab-btn active">{{ day }}</button>
+            <button type="button" class="tab-btn {% if forloop.first %}active{% endif %}" data-target=".tab-schedule-{{ forloop.counter }}">
+                {{ day|date:"n/j" }}
+            </button>
             {% endfor %}
             
             <button type="button" class="tab-btn" data-target=".tab-detail">詳細情報</button>
@@ -50,8 +52,12 @@
         </div>
 
         <!-- 画面設計図　スライド18 プラン詳細画面（1日詳細）-->
-        <div class="tab-content tab-schedule">
-        </div>
+        {% for day in date_list %}
+            <div class="tab-content tab-schedule-{{ forloop.counter }} {% if forloop.first %}active{% endif %}">
+                <p>{{ day|date:"n/j" }}の予定</p>
+            </div>
+        {% endfor %}
+
 
         <!-- 画面設計図　スライド29 プラン詳細画面（MAP）-->
         <div class="tab-content tab-map">

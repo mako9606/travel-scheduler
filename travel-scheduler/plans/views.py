@@ -37,25 +37,24 @@ class PlanCreateView(View):
     #template_name = "plans/plan_detail.html"
 #↑models.py作成したら使って↓を消す
 
+
+# 日付タブの自動作成（models作成したら変更？）
 class PlanDetailView(View):
     def get(self, request):
-        return render(request, "plans/plan_detail.html")
-
-
-# 日付タブの自動作成
-def plan_detail(request):
-    start = date(2025, 1, 1)
-    end = date(2025, 1, 3)
+        start = date(2025, 1, 1)
+        end = date(2025, 1, 3)
     
-    date_list = []
-    current = start_date
-    while current <= end_date:
-        date_list.append(current)
-        current += timedelta(days=1)
+        date_list = []
+        current = start
+        while current <= end:
+            date_list.append(current)
+            current += timedelta(days=1)
         
-    context = {
-        "date_list": dete_list,
-    }    
-        
-    return render(request, "plans/plan_create.html",context)    
+        context = {
+            "date_list": date_list,
+        }   
+        return render(request, "plans/plan_detail.html", context)
+
+
+
     
