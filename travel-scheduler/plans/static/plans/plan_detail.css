@@ -64,6 +64,7 @@ label{
     border: 1px solid #ccc;
     border-top: none;
     margin-top: -2px;
+    background-color: white;
 }
 
 /* タブの中身  クリック・タップした瞬間 に適用される状態*/
@@ -71,23 +72,14 @@ label{
     display: block;
 }
 
-/* メンバーを追加するのリンク */
-.member-add{
-    text-align: right;
-    display: block;
-    margin-top: 10px;
-    font-size: 14px;
-}
-
 .edit-btn{
    padding: 10px 20px;
    text-decoration: none;
-   display: block;
+   display: block; 
    background-color: #ffa158ff; 
    border: 2px solid #592d13;
    color: #592d13;
-   border-radius: 5px;
-   font-size: 16px;
+   border-radius: 5px; 
    font-weight: bold;
    margin-top: 12px;
    width: fit-content;
@@ -98,5 +90,78 @@ label{
     background-color: #ff8c3a;
     transform: scale(0.97);
     border: 2px solid #592d13;
+}
+
+/* タブ中身　～メモ～ */
+.memo-paper{
+    padding: 12px 0;
+}
+
+.memo-edit-btn{
+   padding: 10px 20px;
+   text-decoration: none;
+   display: block;
+   background-color: #dccf7fff; 
+   border: 2px solid #592d13;
+   color: #592d13;
+   border-radius: 5px;
+   font-size: 16px;
+   font-weight: bold;
+   margin-top: 12px;
+   width: fit-content;
+}
+
+
+/* メンバーを追加するのリンク */
+.member-add{
+    text-align: right;
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+
+/* タブ中身　～費用～ */
+.cost-summary{
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.cost-summary-amount{
+    font-size: 22px;
+    font-size: bold;
+}
+
+.cost-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.cost-name {
+  font-size: 15px;
+}
+
+.cost-amount {
+  font-weight: bold;
+}
+
+.cost-add-btn {
+   padding: 10px 20px;
+   text-decoration: none;
+   display: flex; /* 中身の文字を中央寄せ */
+   align-items: center; /* 中身の文字を中央寄せ */
+   justify-content: center; /* 中身の文字を中央寄せ */
+   background-color: #ffa158ff; 
+   border: 2px solid #592d13;
+   color: #592d13;
+   width: 48px;  /* 〇ボタン */
+   height: 48px; /* 〇ボタン */
+   border-radius: 50%;   /* 〇ボタン */
+   font-size: 16px;
+   font-size: 16px;
+   font-weight: bold;
+   margin-top: 12px;
 }
 

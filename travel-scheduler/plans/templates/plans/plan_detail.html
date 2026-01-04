@@ -49,6 +49,15 @@
         
         <!-- 画面設計図　スライド16 プラン詳細画面（メモ）-->
         <div class="tab-content tab-memo">
+
+            <div class="memo-paper">
+                <p class="memo-text" placeholder="アカウント名 入力">
+                    初日の集合時間　〇〇駅に8時
+                </p>
+
+                <button type="button" class="memo-edit-btn">メモ編集</button>
+            </div>
+
         </div>
 
         <!-- 画面設計図　スライド18 プラン詳細画面（1日詳細）-->
@@ -65,7 +74,35 @@
          
         <!-- 画面設計図　スライド32 プラン詳細画面（費用）-->
         <div class="tab-content tab-cost">
+            
+            <!-- 合計金額 -->
+            <div class="cost-summary">
+                <p class="cost-summary-amount">￥12,000</p>
+            </div>
+            
+            <!-- 費用一覧 -->
+            <div class="cost-list">
+
+                <div class="cost-item">
+                    <p class="cost-name">交通費</p>
+                    <p class="cost-amount">¥3,000</p>
+                </div>
+
+                <div class="cost-item">
+                    <p class="cost-name">宿泊費</p>
+                    <p class="cost-amount">¥7,000</p>
+                </div>
+
+                <div class="cost-item">
+                    <p class="cost-name">食費</p>
+                    <p class="cost-amount">¥2,000</p>
+                </div>
+            </div>    
+
+            <button type="button" class="cost-add-btn">＋</button>
+
         </div>
+
     </form>
 
     <script>
