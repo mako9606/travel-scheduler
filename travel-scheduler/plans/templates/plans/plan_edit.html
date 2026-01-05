@@ -12,53 +12,25 @@
     <form method="POST" class="form-container">
         {% csrf_token %}
 
-        <label>旅行タイトル</label>
-        <input type="text" name="text" placeholder="既存の旅行タイトルを入れたい">
-
-        <div class="date-row">
-        <label>出発日</label>
-        <select name="start_year">
-            <option value="">年</option>
-            <option>2025</option>
-            <option>2026</option>
-            <option>2027</option>
-        </select>
-
-        <select name="start_month">
-            <option value="">月</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-        </select>
-
-        <select name="start_day">
-            <option value="">日</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-        </select>
-
-        <label>帰宅日</label>        
-        <select name="end_year">
-            <option value="">年</option>
-            <option>2025</option>
-            <option>2026</option>
-        </select>
-
-        <select name="end_month">
-            <option value="">月</option>
-            <option>1</option>
-            <option>2</option>
-        </select>
-
-        <select name="end_day">
-            <option value="">日</option>
-            <option>1</option>
-            <option>2</option>
-        </select>
+        <div class="form-group">
+            <label>旅行タイトル</label>
+            <input type="text" placeholder="既存の旅行タイトルを入れたい">
         </div>
+
+
+        <div class="form-group">
+            <label>出発日</label>
+            <input type="date">
+        </div>    
+
+        <div class="form-group">
+            <label>帰宅日</label>        
+            <input type="date">
+        </div>    
 
         <a href='{% url 'plans:plan_detail' %}' class="btn">完了</a>
         <a href='#' class="delete-btn">削除</a>
 
+    </form>
+    
 </body>        

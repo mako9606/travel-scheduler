@@ -12,6 +12,9 @@ from datetime import date, timedelta
 def plan_list(request):
     return render(request, "plans/plan_list.html")
 
+def plan_edit(request):
+    return render(request, 'plans/plan_edit.html')
+
 
 
 #class PlanCreateView(LoginRequiredMixin, CreateView):
@@ -54,6 +57,7 @@ class PlanDetailView(View):
             "date_list": date_list,
         }   
         return render(request, "plans/plan_detail.html", context)
+
 
 
 

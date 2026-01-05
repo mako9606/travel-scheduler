@@ -27,6 +27,11 @@ body{
     padding-bottom: 30px;
 }
 
+.form-group{
+    margin-bottom: 20px;
+}
+
+
 .btn{
    padding: 10px 20px;
    text-decoration: none;
