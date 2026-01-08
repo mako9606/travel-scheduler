@@ -12,25 +12,86 @@
     <form method="POST" class="form-container">
         {% csrf_token %}
 
-        <div class="form-group">
-            <label>旅行タイトル</label>
-            <input type="text" placeholder="既存の旅行タイトルを入れたい">
+        <div class="tab-menu">
+            <button type="button" class="tab-btn" data-target=".tab-memo">メモ</button>
+
+            {% for day in date_list %} 
+            <button type="button" class="tab-btn {% if forloop.first %}active{% endif %}" data-target=".tab-schedule-{{ forloop.counter }}">
+                {{ day|date:"n/j" }}
+            </button>
+            {% endfor %}
+            
+            <button type="button" class="tab-btn" data-target=".tab-detail">詳細情報</button>
+            <button type="button" class="tab-btn" data-target=".tab-map">map</button>
+            <button type="button" class="tab-btn" data-target=".tab-cost">費用</button>
+        </div>  
+
+        <div class="tab-content.active">
+            <div class="form-group">
+                <label>旅行タイトル</label>
+                <input type="text" placeholder="既存の旅行タイトルを入れたい">
+            </div>
+
+            <div class="form-group">
+            <label>出発日</label>
+
+            <div class="date-row">
+
+                <select name="end_year">
+                    <option value="">年</option>
+                    <option>2025</option>
+                    <option>2026</option>
+                    <option>2027</option>
+                </select>
+
+                <select name="start_month">
+                    <option value="">月</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+
+                <select name="start_day">
+                    <option value="">日</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+
+            </div>
+
+            <label>帰宅日</label> 
+            <div class="date-row">
+       
+                <select name="end_year">
+                    <option value="">年</option>
+                    <option>2025</option>
+                    <option>2026</option>
+                    <option>2027</option>
+                </select>
+
+                <select name="end_month">
+                    <option value="">月</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+
+                <select name="end_day">
+                    <option value="">日</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+
+            </div>
         </div>
 
-
-        <div class="form-group">
-            <label>出発日</label>
-            <input type="date">
-        </div>    
-
-        <div class="form-group">
-            <label>帰宅日</label>        
-            <input type="date">
-        </div>    
+        </div>
 
         <a href='{% url 'plans:plan_detail' %}' class="btn">完了</a>
-        <a href='#' class="delete-btn">削除</a>
+        <a href='{% url 'plans:plan_delete' %}' class="delete-btn">削除</a>
 
     </form>
-    
+
 </body>        

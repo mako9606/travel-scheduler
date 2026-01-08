@@ -37,7 +37,7 @@ label{
 
 input[name="plan_name"],
 input[type="start_date"],
-input[type="start_date"]{
+input[type="end_date"]{
     width: 100%;
     padding: 12px;
     font-size: 16px;

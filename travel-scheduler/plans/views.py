@@ -15,6 +15,8 @@ def plan_list(request):
 def plan_edit(request):
     return render(request, 'plans/plan_edit.html')
 
+def plan_delete(request):
+    return render(request, 'plans/plan_delete.html')
 
 
 #class PlanCreateView(LoginRequiredMixin, CreateView):
