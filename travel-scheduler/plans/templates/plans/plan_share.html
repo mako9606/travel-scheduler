@@ -1,0 +1,50 @@
+<head>
+<!-- 画面設計図　スライド14 -->
+    <title>共有URL閲覧画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'plans/plan_share.css' %}">
+</head>
+
+<body>
+
+    <!-- 有効期限内　-->
+    <div class="share-container is-valid" style="display:none;">
+        <div class="page-title">{{ object.plan_name }}</div>
+
+        <form method="POST" class="form-container">
+            {% csrf_token %}
+        
+            <h1>☆☆旅行を閲覧しますか？</h1>
+
+            <label>アカウント ログイン</label>
+
+            <label>メールアドレス</label>
+            <input type="email" name="email" placeholder="メールアドレス 入力" required>
+            <label>パスワード</label>
+            <input type="password" name="password" placeholder="********" required>
+
+            <a href="{% url 'plans:plan_detail' %}" class="btn">ログイン</a>
+            <a href="{% url 'account:password_reset' %}" class="forgot">パスワード忘れた方</a>
+
+            <label>アカウント お持ちじゃない方</label>
+
+            <label>アカウント名</label>
+            <input type="text" name="username" placeholder="アカウント名 入力" required>
+
+            <a href="{% url 'plans:plan_detail' %}" class="btn">閲覧</a>
+
+        </form>
+    </div>
+
+
+    <!-- 有効期限外　-->
+    <div class="share-container is-invalid" style="display:block;">
+
+        <div class="form-container">
+            <h1>URLの有効期限が切れています。</h1>
+            <h2>送信者から新しいURLを受け取ってください。</h2>
+        </div>
+
+    </div>
+</body>

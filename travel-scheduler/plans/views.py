@@ -18,6 +18,9 @@ def plan_edit(request):
 def plan_delete(request):
     return render(request, 'plans/plan_delete.html')
 
+def plan_share(request):
+    return render(request, 'plans/plan_share.html')
+
 
 #class PlanCreateView(LoginRequiredMixin, CreateView):
     model = Plan
