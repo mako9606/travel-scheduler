@@ -42,7 +42,7 @@
 
             <p>メンバーとの共有</p>
 
-            <a href="#" class="member-add">メンバーを追加する</a>
+            <a class="member-add">メンバーを追加する</a>
 
             <a href="{% url 'plans:plan_edit' %}" class="edit-btn">編集</a>
         </div>
@@ -112,20 +112,50 @@
 
     </form>
 
+    <!-- スライド13　共有URL表示（モーダル）-->
+    <div class="share-modal">
+        <div class="share-modal-content">
+            <button type="button" class="share-modal-close">×</button>
+
+            <p class="share-title">共有URL</p>
+
+            <p class="share-url">
+                https://example.com/plan/share?token=xxxx
+            </p>
+        </div>  
+    </div>
+
     <script>
         document.querySelectorAll('.tab-btn').forEach((btn) =>{
             btn.addEventListener('click', () => {
 
-                <!--タブの切り替え-->
+                // タブの切り替え
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 
-                <!--タブの中身　切り替え-->
+                // タブの中身　切り替え
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); 
                 const target = btn.dataset.target;
                 document.querySelector(target).classList.add('active');
             });
         });
+
+        // スライド13　共有URL表示（モーダル）
+        const shareModal = document.querySelector('.share-modal');
+        const openShareBtn = document.querySelector('.member-add');
+        const closeShareBtn = document.querySelector('.share-modal-close');
+
+        if (openShareBtn && shareModal && closeShareBtn){
+            openShareBtn.addEventListener('click', () => {
+                shareModal.classList.add('active');
+            });
+
+            closeShareBtn.addEventListener('click', () => {
+                shareModal.classList.remove('active');
+            });
+        }
+
     </script>
+    
 
 </body>    
