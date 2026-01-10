@@ -110,7 +110,7 @@ label{
    margin-top: 12px;
    width: fit-content;
 }
-
+/* タブ中身　～詳細情報～ */
 
 /* メンバーを追加するのリンク */
 .member-add{
@@ -172,6 +172,50 @@ label{
   padding: 8px;
   border-radius: 4px;
 }
+
+/* タブ中身　～1日詳細～ */
+.schedule-edit-btn{
+  color: #592d13;
+  text-decoration: underline;
+}
+
+.schedule-detail-btn{
+  font-size: 18px
+}
+
+.destination-btn
+.add-btn{
+   padding: 10px 20px;
+   text-decoration: none;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-color: #ffa158ff; 
+   border: 2px solid #592d13;
+   color: #592d13;
+   border-radius: 5px;
+   font-size: 16px;
+   font-weight: bold;
+   margin-top: 12px;
+
+  /* ボタンの丸　*/
+   width: 56px;
+   height: 56px;
+   border-radius: 50%;
+
+  /*　画面内固定　*/
+   position: fixed;
+   bottom: 24px;
+   right: 24px;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.button:active{
+    background-color: #ff8c3a;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
+
 
 /* タブ中身　～map~ */
 .tab-map{

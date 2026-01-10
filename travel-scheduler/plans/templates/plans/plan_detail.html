@@ -41,8 +41,8 @@
             <p>実際費用</p>
 
             <p>メンバーとの共有</p>
-
             <a class="member-add">メンバーを追加する</a>
+            <a href="{% url 'plans:share_revoke' %}" class="revoke-btn">URLを失効</a>
 
             <a href="{% url 'plans:plan_edit' %}" class="edit-btn">編集</a>
         </div>
@@ -64,6 +64,28 @@
         {% for day in date_list %}
             <div class="tab-content tab-schedule-{{ forloop.counter }} {% if forloop.first %}active{% endif %}">
                 <p>{{ day|date:"n/j" }}の予定</p>
+            
+
+
+                <div class="time">
+                    <a href="{% url 'destinations:schedule_edit.html' %}" class="schedule-edit-btn">〇〇：〇〇</a>
+                </div> 
+            
+                <div class="destination">
+                    <a href="{% url 'destinations:schedule_detail.html' %}" class="schedule-detail-btn">目的地名</a>
+                </div> 
+
+                <div class="schedule-memo">
+                    <p class="memo-text">
+                        ・メモはありません。
+                    </p>
+
+                    <button type="button" class="memo-edit-btn">メモ編集</button>
+                </div> 
+
+                <a href="{% url 'destinations:destination_search.html' %}" class="destination-btn">目的地検索</a>
+                <a href="{% url 'destinations:destination_edit.html' %}" class="add-btn">＋</a>
+
             </div>
         {% endfor %}
 

@@ -1,0 +1,26 @@
+<head>
+<!-- 画面設計図　スライド15 -->
+<title>URL失効画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'plans:share_revoke.css' %}">
+
+</head>
+
+<body>
+    <div class="page-title">{{ object.plan_name }}</div>
+    
+    <div class="modal-overlay">
+        <div class="form-container modal-box">
+
+            <p class="modal-message">〇〇のURLを失効しますか？</p>
+            
+            <div class="revoke-actions">
+                <a href="{% url 'plans:plan_detail' %}" class="btn-revoke">失効</a>
+                <a href="{% url 'plans:plan_detail' %}" class="btn-cancel">戻る</a>
+            </div>
+                
+        </div>
+    </div>
+
+</body>
