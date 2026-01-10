@@ -1,0 +1,34 @@
+<head>
+<!-- 画面設計図　スライド24 -->
+    <title>目的地検索画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}">
+</head>
+
+<body>
+
+    <div class="page-title">目的地検索</div>
+
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+
+        <input type="text" name="q" placeholder="目的地名 入力" value="{{ q }}">
+        <button type="submit" class="search-btn">検索</button>
+             {% if q %}
+                {% if destinations %}
+                    <ul>
+                        {% for d in destinations %}
+                            <li>{{ d }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>目的地がありません</p>
+                {% endif %}
+            {% endif %}
+
+        <a href="#" class="add-btn">＋</a>
+
+    </form>
+
+</body> 
