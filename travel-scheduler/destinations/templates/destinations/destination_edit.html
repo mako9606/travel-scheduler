@@ -1,0 +1,89 @@
+<head>
+<!-- 画面設計図　スライド20 -->
+    <title>目的地設定・編集　画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}">
+</head>
+
+<body>
+
+    <form method="POST" class="form-container page-title">
+        {% csrf_token %}
+
+        <label>目的地名</label>
+        <input type="text" name="destination-name" placeholder="目的地名 入力" required>
+
+        <label>住所</label>
+        <input type="text" name="address" placeholder="住所 入力" required>
+
+        <label>MAP</label>
+        <a href="#" class="map-link">GoogleMap</a>
+
+        <label>定休日</label>
+        <div class="select-buttons">
+
+            <input type="checkbox" name="closed_days" id="mon" value="mon">
+            <label for="mon" class="select-btn">月</label>
+
+            <input type="checkbox" name="closed_days" id="tue" value="tue">
+            <label for="tue" class="select-btn">火</label>
+
+            <input type="checkbox" name="closed_days" id="wed" value="wed">
+            <label for="wed" class="select-btn">水</label>
+
+            <input type="checkbox" name="closed_days" id="thu" value="thu">
+            <label for="thu" class="select-btn">木</label>
+
+            <input type="checkbox" name="closed_days" id="fri" value="fri">
+            <label for="fri" class="select-btn">金</label>
+
+            <input type="checkbox" name="closed_days" id="sat" value="sat">
+            <label for="sat" class="select-btn">土</label>
+
+            <input type="checkbox" name="closed_days" id="sun" value="sun">
+            <label for="sun" class="select-btn">日</label>
+
+        </div>
+
+
+        <label>営業時間</label>
+        <div class="time-range">
+            <input type="time" name="open_time">
+            <span>〜</span>
+            <input type="time" name="close_time">
+        </div>
+
+        <label>駐車場</label>
+        <div class="select-buttons">
+            <input type="radio" name="parking" id="parking_yes" value="yes">
+            <label for="parking_yes" class="select-btn">有</label>
+
+            <input type="radio" name="parking" id="parking_no" value="no">
+            <label for="parking_no" class="select-btn">無</label>
+        </div>
+        <input type="text" name="parking" placeholder="金額 入力"><p>円</p>
+
+        <label>入場料</label>
+        <div class="select-buttons">
+            <input type="radio" name="ticket" id="ticket_yes" value="yes">
+            <label for="ticket_yes" class="select-btn">有</label>
+
+            <input type="radio" name="ticket" id="ticket_no" value="no">
+            <label for="ticket_no" class="select-btn">無</label>
+        </div>
+        <input type="text" name="ticket" placeholder="金額 入力"><p>円</p>
+
+        <label>リンク</label>
+        <input type="text" name="rink" placeholder="入力">
+
+        <label>メモ</label>
+        <input type="text" name="memo" placeholder="入力">
+
+
+        <button type="submit" class="btn">完了</button>
+        <button type="submit"class="delete-btn">削除</button>
+       
+    </form>
+
+</body> 

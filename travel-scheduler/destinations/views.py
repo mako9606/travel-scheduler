@@ -15,3 +15,9 @@ def destination_search(request):
             "destinations": destinations,
         }
     )
+    
+    
+    
+def destination_edit(request):
+    return render(request, "destinations/destination_edit.html")
+

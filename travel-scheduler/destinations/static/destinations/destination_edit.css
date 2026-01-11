@@ -1,0 +1,127 @@
+/* タイトルの緑背景 */
+.page-title {
+    background: #b7d2b1ff;
+    padding: 10px;
+    color: #447d37;
+    font-size: 20px;
+    font-weight: bold;
+    width: 90%;
+    max-width: 380px;
+    margin: 20px auto 10px auto;
+    box-sizing: border-box;
+}
+
+.form-container{
+    width: 90%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+body{
+    text-align: left;
+    font-size: 17px;
+    color: #592d13;
+    background-color: #f7f7f7ff;
+    display: block;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+label{
+    display: block;
+    font-size: 16px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+input[type="text"]{
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #595959;
+    box-sizing: border-box;
+}
+
+/* 営業時間 */
+.time-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* 有無ボタン */
+.select-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* input は見せない */
+.select-buttons input {
+  display: none;
+}
+
+/* 通常時 */
+.select-btn {
+  padding: 8px 16px;
+  border: 2px solid #595959;
+  border-radius: 5px;
+  cursor: pointer;
+  background: white;
+  color: #592d13;
+  font-weight: bold;
+}
+
+/* 選択されたとき */
+.select-buttons input:checked + .select-btn {
+  background: #a59b80ff;
+  color: white;
+}
+
+/* ↑有無ボタン↑ */
+
+
+/* 完了ボタン */
+.btn{
+   padding: 10px 20px;
+   text-decoration: none;
+   display: block;
+   background-color: #ffa158ff; 
+   border: 2px solid #592d13;
+   color: #592d13;
+   border-radius: 5px;
+   font-size: 16px;
+   font-weight: bold;
+   margin-top: 12px;
+   width: fit-content;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.btn:active{
+    background-color: #ff8c3a;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
+
+/* 削除ボタン */
+.delete-btn{
+   padding: 10px 20px;
+   text-decoration: none;
+   display: block;
+   background-color: white; 
+   border: 2px solid #592d13;
+   color: #990000;
+   border-radius: 5px;
+   font-size: 16px;
+   font-weight: bold;
+   margin-top: 12px;
+   width: fit-content;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.delete-btn:active{
+    background-color: white;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
