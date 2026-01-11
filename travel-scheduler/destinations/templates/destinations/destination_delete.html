@@ -1,0 +1,31 @@
+<head>
+<!-- 画面設計図　スライド28 -->
+<title>プラン詳細画面（目的地削除）</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'destinations/destination_delete.css' %}">
+
+</head>
+
+<body>
+    <div class="page-title"></div>
+    
+    <div class="modal-overlay">
+        <div class="form-container modal-box">
+
+            <p class="modal-message"> "目的地"を削除しますか？</p>
+            
+            <div class="delete-actions">
+                <form method="POST" action="{% url 'plans:plan_detail' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete">
+                        削除
+                    </button>
+                </form>    
+
+
+            <a href="{% url 'destinations:destination_edit' %}" class="btn-cancel">戻る</a>
+        </div>
+    </div>
+
+</body>
