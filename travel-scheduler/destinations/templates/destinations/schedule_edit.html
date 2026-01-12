@@ -1,0 +1,38 @@
+<head>
+<!-- 画面設計図　スライド26 -->
+    <title>予定設定画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'destinations/schedule_edit.css' %}">
+</head>
+
+<body>
+    <div class="page-title">{{ object.plan_name }}</div>
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+
+        <label>目的地名</label>
+
+        <label>到着時間</label>
+        <div class="time-range" required>
+            <input type="time" name="arrival_time">
+            <span>〜</span>
+        <label>出発時間</label>
+            <input type="time" name="departure_time">
+        </div>
+        <p>所要時間　〇〇時間</p>
+
+        <label>費用　カテゴリ選択</label>
+
+        <label>項目名入力</label>
+        <input type="text" name="expense_item" placeholder="項目名　入力">
+
+        <label>金額入力</label>
+        <input type="text" name="expense" placeholder="金額 入力"><p>円</p>
+        <a href="#" class="add-btn">＋</a>
+
+        <button type="submit" class="btn">完了</button>
+
+    </form>
+
+</body>     

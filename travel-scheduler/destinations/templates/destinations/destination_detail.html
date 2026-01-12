@@ -1,0 +1,39 @@
+<head>
+<!-- 画面設計図　スライド25 -->
+    <title>目的地詳細画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}">
+</head>
+
+<body>
+
+    <div class="page-title">目的地検索</div>
+    <div class="modal-overlay">
+        <div class="modal-box">
+
+            <form method="POST" class="form-container">
+                {% csrf_token %}
+
+                <button type="button" class="modal-close" onclick="history.back()">×</button>
+
+                <label>営業時間</label>
+                <p>{{ destination.open_time }} ～ {{ destination.close_time }}</p>
+
+                <label>定休日</label>
+                <p>{{ destination.closed_days }}</p>
+
+                <label>駐車場</label>
+                <p>{{ destination.parking }}</p>
+
+                <label>入場料</label>
+                <p>{{ destination.price }} 円</p>
+
+                <a href="{% url 'destinations:schedule_edit' %}" class="btn">予定を設定</button>
+
+            </form>
+
+        </div>    
+    </div>
+
+</body>    
