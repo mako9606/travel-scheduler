@@ -9,4 +9,6 @@ urlpatterns = [
     path('delete/', views.destination_delete, name='destination_delete'),
     path('detail/', views.destination_detail, name='destination_detail'),
     path("schedule-edit/", views.schedule_edit, name="schedule_edit"),
+    path("schedule-memo/", views.schedule_memo, name="schedule_memo"),
+
 ]

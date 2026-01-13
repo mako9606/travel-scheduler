@@ -74,3 +74,14 @@ def schedule_edit(request):
         request,
         "destinations/schedule_edit.html",
     )
+    
+#  schedule_memo.html
+def schedule_memo(request):
+    if request.method == "POST":
+        # 今は保存しない
+        return redirect("plans:plan_detail")
+
+    return render(
+        request,
+        "destinations/schedule_memo.html",
+    )

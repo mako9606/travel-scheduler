@@ -1,0 +1,19 @@
+<head>
+<!-- 画面設計図　スライド27 -->
+    <title>プラン詳細画面（１日詳細　メモ編集）</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'destinations/schedule_memo.css' %}">
+</head>
+
+<body>
+    <div class="page-title">{{ object.plan_name }}</div>
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+
+
+        <button type="submit" class="btn">完了</button>
+
+    </form>
+
+</body>     
