@@ -1,0 +1,31 @@
+<head>
+<!-- 画面設計図　スライド34 -->
+    <title>プラン詳細画面（費用　編集）</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'plans/plan_cost_edit.css' %}">
+</head>
+
+<body>
+
+    <div class="page-title">{{ object.plan_name }}</div>
+
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+
+        <label>カテゴリー作成</label>
+        <input type="text" name="item-name" placeholder="項目名 入力">
+        <a href="{% url 'plans:plan_detail' %}" class="btn">完了</a>
+
+        <p>金額カテゴリー</P>
+
+        <label>項目名入力</label>
+        <input type="text" name="item-name" placeholder="項目名 入力">
+        <label>金額入力</label>
+        <input type="text" name="cost" placeholder="金額 入力">
+        <a href="{% url 'plans:plan_detail' %}" class="btn">完了</a>
+
+
+    </form>
+
+</body> 

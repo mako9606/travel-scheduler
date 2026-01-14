@@ -11,4 +11,5 @@ urlpatterns = [
     path('plan_delete/', views.plan_delete, name='plan_delete'),
     path('share/', views.plan_share, name='plan_share'),
     path('revoke/', views.share_revoke, name='share_revoke'),
+    path("cost-edit/",views.plan_cost_edit,name="plan_cost_edit"),
 ]

@@ -67,6 +67,16 @@ class PlanDetailView(View):
         return render(request, "plans/plan_detail.html", context)
 
 
-
-
+# plan_cost_edit.html
+def plan_cost_edit(request):
+    return render(
+        request,
+        "plans/plan_cost_edit.html",
+        {
+            # 仮データ（あとで削除OK）
+            "object": {
+                "plan_name": "☆☆旅行"
+            }
+        }
+    )
     

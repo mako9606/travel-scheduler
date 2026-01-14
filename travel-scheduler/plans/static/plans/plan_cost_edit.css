@@ -64,23 +64,3 @@ input[type="text"]{
     transform: scale(0.97);
     border: 2px solid #592d13;
 }
-
-.delete-btn{
-   padding: 10px 20px;
-   text-decoration: none;
-   display: block;
-   background-color: white; 
-   border: 2px solid #592d13;
-   color: #990000;
-   border-radius: 5px;
-   font-size: 16px;
-   font-weight: bold;
-   margin-top: 12px;
-   width: fit-content;
-}
-
-.delete-btn:active{
-    background-color: #ff8c3a;
-    transform: scale(0.97);
-    border: 2px solid #592d13;
-}
