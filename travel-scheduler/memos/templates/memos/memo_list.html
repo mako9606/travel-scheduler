@@ -1,0 +1,26 @@
+<head>
+<!-- 画面設計図　スライド4 -->
+    <title>メモ機能画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'memos/memo_list.css' %}">
+</head>
+
+<body>
+
+    <div class="page-title">note</div>
+
+    <input type="text" name="q" placeholder="目的地名 入力" value="{{ q }}">
+
+    <main class="memo-list">
+
+        <div class="memo-item">
+            <p  class="memo-title">天気予報</p>
+            <p>天気予報 高知市の今日明日の天気 - 日本気象協会 </p>
+        </div>
+
+    </main> 
+
+    <a href="#" class="add-btn">＋</a>
+
+</body>  
