@@ -1,0 +1,29 @@
+<head>
+<!-- 画面設計図　スライド21 -->
+    <title>地点登録画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'destinations/map_destination.css' %}">
+</head>
+
+<body>
+
+    <div class="page-title"></div>
+
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+
+        <input type="text" name="q" placeholder="目的地名 入力" value="{{ q }}">
+        <button type="submit" class="search-btn">検索</button>
+
+        <p>ピン選択</P>
+        <p>ピン選択表示</P>
+
+
+        <a href="{% url 'destinations:map_pin_edit' %}" class="edit-btn">編集</a>
+        <a href="{% url 'destinations:destination_edit' %}" class="btn">登録</a>
+
+
+    </form>
+
+</body> 

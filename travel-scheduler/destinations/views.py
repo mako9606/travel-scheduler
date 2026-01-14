@@ -85,3 +85,20 @@ def schedule_memo(request):
         request,
         "destinations/schedule_memo.html",
     )
+
+#  map_destination.html
+def map_destination(request):
+    q = request.POST.get("q", "") if request.method == "POST" else ""
+
+    context = {
+        "q": q,
+    }
+    return render(request, "destinations/map_destination.html", context)
+
+
+def map_pin_edit(request):
+    return render(request, "destinations/map_pin_edit.html")
+
+
+def map_pin_delete(request):
+    return render(request, "destinations/map_pin_delete.html")

@@ -10,5 +10,8 @@ urlpatterns = [
     path('detail/', views.destination_detail, name='destination_detail'),
     path("schedule-edit/", views.schedule_edit, name="schedule_edit"),
     path("schedule-memo/", views.schedule_memo, name="schedule_memo"),
+    path("map/", views.map_destination, name="map_destination"),
+    path("map/pin-edit/", views.map_pin_edit, name="map_pin_edit"),
+    path("map/pin-delete/", views.map_pin_delete, name="map_pin_delete"),
 
 ]

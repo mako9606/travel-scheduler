@@ -1,0 +1,32 @@
+<head>
+<!-- 画面設計図　スライド22 -->
+    <title>ピン追加・編集画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'destinations/map_pin_edit.css' %}">
+</head>
+
+<body>
+
+    <div class="page-title"></div>
+
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+
+        <label>ピン追加</label>
+        <input type="text" name="pin-name" placeholder="ラベル名 入力">
+        <a href="{% url 'destinations:map_destination' %}" class="btn">追加選択</a>
+
+        <p>ピン選択</P>
+
+        <label>ラベル名　編集</label>
+        <input type="text" name="pin-name" placeholder="変更名 入力">
+        <a href="{% url 'destinations:map_destination' %}" class="btn">変更</a>
+
+        <a href="{% url 'destinations:map_pin_delete' %}" class="delete-btn">削除</a>
+
+
+
+    </form>
+
+</body> 
