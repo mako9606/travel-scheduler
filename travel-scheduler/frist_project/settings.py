@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'account',
     'plans',
     'destinations',
+    'memos',
 ]
 
 MIDDLEWARE = [
