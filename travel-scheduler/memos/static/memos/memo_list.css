@@ -47,6 +47,7 @@ label{
     margin-bottom: 12px;
     text-decoration: none;
     box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    color: inherit;
 }
 
 input[type="text"]{

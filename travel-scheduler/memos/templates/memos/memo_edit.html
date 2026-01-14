@@ -1,1 +1,25 @@
-memo_edit.html
+<head>
+<!-- 画面設計図　スライド6 -->
+    <title>メモ機能画面　（登録・編集）</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'memos/memo_edit.css' %}">
+</head>
+
+<body>
+
+    <div class="page-title">note</div>
+
+    <form class="memo-paper">
+
+        <textarea rows="6" class="memo-text">
+            初日の集合時間　〇〇駅に8時
+        </textarea>
+
+    </form>
+
+    <a href="{% url 'memos:memo_list' %}" class="btn">完了</a>
+    <a href="{% url 'memos:memo_delete' %}" class="delete-btn">削除</a>
+
+
+</body>  

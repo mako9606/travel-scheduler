@@ -1,1 +1,30 @@
-memo_delete.html
+<head>
+<!-- 画面設計図　スライド7 -->
+    <title>メモ機能画面　（削除）</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'memos/memo_delete.css' %}">
+</head>
+
+<body>
+    <div class="page-title">note</div>
+    
+    <div class="modal-overlay">
+        <div class="form-container modal-box">
+
+            <p class="modal-message"> このメモを削除しますか？</p>
+            
+            <div class="delete-actions">
+                <form method="POST" action="{% url 'memos:memo_list' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete">
+                        削除
+                    </button>
+                </form>    
+
+
+            <a href="{% url 'memos:memo_edit' %}" class="btn-cancel">戻る</a>
+        </div>
+    </div>
+
+</body>

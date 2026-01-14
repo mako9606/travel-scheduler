@@ -61,7 +61,7 @@ label{
     margin: 20px 0;
 }
 
-.logout-actions{
+.delete-actions{
     border-top: 1px solid #592d13;
     margin-top: 20px;
     padding-top: 20px;
@@ -71,7 +71,7 @@ label{
     gap: 24px;
 }
 
-.btn-logout,
+.btn-delete,
 .btn-cancel{
     font-size: 16px;
     color: #592d13;
@@ -80,7 +80,7 @@ label{
 }
 
 /* 文字の主張 */
-.btn-logout{
+.btn-delete{
     font-weight: bold;
 }
 

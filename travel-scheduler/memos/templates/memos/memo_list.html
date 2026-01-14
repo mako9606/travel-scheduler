@@ -1,5 +1,5 @@
 <head>
-<!-- 画面設計図　スライド4 -->
+<!-- 画面設計図　スライド5 -->
     <title>メモ機能画面</title>
 
     {% load static %}
@@ -14,13 +14,13 @@
 
     <main class="memo-list">
 
-        <div class="memo-item">
+        <a href="{% url 'memos:memo_detail' %}" class="memo-item">
             <p  class="memo-title">天気予報</p>
             <p>天気予報 高知市の今日明日の天気 - 日本気象協会 </p>
-        </div>
+        </a>
 
     </main> 
 
-    <a href="#" class="add-btn">＋</a>
+    <a href="{% url 'memos:memo_edit' %}" class="add-btn">＋</a>
 
 </body>  
