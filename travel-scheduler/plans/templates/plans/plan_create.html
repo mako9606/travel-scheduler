@@ -12,17 +12,16 @@
     <form method="POST" class="form-container">
         {% csrf_token %}
 
-        <!-- ↓modelsができたらここを開放して、下の部分を消す -->
-
-        <!-- <label>旅行タイトル</label>
+        <label>旅行タイトル</label>
         {{ form.plan_name }}
 
         <label>出発日</label>
         {{ form.start_date }}
         <label>帰宅日</label>
-        {{ form.start_date }} -->
+        {{ form.end_date }}
 
-        <label>旅行タイトル</label>
+        <!-- 確認したら　下の部分を消す -->
+        <!-- <label>旅行タイトル</label>
         <input type="text" name="text" placeholder="旅行タイトル 入力" required>
 
         <div class="form-group">
@@ -79,7 +78,7 @@
 
             </div>
 
-        </div>
+        </div> -->
 
         <a href="#" class="btn">完了</a>
 

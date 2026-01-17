@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.views import View
 from django.views.generic import DeleteView
 
 from datetime import date, timedelta
+
+from .models import Plan
 
 #from .models import Plan
 
@@ -25,7 +27,8 @@ def share_revoke(request):
     return render(request, 'plans/share_revoke.html')
 
 
-#class PlanCreateView(LoginRequiredMixin, CreateView):
+# plan_create.html
+class PlanCreateView(LoginRequiredMixin, CreateView):
     model = Plan
     template_name = "plans/plan_create.html"
     fields = ['plan_name', 'start_date', 'end_date']
@@ -36,11 +39,11 @@ def share_revoke(request):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-#↑models.py作成したら使って↓を消す
-     
-class PlanCreateView(View):
-    def get(self, request):
-        return render(request, "plans/plan_create.html")
+
+#↑models.py作成したら使って↓を消す     
+#class PlanCreateView(View):
+    #def get(self, request):
+       # return render(request, "plans/plan_create.html")
     
     
 #class PlanDetailView(DeleteView):
