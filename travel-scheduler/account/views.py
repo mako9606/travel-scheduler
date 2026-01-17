@@ -11,7 +11,7 @@ def account(request):
     return render(request, 'account/account.html')
 
 
-#アカウント更新画面　モーダル表示
+#　edit_email.html
 @login_required
 def edit_email(request):
     user = request.user
