@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.views import View
@@ -11,8 +12,15 @@ from .models import Plan
 
 #from .models import Plan
 
+# plan_list.html
+@login_required
 def plan_list(request):
-    return render(request, "plans/plan_list.html")
+    plans = Plan.objects.filter(user=request.user).order_by("-order")
+    return render(
+        request,
+        "plans/plan_list.html",
+        {"plans": plans}
+    )
 
 def plan_edit(request):
     return render(request, 'plans/plan_edit.html')

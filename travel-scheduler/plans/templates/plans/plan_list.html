@@ -12,10 +12,16 @@
 
     <main class="plan-list">
 
+        {% for plan in plans %}
         <div class="plan-item">
-            <p  class="plan-title">○○旅行</p>
-            <p  class="plan-date">0000/00/00～0000/00/00</p>
+            <div class="plan-name">{{ plan.plan_name }}</div>
+            <div class="plan-date">
+                {{ plan.start_date }} 〜 {{ plan.end_date }}
+            </div>
         </div>
+        {% empty%}
+            <p>まだプランがありません。</p>
+        {% endfor %}
 
     </main> 
 
