@@ -11,8 +11,7 @@
 
     <form method="POST" action="{% url 'auth_app:login' %}">
         {% csrf_token %}
-
-        <input type="hidden" name="next" value="{% url 'auth_app:home' %}">       
+       
         {{ form.non_field_errors }}    
 
         <label>{{ form.username.label }}</label>

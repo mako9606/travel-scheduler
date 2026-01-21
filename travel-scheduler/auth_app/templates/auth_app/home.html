@@ -9,4 +9,13 @@
 
     <p>あとでちゃんと作る</p>
 
+    <p>
+        <a href="{% url 'plans:plan_list' %}">
+            プランリストへ（仮）
+        </a>
+    </p>
+
+    <p>is_authenticated: {{ request.user.is_authenticated }}</p>
+    <p>user: {{ request.user }}</p>
+
 </body>

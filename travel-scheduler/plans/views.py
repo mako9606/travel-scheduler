@@ -5,6 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.views import View
 from django.views.generic import DeleteView
+from django.db.models import Max
 
 from datetime import date, timedelta
 
@@ -15,7 +16,7 @@ from .models import Plan
 # plan_list.html
 @login_required
 def plan_list(request):
-    plans = Plan.objects.filter(user=request.user).order_by("-order")
+    plans = Plan.objects.filter(user=request.user).order_by("order")
     return render(
         request,
         "plans/plan_list.html",
@@ -46,6 +47,14 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
     
     def form_valid(self, form):
         form.instance.user = self.request.user
+        max_order = (
+            Plan.objects
+            .filter(user=self.request.user)
+            .aggregate(Max("order"))["order__max"]
+            or 0
+        )
+        form.instance.order = max_order + 1
+        
         return super().form_valid(form)
 
 #↑models.py作成したら使って↓を消す     
