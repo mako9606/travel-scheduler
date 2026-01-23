@@ -14,13 +14,8 @@
        
         {{ form.non_field_errors }}    
 
-        <label>{{ form.username.label }}</label>
-        {{ form.username }}
-        {{ form.username.errors }}
-
-        <label>{{ form.password.label }}</label>
-        {{ form.password }}
-        {{ form.password.errors }}
+        <input type="email" name="username">
+        <input type="password" name="password">
 
         <a href="{% url 'account:password_reset' %}" class="forgot">パスワード忘れた方</a>
 

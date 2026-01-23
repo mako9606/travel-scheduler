@@ -8,7 +8,7 @@ UserModel = get_user_model()
 
 class EmailBackend(ModelBackend):
     def authenticate(self, request, username =None, password =None, **kwargs):
-            
+        print("EmailBackend呼べた:", username)   
         if username is None or password is None:
             return None
         
