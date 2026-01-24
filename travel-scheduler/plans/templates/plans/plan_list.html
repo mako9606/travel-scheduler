@@ -10,10 +10,10 @@
 
     <div class="page-title">プランリスト</div>
 
-    <main class="plan-list">
+    <main class="plan-list" id="plan-list">
 
         {% for plan in plans %}
-        <div class="plan-item">
+        <div class="plan-item" data-id="{{ plan.id }}">
             <div class="plan-name">{{ plan.plan_name }}</div>
             <div class="plan-date">
                 {{ plan.start_date }} 〜 {{ plan.end_date }}
@@ -27,4 +27,39 @@
 
     <a href="{% url 'plans:plan_create' %}" class="add-btn">＋</a>
 
-</body>    
+</body> 
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+<script>
+const el = document.getElementById("plan-list");
+
+Sortable.create(el, {
+  animation: 150,
+  onEnd: function () {
+    const order = [];
+    document.querySelectorAll(".plan-item").forEach(item => {
+      order.push(item.dataset.id);
+    });
+
+    fetch("{% url 'plans:plan_reorder' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: order.map(id => "order[]=" + id).join("&")
+    });
+  }
+});
+
+document.querySelectorAll(".plan-item").forEach(item => {
+  item.addEventListener("click", function () {
+    const id = this.dataset.id;
+    window.location.href = `/plans/detail/${id}/`;
+  });
+});
+</script>
+

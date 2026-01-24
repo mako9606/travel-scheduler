@@ -10,8 +10,12 @@ from django.db.models import Max
 from datetime import date, timedelta
 
 from .models import Plan
+from .forms import PlanCreateForm
 
-#from .models import Plan
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+
+
 
 # plan_list.html
 @login_required
@@ -39,11 +43,11 @@ def share_revoke(request):
 # plan_create.html
 class PlanCreateView(LoginRequiredMixin, CreateView):
     model = Plan
+    form_class = PlanCreateForm
     template_name = "plans/plan_create.html"
-    fields = ['plan_name', 'start_date', 'end_date']
     
     def get_success_url(self):
-        return reverse("plans/plan_detail", kwargs={"pk": self.object.pk})
+        return reverse("plans:plan_detail", kwargs={"pk": self.object.pk})
     
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -56,35 +60,22 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
         form.instance.order = max_order + 1
         
         return super().form_valid(form)
-
-#↑models.py作成したら使って↓を消す     
-#class PlanCreateView(View):
-    #def get(self, request):
-       # return render(request, "plans/plan_create.html")
     
     
-#class PlanDetailView(DeleteView):
-    #model = Plan
-    #template_name = "plans/plan_detail.html"
-#↑models.py作成したら使って↓を消す
+class PlanDetailView(LoginRequiredMixin, DeleteView):
+    model = Plan
+    template_name = "plans/plan_detail.html"
 
-
-# 日付タブの自動作成（models作成したら変更？）
-class PlanDetailView(View):
-    def get(self, request):
-        start = date(2025, 1, 1)
-        end = date(2025, 1, 3)
+@require_POST
+@login_required
+def plan_reorder(request):
+    ids = request.POST.getlist("order[]")
     
-        date_list = []
-        current = start
-        while current <= end:
-            date_list.append(current)
-            current += timedelta(days=1)
-        
-        context = {
-            "date_list": date_list,
-        }   
-        return render(request, "plans/plan_detail.html", context)
+    for index, plan_id in enumerate(ids):
+        Plan.objects.filter(id=plan_id, user=request.user)\
+            .update(order=index)
+            
+    return JsonResponse({"status":"ok"})         
 
 
 # plan_cost_edit.html
