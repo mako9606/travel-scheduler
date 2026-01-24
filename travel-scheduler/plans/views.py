@@ -62,9 +62,55 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
     
     
+  
+  
+    
+    
 class PlanDetailView(LoginRequiredMixin, DeleteView):
     model = Plan
     template_name = "plans/plan_detail.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        plan = self.object
+        
+        date_list = []
+        if plan.start_date and plan.end_date:
+            current = plan.start_date
+            while current <= plan.end_date:
+                date_list.append(current)
+                current += timedelta(days=1)
+                
+        context["date_list"] = date_list
+        context["day_items"] = [
+            {
+                "time": "08:00",
+                "destination": "東京駅",
+                "memo": "集合"
+            },
+            {
+                "time": "12:00",
+                "destination": "浅草",
+                "memo": ""
+            }
+        ]
+        context["days"] = []
+        for d in date_list:
+            context["days"].append({
+                "date": d,
+                "items": [
+                    {"time": "08:00", "destination": "東京駅", "memo": "集合"},
+                    {"time": "12:00", "destination": "浅草", "memo": ""}
+                ]
+            })     
+        return context       
+            
+
+
+
+
+
 
 @require_POST
 @login_required

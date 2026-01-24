@@ -61,30 +61,35 @@
         </div>
 
         <!-- 画面設計図　スライド18 プラン詳細画面（1日詳細）-->
-        {% for day in date_list %}
+        {% for day in days %}
             <div class="tab-content tab-schedule-{{ forloop.counter }} {% if forloop.first %}active{% endif %}">
                 <p>{{ day|date:"n/j" }}の予定</p>
             
 
-
+                {% for item in day.items %}
                 <div class="time">
-                    <a href="#" class="schedule-edit-btn">〇〇：〇〇</a>
+                    <a href="#" class="schedule-edit-btn">{{ item.time }}</a>
                 </div> 
             
                 <div class="destination">
-                    <a href="#" class="schedule-detail-btn">目的地名</a>
+                    <a href="#" class="schedule-detail-btn">{{ item.destination }}</a>
                 </div> 
 
                 <div class="schedule-memo">
                     <p class="memo-text">
-                        ・メモはありません。
+                        {% if item.memo %}
+                            {{ item.memo }}
+                        {% else %}
+                            ・メモはありません。
+                        {% endif %}
                     </p>
 
                     <a href="{% url 'destinations:schedule_memo' %}" class="memo-edit-btn">
                         メモ編集
                     </a>
 
-                </div> 
+                </div>
+                {% endfor %}
 
                 <a href="#" class="destination-btn">目的地検索</a>
                 <a href="#" class="add-btn">＋</a>

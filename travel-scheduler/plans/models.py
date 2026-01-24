@@ -20,5 +20,20 @@ class Plan(models.Model):
     
     def __str__(self):
         return self.plan_name
+
+
+
+class DaySchedule(models.Model):
+    plan = models.ForeignKey(
+        Plan,
+        on_delete=models.CASCADE,
+        related_name="days"
+    )
+    date = models.DateField()
+    order = models.PositiveIntegerField(default=0)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
+    def __str__(self):
+        return f"{self.plan.plan_name} - {self.date}"
