@@ -61,7 +61,7 @@
         </div>
 
         <!-- 画面設計図　スライド18 プラン詳細画面（1日詳細）-->
-        {% for day in days %}
+        {% for day in date_list %}
             <div class="tab-content tab-schedule-{{ forloop.counter }} {% if forloop.first %}active{% endif %}">
                 <p>{{ day|date:"n/j" }}の予定</p>
             

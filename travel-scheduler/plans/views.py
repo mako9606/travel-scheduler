@@ -4,12 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.views import View
-from django.views.generic import DeleteView
+from django.views.generic import CreateView, DetailView, DeleteView
 from django.db.models import Max
 
 from datetime import date, timedelta
 
-from .models import Plan
+from .models import Plan, DaySchedule
 from .forms import PlanCreateForm
 
 from django.views.decorators.http import require_POST
@@ -61,20 +61,18 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
         
         return super().form_valid(form)
     
+
+
     
-  
-  
-    
-    
-class PlanDetailView(LoginRequiredMixin, DeleteView):
+class PlanDetailView(LoginRequiredMixin, DetailView):
     model = Plan
     template_name = "plans/plan_detail.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
         plan = self.object
-        
+        # 各日付を作る
         date_list = []
         if plan.start_date and plan.end_date:
             current = plan.start_date
@@ -82,33 +80,11 @@ class PlanDetailView(LoginRequiredMixin, DeleteView):
                 date_list.append(current)
                 current += timedelta(days=1)
                 
+        days = DaySchedule.objects.filter(plan=plan)
+
         context["date_list"] = date_list
-        context["day_items"] = [
-            {
-                "time": "08:00",
-                "destination": "東京駅",
-                "memo": "集合"
-            },
-            {
-                "time": "12:00",
-                "destination": "浅草",
-                "memo": ""
-            }
-        ]
-        context["days"] = []
-        for d in date_list:
-            context["days"].append({
-                "date": d,
-                "items": [
-                    {"time": "08:00", "destination": "東京駅", "memo": "集合"},
-                    {"time": "12:00", "destination": "浅草", "memo": ""}
-                ]
-            })     
-        return context       
-            
-
-
-
+        context["days"] = days
+        return context
 
 
 
