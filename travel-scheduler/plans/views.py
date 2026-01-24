@@ -81,6 +81,22 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
                 current += timedelta(days=1)
                 
         days = DaySchedule.objects.filter(plan=plan)
+        
+        # DaySchedule（メモ等の実データ）
+        days_qs = DaySchedule.objects.filter(plan=plan)
+
+        # 「この日付のDayScheduleちょうだい」って一発で引ける表
+        days_by_date = {d.date: d for d in days_qs}
+      
+        # 旅行期間の全日付に対して,DayScheduleがあればそれをセット、なければNoneをセット
+        schedule_rows = []
+        for d in date_list:
+            schedule_rows.append({
+                "date": d,
+                "day": days_by_date.get(d)
+            })
+
+        context["schedule_rows"] = schedule_rows
 
         context["date_list"] = date_list
         context["days"] = days

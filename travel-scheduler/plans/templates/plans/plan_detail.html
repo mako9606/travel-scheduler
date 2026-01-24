@@ -61,24 +61,14 @@
         </div>
 
         <!-- 画面設計図　スライド18 プラン詳細画面（1日詳細）-->
-        {% for day in date_list %}
+        {% for row in schedule_rows %}
             <div class="tab-content tab-schedule-{{ forloop.counter }} {% if forloop.first %}active{% endif %}">
-                <p>{{ day|date:"n/j" }}の予定</p>
-            
-
-                {% for item in day.items %}
-                <div class="time">
-                    <a href="#" class="schedule-edit-btn">{{ item.time }}</a>
-                </div> 
-            
-                <div class="destination">
-                    <a href="#" class="schedule-detail-btn">{{ item.destination }}</a>
-                </div> 
+                <p>{{ row.date|date:"n/j" }}の予定</p>
 
                 <div class="schedule-memo">
                     <p class="memo-text">
-                        {% if item.memo %}
-                            {{ item.memo }}
+                        {% if row.day and row.day.memo %}
+                            {{ row.day.memo }}
                         {% else %}
                             ・メモはありません。
                         {% endif %}
@@ -89,7 +79,18 @@
                     </a>
 
                 </div>
-                {% endfor %}
+            
+                {% if row.day %}
+                    {% for item in row.day.items %}
+                    <div class="time">
+                        <a href="#" class="schedule-edit-btn">{{ item.time }}</a>
+                    </div> 
+            
+                    <div class="destination">
+                        <a href="#" class="schedule-detail-btn">{{ item.destination }}</a>
+                    </div>
+                    {% endfor %}
+                {% endif %}
 
                 <a href="#" class="destination-btn">目的地検索</a>
                 <a href="#" class="add-btn">＋</a>

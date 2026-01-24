@@ -31,9 +31,9 @@ class DaySchedule(models.Model):
     )
     date = models.DateField()
     order = models.PositiveIntegerField(default=0)
-    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    memo = models.TextField(blank=True)
     
     def __str__(self):
         return f"{self.plan.plan_name} - {self.date}"
