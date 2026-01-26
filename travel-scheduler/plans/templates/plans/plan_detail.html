@@ -92,8 +92,7 @@
                     {% endfor %}
                 {% endif %}
 
-                <a href="#" class="destination-btn">目的地検索</a>
-                <a href="#" class="add-btn">＋</a>
+                <a href="{% url destinations:destination_search %}" class="destination-btn">目的地検索</a>
 
             </div>
         {% endfor %}
