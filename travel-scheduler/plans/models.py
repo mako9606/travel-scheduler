@@ -1,5 +1,7 @@
+from destinations.models import Destination
 from django.db import models
 from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 
@@ -37,3 +39,18 @@ class DaySchedule(models.Model):
     
     def __str__(self):
         return f"{self.plan.plan_name} - {self.date}"
+    
+
+class Schedule(models.Model):
+    day = models.ForeignKey(
+        DaySchedule,
+        on_delete=models.CASCADE,
+        related_name="schedules"
+    )
+    destinations = models.ForeignKey(
+        Destination,
+        on_delete=models.CASCADE
+    )
+    arrival_time = models.TimeField(null=True, blank=True)
+    departure_time = models.TimeField(null=True, blank=True)
+    memo = models.TextField(blank=True)

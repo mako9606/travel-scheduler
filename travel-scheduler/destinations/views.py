@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
+from plans.models import Plan, Schedule, DaySchedule
+from destinations.models import Destination
 
 # destination_search.html  
 def destination_search(request):
@@ -63,17 +66,26 @@ def destination_detail(request):
     
     
 #  schedule_edit.html
-def schedule_edit(request):
-    if request.method == "POST":
-        # ※ 今は保存処理しない（model未実装）
-        # 完了後はプラン詳細へ戻す
-        return redirect("plans:plan_detail")
+def schedule_edit(request, plan_id, destination_id):
+    plan = get_object_or_404(Plan, id=plan_id)
+    destination = get_object_or_404(Destination, id=destination_id)
+    
+    day = plan.days.first()
 
-    # GET：予定設定画面を表示
-    return render(
-        request,
-        "destinations/schedule_edit.html",
-    )
+    if request.method == "POST":
+        Schedule.objects.create(
+            day=day,
+            destinations=destination,
+            arrival_time=request.POST.get("arrival_time"),
+            departure_time=request.POST.get("departure_time"),
+            memo=request.POST.get("memo"),
+        )
+        return redirect("plans:plan_detail", plan_id=plan.id)
+
+    return render(request,"destinations/schedule_edit.html",{
+            "plan": plan,
+            "destination": destination,
+    })
     
 #  schedule_memo.html
 def schedule_memo(request):
