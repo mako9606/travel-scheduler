@@ -12,6 +12,9 @@ from datetime import date, timedelta
 from .models import Plan, DaySchedule
 from .forms import PlanCreateForm
 
+from destinations.models import Schedule
+
+
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 
@@ -91,9 +94,21 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
         # 旅行期間の全日付に対して,DayScheduleがあればそれをセット、なければNoneをセット
         schedule_rows = []
         for d in date_list:
+            day = days_by_date.get(d)
+
+            if day:
+                schedules = (
+                    Schedule.objects
+                    .filter(day=day)
+                    .order_by("order")
+                )
+            else:
+                schedules = []
+            
             schedule_rows.append({
                 "date": d,
-                "day": days_by_date.get(d)
+                "day": day,
+                "schedules": schedules,
             })
 
         context["schedule_rows"] = schedule_rows

@@ -81,14 +81,20 @@
                 </div>
             
                 {% if row.day %}
-                    {% for item in row.day.items %}
-                    <div class="time">
-                        <a href="#" class="schedule-edit-btn">{{ item.time }}</a>
-                    </div> 
-            
-                    <div class="destination">
-                        <a href="#" class="schedule-detail-btn">{{ item.destination }}</a>
-                    </div>
+                    {% for schedule in row.schedules %}
+
+                        <div class="schedule-row">
+                            <span class="time">
+                                {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                            </span>
+
+                            <span class="destination">
+                                {{ schedule.destination.name }}
+                            </span>
+                        </div> 
+
+                    {% empty %}
+                        <p class="no-schedule">予定はありません。</p>
                     {% endfor %}
                 {% endif %}
 
