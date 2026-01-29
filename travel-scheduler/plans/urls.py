@@ -13,4 +13,6 @@ urlpatterns = [
     path('share/', views.plan_share, name='plan_share'),
     path('revoke/', views.share_revoke, name='share_revoke'),
     path("cost-edit/",views.plan_cost_edit,name="plan_cost_edit"),
+    path("schedule/<int:pk>/edit/", views.schedule_edit, name="schedule_edit"),
+    path("schedule-memo/", views.schedule_memo, name="schedule_memo"),
 ]

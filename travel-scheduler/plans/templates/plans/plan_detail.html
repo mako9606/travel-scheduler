@@ -83,7 +83,7 @@
                 {% if row.day %}
                     {% for schedule in row.schedules %}
 
-                        <div class="schedule-row">
+                        <a href="{% url 'destinations:schedule_edit' schedule.id %}" class="schedule-row">
                             <span class="time">
                                 {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
                             </span>
@@ -91,7 +91,7 @@
                             <span class="destination">
                                 {{ schedule.destination.name }}
                             </span>
-                        </div> 
+                        </a> 
 
                     {% empty %}
                         <p class="no-schedule">予定はありません。</p>

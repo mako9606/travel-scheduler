@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
@@ -9,10 +9,11 @@ from django.db.models import Max
 
 from datetime import date, timedelta
 
+from plans.models import Plan, DaySchedule, Schedule
 from .models import Plan, DaySchedule
 from .forms import PlanCreateForm
 
-from destinations.models import Schedule
+from destinations.models import Schedule, DaySchedule
 
 
 from django.views.decorators.http import require_POST
