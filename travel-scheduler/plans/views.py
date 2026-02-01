@@ -9,12 +9,8 @@ from django.db.models import Max
 
 from datetime import date, timedelta
 
-from plans.models import Plan, DaySchedule, Schedule
-from .models import Plan, DaySchedule
+from .models import Plan, DaySchedule, Schedule
 from .forms import PlanCreateForm
-
-from destinations.models import Schedule, DaySchedule
-
 
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
@@ -145,3 +141,12 @@ def plan_cost_edit(request):
         }
     )
     
+def schedule_edit(request, pk):
+    schedule = get_object_or_404(Schedule, pk=pk)
+    return render(request, "plans/schedule_edit.html", {
+        "schedule": schedule,
+    })
+    
+    
+def schedule_memo(request):
+    return render(request, "plans/schedule_memo.html")

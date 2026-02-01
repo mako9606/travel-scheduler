@@ -74,7 +74,7 @@
                         {% endif %}
                     </p>
 
-                    <a href="{% url 'destinations:schedule_memo' %}" class="memo-edit-btn">
+                    <a href="{% url 'plans:schedule_memo' %}" class="memo-edit-btn">
                         メモ編集
                     </a>
 
@@ -83,7 +83,7 @@
                 {% if row.day %}
                     {% for schedule in row.schedules %}
 
-                        <a href="{% url 'destinations:schedule_edit' schedule.id %}" class="schedule-row">
+                        <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row">
                             <span class="time">
                                 {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
                             </span>
