@@ -1,5 +1,8 @@
 from django import forms
+
 from .models import Plan
+from .models import Schedule
+
 from datetime import date
 
 
@@ -19,3 +22,14 @@ class PlanCreateForm(forms.ModelForm):
                 empty_label=("年", "月", "日"),
             ),
         }
+        
+        
+class ScheduleForm(forms.ModelForm):
+    class Meta:
+        model = Schedule
+        fields = [
+            "destinations",
+            "arrival_time",
+            "departure_time",
+            "memo",
+        ]        

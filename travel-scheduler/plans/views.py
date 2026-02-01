@@ -10,7 +10,7 @@ from django.db.models import Max
 from datetime import date, timedelta
 
 from .models import Plan, DaySchedule, Schedule
-from .forms import PlanCreateForm
+from .forms import PlanCreateForm, ScheduleForm
 
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
@@ -143,9 +143,26 @@ def plan_cost_edit(request):
     
 def schedule_edit(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk)
-    return render(request, "plans/schedule_edit.html", {
-        "schedule": schedule,
-    })
+
+    if request.method == "POST":
+        form = ScheduleForm(request.POST, instance=schedule)
+        if form.is_valid():
+            form.save()
+            return redirect(
+                "plans:plan_detail",
+                pk=schedule.day.plan.id
+            )
+    else:
+        form = ScheduleForm(instance=schedule)
+
+    return render(
+        request,
+        "plans/schedule_edit.html",
+        {
+            "form": form,
+            "schedule": schedule,
+        }
+    )
     
     
 def schedule_memo(request):
