@@ -31,5 +31,4 @@ class ScheduleForm(forms.ModelForm):
             "destinations",
             "arrival_time",
             "departure_time",
-            "memo",
         ]        

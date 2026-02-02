@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # destination_search.html  
 def destination_search(request):
@@ -17,13 +18,10 @@ def destination_search(request):
     )
     
 # destination_edit.html  
-from django.shortcuts import render, redirect
-
+# 今は保存処理なし（後で書く）
 def destination_edit(request):
     if request.method == "POST":
-        # 今は保存処理なし（後で書く）
-        return redirect("plans:plan_detail")
-
+        return redirect(request.META.get("HTTP_REFERER", "/"))
     return render(request, "destinations/destination_edit.html")
 
 

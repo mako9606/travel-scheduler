@@ -1,5 +1,5 @@
 <head>
-<!-- 画面設計図　スライド26 -->
+<!-- 画面設計図　スライド27 -->
     <title>予定設定画面</title>
 
     {% load static %}
@@ -12,15 +12,15 @@
         {% csrf_token %}
 
         <label>目的地名</label>
-        <p>{{ destination.name }}</p>
+        <p>{{ form.destinations }}</p>
 
         <label>到着時間</label>
         <div class="time-range">
-            <input type="time" name="arrival_time">
-            <span>〜</span>
-        <label>出発時間</label>
-            <input type="time" name="departure_time">
+            {{ form.arrival_time }}
+                <span>〜</span>
+            {{ form.departure_time }}
         </div>
+
         <p>所要時間　〇〇時間</p>
 
         <label>費用　カテゴリ選択</label>

@@ -10,6 +10,8 @@ from django.db.models import Max
 from datetime import date, timedelta
 
 from .models import Plan, DaySchedule, Schedule
+from destinations.models import Destination
+
 from .forms import PlanCreateForm, ScheduleForm
 
 from django.views.decorators.http import require_POST
@@ -97,7 +99,7 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
                 schedules = (
                     Schedule.objects
                     .filter(day=day)
-                    .order_by("order")
+                    .order_by("arrival_time")
                 )
             else:
                 schedules = []
@@ -141,8 +143,50 @@ def plan_cost_edit(request):
         }
     )
     
+    
+# schedule_edit.html
+# 新規追加時
+def schedule_create(request):
+    day_schedule = get_object_or_404(
+        DaySchedule,
+        pk=request.GET.get("day_schedule_id")
+    )
+    destination = get_object_or_404(
+        Destination,
+        pk=request.GET.get("destination_id")
+    )
+
+    if request.method == "POST":
+        form = ScheduleForm(request.POST)
+        if form.is_valid():
+            schedule = form.save(commit=False)
+            schedule.day = day_schedule
+            schedule.destination = destination
+            schedule.save()
+
+            return redirect(
+                "plans:plan_detail",
+                pk=day_schedule.plan.id
+            )
+    else:
+        form = ScheduleForm()
+
+    return render(
+        request,
+        "plans/schedule_edit.html",
+        {
+            "form": form,
+            "schedule": None,
+            "day_schedule": day_schedule,
+            "destination": destination,
+        }
+    )
+    
+# 編集時
 def schedule_edit(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk)
+    day_schedule = schedule.day
+    destination = schedule.destinations
 
     if request.method == "POST":
         form = ScheduleForm(request.POST, instance=schedule)
@@ -150,7 +194,7 @@ def schedule_edit(request, pk):
             form.save()
             return redirect(
                 "plans:plan_detail",
-                pk=schedule.day.plan.id
+                pk=day_schedule.plan.id
             )
     else:
         form = ScheduleForm(instance=schedule)
@@ -161,9 +205,11 @@ def schedule_edit(request, pk):
         {
             "form": form,
             "schedule": schedule,
+            "day_schedule": day_schedule,
+            "destination": destination,
         }
     )
-    
+   
     
 def schedule_memo(request):
     return render(request, "plans/schedule_memo.html")

@@ -13,6 +13,7 @@ urlpatterns = [
     path('share/', views.plan_share, name='plan_share'),
     path('revoke/', views.share_revoke, name='share_revoke'),
     path("cost-edit/",views.plan_cost_edit,name="plan_cost_edit"),
-    path("schedule/<int:pk>/edit/", views.schedule_edit, name="schedule_edit"),
+    path("schedule/<int:pk>/edit/", views.schedule_edit, name="schedule_edit"), #編集時用
+    path("schedule/create/", views.schedule_create, name="schedule_create"), #新規追加用
     path("schedule-memo/", views.schedule_memo, name="schedule_memo"),
 ]

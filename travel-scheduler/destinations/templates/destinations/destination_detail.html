@@ -29,8 +29,9 @@
                 <label>入場料</label>
                 <p>{{ destination.price }} 円</p>
 
-                <!--<a href="{% url 'plans:schedule_edit' plan.id destination.id %}" class="btn">予定を設定</a> -->
-
+                <a href="{% url 'plans:schedule_create' %}?day_schedule_id={{ day.id }}&destination_id={{ destination.id }}" class="btn">
+                    予定に設定
+                </a>
             </form>
 
         </div>    
