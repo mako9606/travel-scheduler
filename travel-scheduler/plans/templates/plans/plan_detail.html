@@ -83,13 +83,23 @@
                 {% if row.day %}
                     {% for schedule in row.schedules %}
 
-                        <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row">
+                        {% if schedule.destination %}
+                            <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
+                                 class="schedule-row">
+                        {% else %}
+                            <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row">
+                        {% endif %}    
+
                             <span class="time">
                                 {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
                             </span>
-
+                        
                             <span class="destination">
-                                {{ schedule.destination.name }}
+                                {% if schedule.destinations %}
+                                    {{ schedule.destinations.name }}
+                                {% else %}
+                                    目的地未設定
+                                {% endif %}
                             </span>
                         </a> 
 
@@ -98,8 +108,9 @@
                     {% endfor %}
                 {% endif %}
 
-                <a href="{% url 'destinations:destination_search' %}" class="destination-btn">目的地検索</a>
-
+                {% if row.day and row.day.id %}
+                    <a href="{% url 'destinations:destination_search' %}?day_schedule_id={{ row.day.id }}" class="destination-btn">目的地検索</a>
+                {% endif %}
             </div>
         {% endfor %}
 

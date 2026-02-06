@@ -8,7 +8,7 @@
 
 <body>
 
-    <div class="page-title">目的地検索</div>
+    <div class="page-title">目的地詳細画面</div>
     <div class="modal-overlay">
         <div class="modal-box">
 
@@ -29,9 +29,15 @@
                 <label>入場料</label>
                 <p>{{ destination.price }} 円</p>
 
-                <a href="{% url 'plans:schedule_create' %}?day_schedule_id={{ day.id }}&destination_id={{ destination.id }}" class="btn">
-                    予定に設定
-                </a>
+                {% if day %} <!-- 1日詳細タブの詳細画面 -->
+                    <a href="{% url 'destinations:destination_edit' %}?day_schedule_id={{ day.id }}" class="edit-btn">
+                        編集
+                    </a>
+                {% else %} <!-- 目的地検索画面からの詳細画面 -->
+                    <a href="{% url 'plans:schedule_create' %}?day_schedule_id={{ day.id }}&destination_id={{ destination.id }}" class="btn">
+                        予定に設定
+                    </a>
+                {% endif %}
             </form>
 
         </div>    

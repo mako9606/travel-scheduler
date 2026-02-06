@@ -1,63 +1,70 @@
-from django.shortcuts import render
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from plans.models import DaySchedule
+from .models import Destination
 
 # destination_search.html  
 def destination_search(request):
+    day_schedule_id = request.GET.get("day_schedule_id")
+    day = None
+
+    if day_schedule_id:
+        day = get_object_or_404(DaySchedule, pk=day_schedule_id)
+
     q = request.GET.get("q", "")
+    destinations = Destination.objects.filter(name__icontains=q) if q else []
 
-    # 仮の検索結果（model実装に変更する）
-    destinations = []
-
-    return render(
-        request,
-        "destinations/destination_search.html",
-        {
-            "q": q,
-            "destinations": destinations,
-        }
-    )
+    return render(request, "destinations/destination_search.html", {
+        "day": day,
+        "q": q,
+        "destinations": destinations,
+    })
+    
+    
     
 # destination_edit.html  
 # 今は保存処理なし（後で書く）
 def destination_edit(request):
     if request.method == "POST":
-        return redirect(request.META.get("HTTP_REFERER", "/"))
-    return render(request, "destinations/destination_edit.html")
+        day_id = request.POST.get("day_schedule_id")
+        if day_id:
+            # 予定設定画面に遷移
+            return redirect("plans:schedule_edit",day_schedule_id=day_id)
 
+        # day がなければ検索画面に遷移
+        return redirect("destinations:destination_search")
+    return render(request, "destinations/destination_edit.html")
 
 
 # destination_delete.html  
 def destination_delete(request):
-    if request.method == 'POST':
-        # 今は削除処理なし（model未実装のため）
-        # 削除した体で plan_detail に戻す
-        return redirect('plans:plan_detail')
+    if request.method == "POST":
+        day_id = request.POST.get("day_schedule_id")
 
-    # GET のときは削除確認画面を表示
-    return render(
-        request,
-        'destinations/destination_delete.html'
-    )
+        if day_id:
+            day = get_object_or_404(DaySchedule, pk=day_id)
+            plan = day.plan 
+            # 削除ボタン後 plan_detail（day付き）に遷移
+            return redirect('plans:plan_detail', pk=plan.id)
+
+    # GET：削除確認画面
+    return render(request, 'destinations/destination_delete.html')
     
 
 # destination_detail.html
-def destination_detail(request):
-    # 今はダミーデータ（表示確認用）
-    destination = {
-        "open_time": "10:00",
-        "close_time": "18:00",
-        "closed_days": "水曜日",
-        "parking": "あり",
-        "price": "500",
-    }
+def destination_detail(request, pk):
+    destination = get_object_or_404(Destination, pk=pk)
 
-    return render(
-        request,
-        "destinations/destination_detail.html",
-        {
-            "destination": destination
-        }
-    )
+    day = None
+    day_schedule_id = request.GET.get("day_schedule_id")
+
+    if day_schedule_id:
+        day = get_object_or_404(DaySchedule, pk=day_schedule_id)
+
+
+    return render(request, "destinations/destination_detail.html", {
+        "destination": destination,
+        "day": day,
+    })
 
 
 #  map_destination.html

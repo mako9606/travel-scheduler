@@ -8,8 +8,13 @@
 
 <body>
     <div class="page-title"></div>
-    <form method="POST" class="form-container">
+    <form method="POST" action="{% url 'destinations:destination_edit' %}" class="form-container">
         {% csrf_token %}
+
+        {% if day %}
+            <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
+        {% endif %}
+
 
         <label>目的地名</label>
         <input type="text" name="destination-name" placeholder="目的地名 入力" required>
@@ -18,7 +23,7 @@
         <input type="text" name="address" placeholder="住所 入力" required>
 
         <label>MAP</label>
-        <a href="{% url 'destinations:map_destination' %}" class="btn" class="map-link">GoogleMap</a>
+        <a href="{% url 'destinations:map_destination' %}" class="btn map-link">GoogleMap</a>
 
         <label>定休日</label>
         <div class="select-buttons">
@@ -82,8 +87,22 @@
 
 
         <button type="submit" class="btn">完了</button>
-        <button type="submit"class="delete-btn">削除</button>
-       
     </form>
 
-</body> 
+    <!-- 削除 -->
+    <form method="POST" action="{% url 'destinations:destination_delete' %}">
+        {% csrf_token %}
+        {% if day %}
+            <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
+        {% endif %}
+        <button type="submit" class="delete-btn">削除</button>
+    </form>
+
+    <!-- 予定に設定 -->
+    {% if day and destination %}
+        <a href="{% url 'plans:schedule_create' %}?day_schedule_id={{ day.id }}&destination_id={{ destination.id }}"
+           class="btn">
+            予定に設定
+        </a>
+    {% endif %}
+</body>

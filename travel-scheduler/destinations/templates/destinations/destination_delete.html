@@ -16,15 +16,14 @@
             <p class="modal-message"> "目的地"を削除しますか？</p>
             
             <div class="delete-actions">
-                <form method="POST" action="{% url 'plans:plan_detail' %}">
+                <form method="POST">
                     {% csrf_token %}
-                    <button type="submit" class="btn-delete">
-                        削除
-                    </button>
+                    <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
+                    <button type="submit" class="btn-delete">削除</button>
                 </form>    
 
 
-            <a href="{% url 'destinations:destination_edit' %}" class="btn-cancel">戻る</a>
+            <a href="{% url 'destinations:destination_edit' %}?day_schedule_id={{ day.id }}" class="btn-cancel">戻る</a>
         </div>
     </div>
 

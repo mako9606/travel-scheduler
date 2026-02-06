@@ -10,16 +10,32 @@
 
     <div class="page-title">目的地検索</div>
 
-    <form method="POST" class="form-container">
+    <form method="GET" class="form-container"
+        action="{% url 'destinations:destination_search' %}">
         {% csrf_token %}
+
+        {% if day %}
+            <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
+        {% endif %}
 
         <input type="text" name="q" placeholder="目的地名 入力" value="{{ q }}">
         <button type="submit" class="search-btn">検索</button>
+
              {% if q %}
                 {% if destinations %}
                     <ul>
                         {% for d in destinations %}
-                            <li>{{ d }}</li>
+                            <li>
+                                {% if day %}
+                                    <a href="{% url 'destinations:destination_detail' d.id %}?day_schedule_id={{ day.id }}">
+                                        {{ d.name }}
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'destinations:destination_detail' d.id %}">
+                                        {{ d.name }}
+                                    </a>
+                                {% endif %}
+                            </li>
                         {% endfor %}
                     </ul>
                 {% else %}
@@ -27,8 +43,7 @@
                 {% endif %}
             {% endif %}
 
-        <a href="{% url 'destinations:destination_edit' %}" class="add-btn">＋</a>
+        <a href="{% url 'destinations:destination_edit' %}?day_schedule_id={{ day.id }}" class="add-btn">＋</a>
 
     </form>
-
 </body> 

@@ -11,6 +11,10 @@
     <form method="POST" class="form-container">
         {% csrf_token %}
 
+        {% if destination %}
+            <input type="hidden" name="destination_id" value="{{ destination.id }}">
+        {% endif %}
+
         <label>目的地名</label>
         <p>{{ form.destinations }}</p>
 
