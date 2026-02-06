@@ -96,11 +96,24 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
             day = days_by_date.get(d)
 
             if day:
-                schedules = (
+                schedules_qs = (
                     Schedule.objects
                     .filter(day=day)
+                    .order_by("order")
+                )
+                # order 未初期化（0）のものだけ、arrival_time順で初期化
+                zero_order_schedules = (
+                    Schedule.objects
+                    .filter(day=day, order=0)
                     .order_by("arrival_time")
                 )
+
+                if zero_order_schedules.exists():
+                    for idx, s in enumerate(zero_order_schedules):
+                        s.order = idx
+                        s.save(update_fields=["order"])
+
+                schedules = schedules_qs
             else:
                 schedules = []
             

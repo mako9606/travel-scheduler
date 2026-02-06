@@ -83,11 +83,12 @@
                 {% if row.day %}
                     {% for schedule in row.schedules %}
 
-                        {% if schedule.destination %}
-                            <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
-                                 class="schedule-row">
+                        {% if schedule.destinations %}
+                            <a href="{% url 'destinations:destination_detail' schedule.destinations.id %}?day_schedule_id={{ row.day.id }}"
+                                class="schedule-row" data-schedule-id="{{ schedule.id }}" data-order="{{ schedule.order }}">
                         {% else %}
-                            <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row">
+                            <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row"
+                                data-schedule-id="{{ schedule.id }}" data-order="{{ schedule.order }}">
                         {% endif %}    
 
                             <span class="time">
@@ -204,5 +205,18 @@
 
     </script>
     
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+    <script>// 各「1日詳細」タブごとに並び替えを有効化
+        document.querySelectorAll('.tab-content').forEach((tab) => {
+            new Sortable(tab, {
+                animation: 150,
+                draggable: '.schedule-row',
+                handle: '.schedule-row',
+            });
+        });
+    </script>
 
 </body>    
+
+

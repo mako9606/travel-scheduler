@@ -54,3 +54,4 @@ class Schedule(models.Model):
     arrival_time = models.TimeField(null=True, blank=True)
     departure_time = models.TimeField(null=True, blank=True)
     memo = models.TextField(blank=True)
+    order = models.PositiveIntegerField(default=0)
