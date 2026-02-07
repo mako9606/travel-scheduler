@@ -85,10 +85,10 @@
 
                         {% if schedule.destinations %}
                             <a href="{% url 'destinations:destination_detail' schedule.destinations.id %}?day_schedule_id={{ row.day.id }}"
-                                class="schedule-row" data-schedule-id="{{ schedule.id }}" data-order="{{ schedule.order }}">
+                                class="schedule-row" data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
                         {% else %}
                             <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row"
-                                data-schedule-id="{{ schedule.id }}" data-order="{{ schedule.order }}">
+                                data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
                         {% endif %}    
 
                             <span class="time">
@@ -207,12 +207,35 @@
     
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
-    <script>// 各「1日詳細」タブごとに並び替えを有効化
+    <script>// 目的地の順番並び替えを有効化
         document.querySelectorAll('.tab-content').forEach((tab) => {
             new Sortable(tab, {
                 animation: 150,
                 draggable: '.schedule-row',
                 handle: '.schedule-row',
+
+                onEnd: function () {
+                    const rows = tab.querySelectorAll('.schedule-row');
+                    if (!rows.length) return;
+
+                    const formData = new FormData();
+                    rows.forEach(row => {
+                        const id = row.dataset.scheduleId;
+                        if (!id) return;   // ← schedule-idを持たない行は無視をするって意味
+                        formData.append('order[]', id);
+                    });
+
+                    // day_id は、行が持っている day_schedule_id を利用
+                    formData.append("day_id", rows[0].dataset.dayId);
+
+                    fetch("{% url 'plans:schedule_reorder' %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}",
+                        },
+                        body: formData,
+                    });
+                },
             });
         });
     </script>

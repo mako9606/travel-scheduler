@@ -2,10 +2,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView
-from django.views import View
 from django.views.generic import CreateView, DetailView, DeleteView
+from django.views import View
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Max
+from django.http import JsonResponse
+
 
 from datetime import date, timedelta
 
@@ -17,7 +20,7 @@ from .forms import PlanCreateForm, ScheduleForm
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 
-
+import json
 
 # plan_list.html
 @login_required
@@ -130,7 +133,7 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-
+# プランの順番入れ替え
 @require_POST
 @login_required
 def plan_reorder(request):
@@ -234,6 +237,21 @@ def schedule_edit(request, pk):
             "destination": destination,
         }
     )
+
+#目的地の順番入れ替え　   
+@require_POST
+@login_required
+def schedule_reorder(request):
+    ids = request.POST.getlist("order[]")
+    day_id = request.POST.get("day_id")
+
+    for index, schedule_id in enumerate(ids):
+        Schedule.objects.filter(
+            id=schedule_id,
+            day_id=day_id
+        ).update(order=index)
+
+    return JsonResponse({"status": "ok"})  
    
     
 def schedule_memo(request):
