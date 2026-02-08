@@ -15,7 +15,7 @@
             <button type="button" class="tab-btn" data-target=".tab-memo">メモ</button>
 
             {% for day in date_list %} 
-            <button type="button" class="tab-btn {% if forloop.first %}active{% endif %}" data-target=".tab-schedule-{{ forloop.counter }}">
+            <button type="button" class="tab-btn {% if forloop.first %}active{% endif %}" data-target=".tab-schedule-{{ forloop.counter }}" data-day-id="{{ row.day.id }}">
                 {{ day|date:"n/j" }}
             </button>
             {% endfor %}
@@ -186,6 +186,17 @@
                 const target = btn.dataset.target;
                 document.querySelector(target).classList.add('active');
             });
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            const dayId = params.get("day");
+            if (!dayId) return;
+
+            const targetBtn = document.querySelector(
+        `        .tab-btn[data-day-id="${dayId}"]`
+            );
+            if (targetBtn) {targetBtn.click();}
         });
 
         // スライド13　共有URL表示（モーダル）

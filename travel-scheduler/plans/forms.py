@@ -31,4 +31,10 @@ class ScheduleForm(forms.ModelForm):
             "destinations",
             "arrival_time",
             "departure_time",
-        ]        
+        ]
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["destinations"].required = True
+        self.fields["arrival_time"].required = True
+        self.fields["departure_time"].required = True         

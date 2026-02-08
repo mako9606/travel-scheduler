@@ -5,7 +5,7 @@ app_name = 'destinations'
 
 urlpatterns = [
     path('search/', views.destination_search, name='destination_search'),
-    path('edit/', views.destination_edit, name='destination_edit'),
+    path('edit/<int:pk>/', views.destination_edit, name='destination_edit'),
     path('delete/', views.destination_delete, name='destination_delete'),
     path('detail/<int:pk>/', views.destination_detail, name='destination_detail'),
     path("map/", views.map_destination, name="map_destination"),

@@ -181,8 +181,7 @@ def schedule_create(request):
             schedule.save()
 
             return redirect(
-                "plans:plan_detail",
-                pk=day_schedule.plan.id
+                reverse("plans:plan_detail", kwargs={'pk': day_schedule.plan.id})+f"?day={day_schedule.id}"
             )
     else:
         form = ScheduleForm()
@@ -201,27 +200,19 @@ def schedule_create(request):
 def schedule_edit(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk)
     day_schedule = schedule.day
-    destination = schedule.destinations
 
     if request.method == "POST":
         form = ScheduleForm(request.POST, instance=schedule)
         if form.is_valid():
-            schedule = form.save(commit=False)
-            
-            destination_id = request.POST.get("destination_id")
-            if destination_id:
-                destination = get_object_or_404(Destination, pk=destination_id)
-                schedule.destinations = destination
-            schedule.save()
-            form.save_m2m() 
-                
-            return redirect("plans:plan_detail",pk=day_schedule.plan.id)
+            form.save()    
+            return redirect(
+                reverse("plans:plan_detail", kwargs={'pk': day_schedule.plan.id})+f"?day={day_schedule.id}"
+            )
         
         return render(request, "plans/schedule_edit.html", {
             "form": form,
             "schedule": schedule,
             "day_schedule": day_schedule,
-            "destination": destination,
         })
     
     else:
@@ -234,7 +225,6 @@ def schedule_edit(request, pk):
             "form": form,
             "schedule": schedule,
             "day_schedule": day_schedule,
-            "destination": destination,
         }
     )
 

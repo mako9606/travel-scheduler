@@ -21,7 +21,7 @@
 
 
         <a href="{% url 'destinations:map_pin_edit' %}" class="edit-btn">編集</a>
-        <a href="{% url 'destinations:destination_edit' %}" class="btn">登録</a>
+        <a href="{% url 'destinations:destination_edit' destination.id  %}" class="btn">登録</a>
 
 
     </form>

@@ -23,7 +23,7 @@
                 </form>    
 
 
-            <a href="{% url 'destinations:destination_edit' %}?day_schedule_id={{ day.id }}" class="btn-cancel">戻る</a>
+            <a href="{% url 'destinations:destination_edit' destination.id  %}?day_schedule_id={{ day.id }}" class="btn-cancel">戻る</a>
         </div>
     </div>
 
