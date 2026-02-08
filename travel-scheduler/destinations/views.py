@@ -23,7 +23,6 @@ def destination_search(request):
     })
     
 # destination_edit.html 新規作成時
-# 今は保存処理なし（後で書く）
 def destination_create(request):
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
@@ -50,29 +49,37 @@ def destination_create(request):
     ) 
     
 # destination_edit.html  
-# 今は保存処理なし（後で書く）
-def destination_edit(request, pk=None):    
-    destination = get_object_or_404(Destination, pk=pk) if pk else None
+def destination_edit(request, pk):    
+    destination = get_object_or_404(Destination, pk=pk)
     
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
 
     if request.method == "POST":
+        form = DestinationForm(request.POST, instance=destination)
+        if form.is_valid():
+            destination = form.save(commit=False)
+            destination.user = request.user
+            destination.save()
         
-        if day and destination:
-            # 予定設定画面に遷移
+        if day:
+            # プラン内
             return redirect(
                 reverse("plans:schedule_create")
                 + f"?day_schedule_id={day.id}&destination_id={destination.id}"
             )
 
-        # day がなければ検索画面に遷移
+        # プラン外
         return redirect("destinations:destination_search")
+    
+    else:
+        form = DestinationForm(instance=destination)
 
     return render(
         request,
         "destinations/destination_edit.html",
         {
+            "form": form,
             "destination": destination,
             "day": day,
         }
