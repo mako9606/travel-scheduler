@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from plans.models import DaySchedule
 from .models import Destination
+from .forms import DestinationForm
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
@@ -28,12 +29,21 @@ def destination_create(request):
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
 
     if request.method == "POST":
+        form = DestinationForm(request.POST)
+        if form.is_valid():
+            destination = form.save(commit=False)
+            destination.user = request.user
+            destination.save()
         return redirect("destinations:destination_search")
+    
+    else:
+        form = DestinationForm()
 
     return render(
         request,
         "destinations/destination_edit.html",
         {
+            "form": form,
             "destination": None,
             "day": day,
         }
