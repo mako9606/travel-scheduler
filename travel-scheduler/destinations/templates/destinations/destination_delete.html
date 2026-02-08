@@ -16,7 +16,7 @@
             <p class="modal-message"> "目的地"を削除しますか？</p>
             
             <div class="delete-actions">
-                <form method="POST">
+                <form method="POST" action="{% url 'destinations:destination_delete' destination.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
                     <button type="submit" class="btn-delete">削除</button>

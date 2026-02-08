@@ -31,17 +31,10 @@
                                         {{ d.name }}
                                     </a>
 
-                                    <!-- プラン内：目的地を追加 -->
-                                    <a href="{% url 'destinations:destination_edit' d.id %}?day_schedule_id={{ day.id }}"
-                                        class="add-btn">＋</a>
                                 {% else %}
                                     <a href="{% url 'destinations:destination_detail' d.id %}">
                                         {{ d.name }}
                                     </a>
-
-                                    <!-- プラン外：目的地を追加 -->
-                                    <a href="{% url 'destinations:destination_edit' d.id %}"
-                                        class="add-btn">＋</a>
 
                                 {% endif %}
                             </li>
@@ -50,6 +43,11 @@
                 {% else %}
                     <p>目的地がありません</p>
                 {% endif %}
+            {% endif %}
+            {% if day %} <!-- プラン内：目的地を追加 -->
+                <a href="{% url 'destinations:destination_create' %}?day_schedule_id={{ day.id }}" class="add-btn">＋</a>
+            {% else %} <!-- プラン外：目的地を追加 -->
+                <a href="{% url 'destinations:destination_create' %}" class="add-btn">＋</a>
             {% endif %}
 
     </form>

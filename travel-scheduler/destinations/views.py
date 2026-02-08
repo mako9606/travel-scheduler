@@ -21,19 +21,35 @@ def destination_search(request):
         "destinations": destinations,
     })
     
-    
+# destination_edit.html 新規作成時
+# 今は保存処理なし（後で書く）
+def destination_create(request):
+    day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
+    day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
+
+    if request.method == "POST":
+        return redirect("destinations:destination_search")
+
+    return render(
+        request,
+        "destinations/destination_edit.html",
+        {
+            "destination": None,
+            "day": day,
+        }
+    ) 
     
 # destination_edit.html  
 # 今は保存処理なし（後で書く）
-def destination_edit(request, pk):    
-    destination = get_object_or_404(Destination, pk=pk)
+def destination_edit(request, pk=None):    
+    destination = get_object_or_404(Destination, pk=pk) if pk else None
     
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
 
     if request.method == "POST":
         
-        if day:
+        if day and destination:
             # 予定設定画面に遷移
             return redirect(
                 reverse("plans:schedule_create")

@@ -8,7 +8,14 @@
 
 <body>
     <div class="page-title"></div>
-    <form method="POST" action="{% url 'destinations:destination_edit' destination.id %}" class="form-container">
+    <form method="POST"
+        action="{% if destination %}
+                    {% url 'destinations:destination_edit' destination.id %}
+                {% else %}
+                    {% url 'destinations:destination_create' %}
+                {% endif %}"
+        class="form-container">
+        
         {% csrf_token %}
 
         {% if day %}
@@ -29,31 +36,31 @@
         <div class="select-buttons">
 
             <input type="checkbox" name="closed_days" id="mon" value="mon"
-                {% if 'mon' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'mon' in destination.closed_days %}checked{% endif %}>
             <label for="mon" class="select-btn">月</label>
 
             <input type="checkbox" name="closed_days" id="tue" value="tue"
-                {% if 'tue' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'tue' in destination.closed_days %}checked{% endif %}>
             <label for="tue" class="select-btn">火</label>
 
             <input type="checkbox" name="closed_days" id="wed" value="wed"
-                {% if 'wed' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'wed' in destination.closed_days %}checked{% endif %}>
             <label for="wed" class="select-btn">水</label>
 
             <input type="checkbox" name="closed_days" id="thu" value="thu"
-                {% if 'thu' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'thu' in destination.closed_days %}checked{% endif %}>
             <label for="thu" class="select-btn">木</label>
 
             <input type="checkbox" name="closed_days" id="fri" value="fri"
-                {% if 'fri' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'fri' in destination.closed_days %}checked{% endif %}>
             <label for="fri" class="select-btn">金</label>
 
             <input type="checkbox" name="closed_days" id="sat" value="sat"
-                {% if 'sat' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'sat' in destination.closed_days %}checked{% endif %}>
             <label for="sat" class="select-btn">土</label>
 
             <input type="checkbox" name="closed_days" id="sun" value="sun"
-            {% if 'sun' in destination.closed_days %}checked{% endif %}>
+            {% if destination and 'sun' in destination.closed_days %}checked{% endif %}>
             <label for="sun" class="select-btn">日</label>
 
         </div>
@@ -68,11 +75,11 @@
 
         <label>駐車場</label>
         <div class="select-buttons">
-            <input type="radio" name="parking" id="parking_yes" value="yes"
+            <input type="radio" name="parking_type" id="parking_yes" value="yes"
                 {% if destination.parking == 'yes' %}checked{% endif %}>
             <label for="parking_yes" class="select-btn">有</label>
 
-            <input type="radio" name="parking" id="parking_no" value="no"
+            <input type="radio" name="parking_type" id="parking_no" value="no"
                 {% if destination.parking == 'no' %}checked{% endif %}>
             <label for="parking_no" class="select-btn">無</label>
         </div>
@@ -80,11 +87,11 @@
 
         <label>入場料</label>
         <div class="select-buttons">
-            <input type="radio" name="ticket" id="ticket_yes" value="yes"
+            <input type="radio" name="ticket_type" id="ticket_yes" value="yes"
                 {% if destination.ticket == 'yes' %}checked{% endif %}>
             <label for="ticket_yes" class="select-btn">有</label>
 
-            <input type="radio" name="ticket" id="ticket_no" value="no"
+            <input type="radio" name="ticket_type" id="ticket_no" value="no"
                 {% if destination.ticket == 'no' %}checked{% endif %}>
             <label for="ticket_no" class="select-btn">無</label>
         </div>
@@ -101,13 +108,15 @@
     </form>
 
     <!-- 削除 -->
-    <form method="POST" action="{% url 'destinations:destination_delete' %}">
+    {% if destination %}
+    <form method="POST" action="{% url 'destinations:destination_delete' destination.id %}">
         {% csrf_token %}
         {% if day %}
             <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
         {% endif %}
         <button type="submit" class="delete-btn">削除</button>
     </form>
+    {% endif %}
 
     <!-- 予定に設定 -->
     {% if day and destination %}
