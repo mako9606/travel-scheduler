@@ -21,7 +21,8 @@ def destination_search(request):
         "q": q,
         "destinations": destinations,
     })
-    
+
+
 # destination_edit.html 新規作成時
 def destination_create(request):
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
@@ -33,7 +34,9 @@ def destination_create(request):
             destination = form.save(commit=False)
             destination.user = request.user
             destination.save()
-        return redirect("destinations:destination_search")
+        return redirect(
+            f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
+        )
     
     else:
         form = DestinationForm()
@@ -69,7 +72,7 @@ def destination_edit(request, pk):
                 + f"?day_schedule_id={day.id}&destination_id={destination.id}"
             )
 
-        # プラン外
+        # プラン外　→　検索画面に遷移
         return redirect("destinations:destination_search")
     
     else:

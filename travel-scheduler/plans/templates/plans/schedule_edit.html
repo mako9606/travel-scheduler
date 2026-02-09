@@ -11,6 +11,8 @@
     <form method="POST" class="form-container">
         {% csrf_token %}
 
+        <input type="hidden" name="day_schedule_id" value="{{ day_schedule.id }}">
+
         {% if destination %}
             <input type="hidden" name="destination_id" value="{{ destination.id }}">
         {% endif %}

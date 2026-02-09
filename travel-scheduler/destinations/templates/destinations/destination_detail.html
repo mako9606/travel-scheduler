@@ -12,8 +12,7 @@
     <div class="modal-overlay">
         <div class="modal-box">
 
-            <form method="POST" class="form-container">
-                {% csrf_token %}
+            <div class="form-container">
 
                 <button type="button" class="modal-close" onclick="history.back()">×</button>
 
@@ -43,7 +42,7 @@
                     <a href="{% url 'destinations:destination_edit' destination.id %}">編集</a>
                 {% endif %}
 
-            </form>
+                </div>
 
         </div>    
     </div>

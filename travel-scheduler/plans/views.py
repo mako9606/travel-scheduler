@@ -163,15 +163,18 @@ def plan_cost_edit(request):
 # schedule_edit.html
 # 新規追加時
 def schedule_create(request):
-    day_schedule = get_object_or_404(
-        DaySchedule,
-        pk=request.GET.get("day_schedule_id")
+    day_schedule_id = (
+        request.GET.get("day_schedule_id")
+        or request.POST.get("day_schedule_id")
     )
-    destination = get_object_or_404(
-        Destination,
-        pk=request.GET.get("destination_id")
+    destination_id = (
+        request.GET.get("destination_id")
+        or request.POST.get("destination_id")
     )
 
+    day_schedule = get_object_or_404(DaySchedule, pk=day_schedule_id)
+    destination = get_object_or_404(Destination, pk=destination_id)
+    
     if request.method == "POST":
         form = ScheduleForm(request.POST)
         if form.is_valid():
@@ -180,9 +183,7 @@ def schedule_create(request):
             schedule.destinations = destination
             schedule.save()
 
-            return redirect(
-                reverse("plans:plan_detail", kwargs={'pk': day_schedule.plan.id})+f"?day={day_schedule.id}"
-            )
+            return redirect("plans:plan_detail",pk=day_schedule.plan.id)     
     else:
         form = ScheduleForm()
 
@@ -194,6 +195,7 @@ def schedule_create(request):
             "schedule": None,
             "day_schedule": day_schedule,
             "destination": destination,
+            "plan": day_schedule.plan, 
         }
     )
     
