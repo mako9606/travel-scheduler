@@ -13,6 +13,9 @@
     <form method="POST" class="form-container">
         {% csrf_token %}
 
+        <label>金額カテゴリー</label>
+        {{ form.category }}
+
         <label>項目名</label>
         {{ form.name }}
 

@@ -175,7 +175,7 @@ def plan_cost_edit(request, pk):
     plan = get_object_or_404(Plan, pk=pk)
 
     if request.method == "POST":
-        form = CostForm(request.POST)
+        form = CostForm(request.POST, plan=plan)
         print("POST DATA:", request.POST)
         print("FORM VALID:", form.is_valid())
         print("FORM ERRORS:", form.errors)
@@ -185,7 +185,7 @@ def plan_cost_edit(request, pk):
             cost.save()
             return redirect("plans:plan_detail", pk=plan.id)
     else:
-        form = CostForm()
+        form = CostForm(plan=plan)
 
     return render(
         request,

@@ -2,7 +2,7 @@ from django import forms
 
 from .models import Plan
 from .models import Schedule
-from .models import Cost
+from .models import Cost, CostCategory
 
 from datetime import date
 
@@ -55,4 +55,11 @@ class ScheduleForm(forms.ModelForm):
 class CostForm(forms.ModelForm):
     class Meta:
         model = Cost
-        fields = ["name", "amount"]         
+        fields = ["category","name", "amount"] 
+        
+    def __init__(self, *args, **kwargs):
+        plan = kwargs.pop("plan", None)
+        super().__init__(*args, **kwargs)
+
+        if plan:
+            self.fields["category"].queryset = CostCategory.objects.filter(plan=plan)    
