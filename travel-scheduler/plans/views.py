@@ -12,7 +12,7 @@ from django.http import JsonResponse
 
 from datetime import date, timedelta
 
-from .models import Plan, DaySchedule, Schedule, Cost
+from .models import Plan, DaySchedule, Schedule, Cost, CostCategory
 from destinations.models import Destination
 
 from .forms import PlanCreateForm, ScheduleForm, CostForm
@@ -64,7 +64,14 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
         )
         form.instance.order = max_order + 1
         
-        return super().form_valid(form)
+        # まず保存
+        response = super().form_valid(form)
+
+        # デフォルトカテゴリー作成
+        CostCategory.objects.create(plan=self.object, name="入場料")
+        CostCategory.objects.create(plan=self.object, name="駐車場")
+
+        return response
     
 
 
