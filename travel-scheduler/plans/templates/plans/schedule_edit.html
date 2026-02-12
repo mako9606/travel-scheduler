@@ -8,10 +8,10 @@
 
 <body>
     <div class="page-title">{{ plan.plan_name }}</div>
-    <form method="POST" class="form-container">
+    <form method="POST" action="" class="form-container">
         {% csrf_token %}
 
-        <input type="hidden" name="day_schedule_id" value="{{ day_schedule.id }}">
+        <input type="hidden" name="day_schedule_id" value="{{ day_schedule.id|default_if_none:'' }}">
 
         {% if destination %}
             <input type="hidden" name="destination_id" value="{{ destination.id }}">

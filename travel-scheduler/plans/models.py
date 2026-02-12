@@ -55,3 +55,31 @@ class Schedule(models.Model):
     departure_time = models.TimeField(null=True, blank=True)
     memo = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
+
+
+class CostCategory(models.Model):
+    plan = models.ForeignKey(
+        Plan,
+        on_delete=models.CASCADE,
+        related_name="cost_categories"
+    )
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+        
+    
+class Cost(models.Model):
+    plan = models.ForeignKey(
+        Plan,
+        on_delete=models.CASCADE,
+        related_name="costs"
+    )
+    category = models.ForeignKey(
+        CostCategory,
+        on_delete=models.CASCADE,
+        related_name="items"
+    )    
+    name = models.CharField(max_length=100)
+    amount = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)

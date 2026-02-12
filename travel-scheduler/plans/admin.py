@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Plan, DaySchedule, Schedule
+from .models import Plan, DaySchedule, Schedule, Cost
 
 admin.site.register(Plan)
 admin.site.register(DaySchedule)
 admin.site.register(Schedule)
+admin.site.register(Cost)

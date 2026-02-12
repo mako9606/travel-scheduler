@@ -8,23 +8,18 @@
 
 <body>
 
-    <div class="page-title">{{ object.plan_name }}</div>
+    <div class="page-title">{{ plan.plan_name }}</div>
 
     <form method="POST" class="form-container">
         {% csrf_token %}
 
-        <label>カテゴリー作成</label>
-        <input type="text" name="item-name" placeholder="項目名 入力">
-        <a href="{% url 'plans:plan_detail' %}" class="btn">完了</a>
+        <label>項目名</label>
+        {{ form.name }}
 
-        <p>金額カテゴリー</P>
+        <label>金額</label>
+        {{ form.amount }}
 
-        <label>項目名入力</label>
-        <input type="text" name="item-name" placeholder="項目名 入力">
-        <label>金額入力</label>
-        <input type="text" name="cost" placeholder="金額 入力">
-        <a href="{% url 'plans:plan_detail' %}" class="btn">完了</a>
-
+        <button type="submit" class="btn">完了</button>
 
     </form>
 

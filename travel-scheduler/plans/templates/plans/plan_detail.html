@@ -14,9 +14,9 @@
         <div class="tab-menu">
             <button type="button" class="tab-btn" data-target=".tab-memo">メモ</button>
 
-            {% for day in date_list %} 
-            <button type="button" class="tab-btn {% if forloop.first %}active{% endif %}" data-target=".tab-schedule-{{ forloop.counter }}" data-day-id="{{ row.day.id }}">
-                {{ day|date:"n/j" }}
+            {% for row in schedule_rows %} 
+            <button type="button" class="tab-btn" data-target=".tab-schedule-{{ forloop.counter }}" {% if row.day %}data-day-id="{{ row.day.id }}"{% endif %}>
+                {{ row.date|date:"n/j" }}
             </button>
             {% endfor %}
             
@@ -62,7 +62,7 @@
 
         <!-- 画面設計図　スライド18 プラン詳細画面（1日詳細）-->
         {% for row in schedule_rows %}
-            <div class="tab-content tab-schedule-{{ forloop.counter }} {% if forloop.first %}active{% endif %}">
+            <div class="tab-content tab-schedule-{{ forloop.counter }}"{% if row.day %}data-day-id="{{ row.day.id }}"{% endif %}>
                 <p>{{ row.date|date:"n/j" }}の予定</p>
 
                 <div class="schedule-memo">
@@ -132,29 +132,24 @@
             
             <!-- 合計金額 -->
             <div class="cost-summary">
-                <p class="cost-summary-amount">￥12,000</p>
+                <p class="cost-summary-amount">￥{{ total_cost }}</p>
             </div>
             
             <!-- 費用一覧 -->
             <div class="cost-list">
 
-                <div class="cost-item">
-                    <p class="cost-name">交通費</p>
-                    <p class="cost-amount">¥3,000</p>
-                </div>
+                {% for cost in object.costs.all %}
+                    <div class="cost-item">
+                        <p class="cost-name">{{ cost.name }}</p>
+                        <p class="cost-amount">¥{{ cost.amount }}</p>
+                    </div>
+                {% empty %}
+                    <p>費用はまだありません。</p>
+                {% endfor %}
 
-                <div class="cost-item">
-                    <p class="cost-name">宿泊費</p>
-                    <p class="cost-amount">¥7,000</p>
-                </div>
-
-                <div class="cost-item">
-                    <p class="cost-name">食費</p>
-                    <p class="cost-amount">¥2,000</p>
-                </div>
             </div>    
 
-            <a href="{% url 'plans:plan_cost_edit' %}" class="cost-add-btn">＋</a>
+            <a href="{% url 'plans:plan_cost_edit' object.id %}" class="cost-add-btn">＋</a>
 
         </div>
 
@@ -190,14 +185,38 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             const params = new URLSearchParams(window.location.search);
-            const dayId = params.get("day");
-            if (!dayId) return;
+            const dayId = params.get("day_schedule_id");
 
-            const targetBtn = document.querySelector(
-        `        .tab-btn[data-day-id="${dayId}"]`
-            );
-            if (targetBtn) {targetBtn.click();}
+            // いったん全部リセット
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            // ?day があればそれを表示
+            if (dayId) {
+                const targetContent = document.querySelector(
+                    `.tab-content[data-day-id="${dayId}"]`
+                );
+                const targetBtn = document.querySelector(
+                    `.tab-btn[data-day-id="${dayId}"]`
+                );
+
+                if (targetContent && targetBtn) {
+                    targetContent.classList.add('active');
+                    targetBtn.classList.add('active');
+                    return;
+                }
+            }
+
+            // なければ「最初のスケジュール」を表示
+            const firstContent = document.querySelector('.tab-content.tab-schedule-1');
+            const firstBtn = document.querySelector('.tab-btn[data-target=".tab-schedule-1"]');
+
+            if (firstContent && firstBtn) {
+                firstContent.classList.add('active');
+                firstBtn.classList.add('active');
+            }
         });
+
 
         // スライド13　共有URL表示（モーダル）
         const shareModal = document.querySelector('.share-modal');
@@ -252,5 +271,3 @@
     </script>
 
 </body>    
-
-

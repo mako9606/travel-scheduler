@@ -2,6 +2,7 @@ from django import forms
 
 from .models import Plan
 from .models import Schedule
+from .models import Cost
 
 from datetime import date
 
@@ -33,8 +34,25 @@ class ScheduleForm(forms.ModelForm):
             "departure_time",
         ]
         
+        widgets = {
+            "arrival_time": forms.TimeInput(
+                format="%H:%M",
+                attrs={"type": "time"}
+            ),
+            "departure_time": forms.TimeInput(
+                format="%H:%M",
+                attrs={"type": "time"}
+            ),
+        }
+        
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["destinations"].required = True
         self.fields["arrival_time"].required = True
-        self.fields["departure_time"].required = True         
+        self.fields["departure_time"].required = True   
+        
+         
+class CostForm(forms.ModelForm):
+    class Meta:
+        model = Cost
+        fields = ["name", "amount"]         

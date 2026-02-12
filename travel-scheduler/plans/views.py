@@ -6,16 +6,16 @@ from django.views.generic import CreateView, DetailView, DeleteView
 from django.views import View
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Max
+from django.db.models import Max, Sum
 from django.http import JsonResponse
 
 
 from datetime import date, timedelta
 
-from .models import Plan, DaySchedule, Schedule
+from .models import Plan, DaySchedule, Schedule, Cost
 from destinations.models import Destination
 
-from .forms import PlanCreateForm, ScheduleForm
+from .forms import PlanCreateForm, ScheduleForm, CostForm
 
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
@@ -85,13 +85,18 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
                 date_list.append(current)
                 current += timedelta(days=1)
                 
-        days = DaySchedule.objects.filter(plan=plan)
-        
-        # DaySchedule（メモ等の実データ）
-        days_qs = DaySchedule.objects.filter(plan=plan)
+        # 旅行期間の全日付に対して DaySchedule を必ず作る
+        for d in date_list:
+            DaySchedule.objects.get_or_create(
+                plan=plan,
+                date=d
+            )
 
-        # 「この日付のDayScheduleちょうだい」って一発で引ける表
-        days_by_date = {d.date: d for d in days_qs}
+        # 改めて全DayScheduleを取得
+        days_qs = DaySchedule.objects.filter(plan=plan).order_by("date")
+
+        # 日付 → DaySchedule の辞書
+        days_by_date = {d.date: d for d in days_qs} 
       
         # 旅行期間の全日付に対して,DayScheduleがあればそれをセット、なければNoneをセット
         schedule_rows = []
@@ -115,8 +120,22 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
                     for idx, s in enumerate(zero_order_schedules):
                         s.order = idx
                         s.save(update_fields=["order"])
-
-                schedules = schedules_qs
+                        
+                    schedules = (
+                        Schedule.objects
+                        .filter(day=day)
+                        .order_by("order")
+                    )
+                    print(
+                        "DEBUG",
+                        "date:", d,
+                        "day_id:", day.id if day else None,
+                        "schedule_day_ids:", list(schedules.values_list("day_id", flat=True)),
+                    )
+ 
+                
+                else:
+                    schedules = schedules_qs
             else:
                 schedules = []
             
@@ -125,11 +144,15 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
                 "day": day,
                 "schedules": schedules,
             })
-
         context["schedule_rows"] = schedule_rows
+        
+
+        total_cost = plan.costs.aggregate(
+            total=Sum("amount")
+        )["total"] or 0
+        context["total_cost"] = total_cost
 
         context["date_list"] = date_list
-        context["days"] = days
         return context
 
 
@@ -147,15 +170,29 @@ def plan_reorder(request):
 
 
 # plan_cost_edit.html
-def plan_cost_edit(request):
+@login_required
+def plan_cost_edit(request, pk):
+    plan = get_object_or_404(Plan, pk=pk)
+
+    if request.method == "POST":
+        form = CostForm(request.POST)
+        print("POST DATA:", request.POST)
+        print("FORM VALID:", form.is_valid())
+        print("FORM ERRORS:", form.errors)
+        if form.is_valid():
+            cost = form.save(commit=False)
+            cost.plan = plan
+            cost.save()
+            return redirect("plans:plan_detail", pk=plan.id)
+    else:
+        form = CostForm()
+
     return render(
         request,
         "plans/plan_cost_edit.html",
         {
-            # 仮データ（あとで削除OK）
-            "object": {
-                "plan_name": "☆☆旅行"
-            }
+            "form": form,
+            "plan": plan,
         }
     )
     
@@ -163,27 +200,49 @@ def plan_cost_edit(request):
 # schedule_edit.html
 # 新規追加時
 def schedule_create(request):
-    day_schedule_id = (
-        request.GET.get("day_schedule_id")
-        or request.POST.get("day_schedule_id")
-    )
-    destination_id = (
-        request.GET.get("destination_id")
-        or request.POST.get("destination_id")
-    )
+    print("---- schedule_create start ----")
+    print("method:", request.method)
 
+    print("POST day_schedule_id:", request.POST.get("day_schedule_id"))
+    print("GET  day_schedule_id:", request.GET.get("day_schedule_id"))
+
+    print("POST destination_id:", request.POST.get("destination_id"))
+    print("GET  destination_id:", request.GET.get("destination_id"))
+    
+    day_schedule_id = request.POST.get("day_schedule_id") or request.GET.get("day_schedule_id")
+    destination_id = request.POST.get("destination_id") or request.GET.get("destination_id")
+
+    print("決定 day_schedule_id:", day_schedule_id)
+    print("決定 destination_id:", destination_id)
+    print("---- schedule_create end ----")
+    
     day_schedule = get_object_or_404(DaySchedule, pk=day_schedule_id)
     destination = get_object_or_404(Destination, pk=destination_id)
     
     if request.method == "POST":
         form = ScheduleForm(request.POST)
+        print("FORM VALID:", form.is_valid())
+        print("FORM ERRORS:", form.errors)
+        print("POST DATA:", request.POST)
+
         if form.is_valid():
+            print("FORM VALID")
             schedule = form.save(commit=False)
             schedule.day = day_schedule
             schedule.destinations = destination
+            last_order = (
+                Schedule.objects
+                .filter(day=day_schedule)
+                .aggregate(max_order=Max("order"))
+                ["max_order"]
+            )
+            schedule.order = (last_order or 0) + 1
             schedule.save()
 
-            return redirect("plans:plan_detail",pk=day_schedule.plan.id)     
+            return redirect(
+                reverse("plans:plan_detail", kwargs={"pk": day_schedule.plan.id})
+                + f"?day_schedule_id={day_schedule.id}"
+            )     
     else:
         form = ScheduleForm()
 
@@ -208,7 +267,8 @@ def schedule_edit(request, pk):
         if form.is_valid():
             form.save()    
             return redirect(
-                reverse("plans:plan_detail", kwargs={'pk': day_schedule.plan.id})+f"?day={day_schedule.id}"
+                reverse("plans:plan_detail", kwargs={'pk': day_schedule.plan.id})
+                + f"?day_schedule_id={day_schedule.id}"
             )
         
         return render(request, "plans/schedule_edit.html", {
