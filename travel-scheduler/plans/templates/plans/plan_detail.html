@@ -83,8 +83,8 @@
                 {% if row.day %}
                     {% for schedule in row.schedules %}
 
-                        {% if schedule.destinations %}
-                            <a href="{% url 'destinations:destination_detail' schedule.destinations.id %}?day_schedule_id={{ row.day.id }}"
+                        {% if schedule.destination %}
+                            <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
                                 class="schedule-row" data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
                         {% else %}
                             <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row"
@@ -96,8 +96,8 @@
                             </span>
                         
                             <span class="destination">
-                                {% if schedule.destinations %}
-                                    {{ schedule.destinations.name }}
+                                {% if schedule.destination %}
+                                    {{ schedule.destination.name }}
                                 {% else %}
                                     目的地未設定
                                 {% endif %}

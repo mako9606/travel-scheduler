@@ -47,7 +47,7 @@ class Schedule(models.Model):
         on_delete=models.CASCADE,
         related_name="schedules"
     )
-    destinations = models.ForeignKey(
+    destination = models.ForeignKey(
         Destination,
         on_delete=models.CASCADE
     )

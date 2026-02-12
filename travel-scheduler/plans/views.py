@@ -229,7 +229,7 @@ def schedule_create(request):
             print("FORM VALID")
             schedule = form.save(commit=False)
             schedule.day = day_schedule
-            schedule.destinations = destination
+            schedule.destination = destination
             last_order = (
                 Schedule.objects
                 .filter(day=day_schedule)

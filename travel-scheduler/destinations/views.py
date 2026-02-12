@@ -114,7 +114,7 @@ def destination_detail(request, pk):
     day_schedule_id = request.GET.get("day_schedule_id")
     if day_schedule_id:
         day = get_object_or_404(DaySchedule, pk=day_schedule_id)
-        is_registered = day.schedules.filter(destinations=destination).exists()
+        is_registered = day.schedules.filter(destination=destination).exists()
         
     return render(request, "destinations/destination_detail.html", {
         "destination": destination,
