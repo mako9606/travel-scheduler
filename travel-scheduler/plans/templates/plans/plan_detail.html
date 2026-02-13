@@ -137,9 +137,12 @@
             
             <!-- 費用一覧 -->
             <div class="cost-list">
+                {% if total_cost == 0 %}
+                    <p>費用はまだありません。</p>
+                {% endif %}
+
                 {% for category in categories %}
                     <div class="cost-category-block">
-
 
                         <!-- カテゴリー名 + 合計 -->
                         <div class="cost-category-header">
@@ -150,7 +153,7 @@
                         </div>
 
                         <!-- 中身 -->
-                        <div class="cost-items">
+                        <div class="cost-items hidden">
                             {% for cost in category.items.all %}
                                 <div class="cost-item">
                                     <p class="cost-name">{{ cost.name }}</p>
@@ -160,9 +163,7 @@
                                 <p>費用はまだありません。</p>
                             {% endfor %}
                         </div>
-                    </div>
-                {% empty %}
-                    <p>費用はまだありません。</p>
+                    </div>    
                 {% endfor %}
             </div>    
 
@@ -285,6 +286,17 @@
                 },
             });
         });
+    </script>
+
+    <script> // 費用タブの▽開閉
+    document.querySelectorAll(".cost-category-header").forEach(header => {
+        header.addEventListener("click", () => {
+            const items = header.nextElementSibling;
+            if (items) {
+                items.classList.toggle("hidden");
+            }
+        });
+    });
     </script>
 
 </body>    

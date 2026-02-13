@@ -280,3 +280,8 @@ label{
    margin-top: 12px;
 }
 
+
+/* 費用の▽タブ */
+.hidden {
+    display: none;
+}
