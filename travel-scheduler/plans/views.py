@@ -154,11 +154,13 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
         context["schedule_rows"] = schedule_rows
         
 
-        total_cost = plan.costs.aggregate(
-            total=Sum("amount")
-        )["total"] or 0
+        total_cost = plan.costs.aggregate(total=Sum("amount"))["total"] or 0
+        categories = (
+            plan.cost_categories
+            .annotate(total=Sum("items__amount"))
+        )
+        context["categories"] = categories
         context["total_cost"] = total_cost
-
         context["date_list"] = date_list
         return context
 

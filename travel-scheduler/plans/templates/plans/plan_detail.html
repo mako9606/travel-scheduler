@@ -137,16 +137,33 @@
             
             <!-- 費用一覧 -->
             <div class="cost-list">
+                {% for category in categories %}
+                    <div class="cost-category-block">
 
-                {% for cost in object.costs.all %}
-                    <div class="cost-item">
-                        <p class="cost-name">{{ cost.name }}</p>
-                        <p class="cost-amount">¥{{ cost.amount }}</p>
+
+                        <!-- カテゴリー名 + 合計 -->
+                        <div class="cost-category-header">
+                            <span class="category-name">{{ category.name }}</span>
+                            <span class="category-total">
+                                ¥{{ category.total|default:0 }}
+                            </span>
+                        </div>
+
+                        <!-- 中身 -->
+                        <div class="cost-items">
+                            {% for cost in category.items.all %}
+                                <div class="cost-item">
+                                    <p class="cost-name">{{ cost.name }}</p>
+                                    <p class="cost-amount">¥{{ cost.amount }}</p>
+                                </div>
+                            {% empty %}
+                                <p>費用はまだありません。</p>
+                            {% endfor %}
+                        </div>
                     </div>
                 {% empty %}
                     <p>費用はまだありません。</p>
                 {% endfor %}
-
             </div>    
 
             <a href="{% url 'plans:plan_cost_edit' object.id %}" class="cost-add-btn">＋</a>
