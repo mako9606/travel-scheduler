@@ -180,11 +180,15 @@ def plan_reorder(request):
 
 # plan_cost_edit.html
 @login_required
-def plan_cost_edit(request, pk):
+def plan_cost_edit(request, pk, cost_id=None):
     plan = get_object_or_404(Plan, pk=pk)
+    
+    cost = None
+    if cost_id is not None:
+        cost = get_object_or_404(Cost, pk=cost_id, plan=plan)
 
     if request.method == "POST":
-        form = CostForm(request.POST, plan=plan)
+        form = CostForm(request.POST, plan=plan, instance=cost)
         print("POST DATA:", request.POST)
         print("FORM VALID:", form.is_valid())
         print("FORM ERRORS:", form.errors)
@@ -194,17 +198,27 @@ def plan_cost_edit(request, pk):
             cost.save()
             return redirect("plans:plan_detail", pk=plan.id)
     else:
-        form = CostForm(plan=plan)
+        form = CostForm(plan=plan, instance=cost)
 
-    return render(
-        request,
-        "plans/plan_cost_edit.html",
-        {
+    return render(request, "plans/plan_cost_edit.html",{
             "form": form,
             "plan": plan,
-        }
-    )
+            "cost": cost,
+        })
     
+@login_required
+def cost_delete(request, pk, cost_id):
+    plan = get_object_or_404(Plan, pk=pk)
+    cost = get_object_or_404(Cost, pk=cost_id, plan=plan)
+    
+    if request.method == "POST":
+        cost.delete()
+        return redirect("plans:plan_detail", pk=plan.id)
+
+    return render(request, "plans/plan_cost_delete.html", {
+        "plan": plan,
+        "cost": cost,
+    })
     
 # schedule_edit.html
 # 新規追加時

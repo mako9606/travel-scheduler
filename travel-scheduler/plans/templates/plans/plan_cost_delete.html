@@ -1,0 +1,31 @@
+<head>
+<!-- 画面設計図　スライド -->
+<title>費用　削除　画面</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'plans/plan_cost_delete.css' %}">
+
+</head>
+
+<body>
+    <div class="page-title">{{ plan.plan_name }}</div>
+    
+    <div class="modal-overlay">
+        <div class="form-container modal-box">
+
+            <p class="modal-message"> "{{ cost.name }}"を削除しますか？</p>
+            
+            <div class="delete-actions">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete">
+                        削除
+                    </button>
+                </form>    
+
+
+            <a href="{% url 'plans:plan_detail' plan.id %}" class="btn-cancel">戻る</a>
+        </div>
+    </div>
+
+</body>

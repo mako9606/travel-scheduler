@@ -147,8 +147,10 @@
                         <!-- カテゴリー名 + 合計 -->
                         <div class="cost-category-header">
                             <span class="category-name">{{ category.name }}</span>
-                            <span class="category-total">
-                                ¥{{ category.total|default:0 }}
+
+                            <span class="category-right">
+                                <span class="category-total">¥{{ category.total|default:0 }}</span>
+                                <span class="category-toggle-icon">▽</span>
                             </span>
                         </div>
 
@@ -158,6 +160,13 @@
                                 <div class="cost-item">
                                     <p class="cost-name">{{ cost.name }}</p>
                                     <p class="cost-amount">¥{{ cost.amount }}</p>
+                                    <a class="cost-edit-icon"
+                                        href="{% url 'plans:plan_cost_edit_item' object.id cost.id %}">
+                                        ✏️
+                                    </a>
+                                    <a href="{% url 'plans:cost_delete' object.id cost.id %}" class="cost-delete-icon">
+                                        🗑
+                                    </a>
                                 </div>
                             {% empty %}
                                 <p>費用はまだありません。</p>
@@ -289,14 +298,22 @@
     </script>
 
     <script> // 費用タブの▽開閉
-    document.querySelectorAll(".cost-category-header").forEach(header => {
-        header.addEventListener("click", () => {
-            const items = header.nextElementSibling;
-            if (items) {
+    document.addEventListener("DOMContentLoaded", () => {    
+        document.querySelectorAll(".cost-category-header").forEach((header) => {
+            header.addEventListener("click", () => {
+                const block = header.closest(".cost-category-block");
+                const items = block.querySelector(".cost-items");
+                const icon = header.querySelector(".category-toggle-icon");
+
+                if (!items) return;
+
                 items.classList.toggle("hidden");
-            }
+  
+                const isHidden = items.classList.contains("hidden");
+                if (icon) icon.textContent = isHidden ? "▽" : "▲";
+            });
         });
     });
     </script>
 
-</body>    
+</body>

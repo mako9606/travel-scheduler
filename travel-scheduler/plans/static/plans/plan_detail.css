@@ -281,7 +281,44 @@ label{
 }
 
 
-/* 費用の▽タブ */
+/* 費用の▼タブ */
 .hidden {
     display: none;
 }
+
+.cost-category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;           /* ← 押せる感じ */
+    background-color: #f7f7f7;
+    border-radius: 6px;
+    border-bottom: 1px solid #eee;
+}
+
+.cost-category-header:hover {
+    background-color: #ececec;  /* ← ホバーで分かる */
+}
+
+.category-right{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-toggle-icon{
+  font-size: 14px;
+  line-height: 1;
+}
+
+.cost-category-block{
+  border-left: 4px solid transparent;
+  padding-left: 8px;
+}
+
+.cost-list .cost-category-block:nth-of-type(4n+1){ border-left-color:#f59e0b; }
+.cost-list .cost-category-block:nth-of-type(4n+2){ border-left-color:#10b981; }
+.cost-list .cost-category-block:nth-of-type(4n+3){ border-left-color:#3b82f6; }
+.cost-list .cost-category-block:nth-of-type(4n){ border-left-color:#ef4444; }
+
