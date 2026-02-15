@@ -10,6 +10,36 @@
 
     <div class="page-title">{{ plan.plan_name }}</div>
 
+    {% if mode == "category_create" or mode == "category_edit" %}
+
+    <!-- カテゴリー新規作成-->
+    <form method="POST"
+        action="{% if mode == 'category_create' %}
+                    {% url 'plans:cost_category_create' plan.id %}
+                {% else %}
+                    {% url 'plans:cost_category_edit' plan.id category.id %}
+                {% endif %}"
+        class="form-container">
+        {% csrf_token %}
+
+        <label>カテゴリー名</label>
+        <input type="text"
+               name="name"
+               placeholder="カテゴリー名　入力"
+               value="{% if mode == 'category_edit' %}{{ category.name }}{% endif %}">
+        <button type="submit" class="btn">完了</button>
+
+        {% if mode == "category_edit" %}
+            <a href="{% url 'plans:cost_category_delete' plan.id category.id %}"
+                class="btn-delete-link">
+                削除する
+            </a>
+        {% endif %}
+    </form>
+    
+    {% else %}
+    
+    <!-- 費用項目 新規/編集 -->
     <form method="POST" class="form-container">
         {% csrf_token %}
 
@@ -23,7 +53,7 @@
         {{ form.amount }}
 
         <button type="submit" class="btn">完了</button>
-
     </form>
+    {% endif %}
 
 </body> 

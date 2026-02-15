@@ -167,10 +167,14 @@
                                     <a href="{% url 'plans:cost_delete' object.id cost.id %}" class="cost-delete-icon">
                                         🗑
                                     </a>
-                                </div>
-                            {% empty %}
+                                </div>    
+                            {% endfor %}    
+                                
+                                <a href="{% url 'plans:cost_category_edit' object.id category.id %}">
+                                    カテゴリー編集
+                                </a>
+
                                 <p>費用はまだありません。</p>
-                            {% endfor %}
                         </div>
                     </div>    
                 {% endfor %}

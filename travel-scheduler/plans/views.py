@@ -15,7 +15,7 @@ from datetime import date, timedelta
 from .models import Plan, DaySchedule, Schedule, Cost, CostCategory
 from destinations.models import Destination
 
-from .forms import PlanCreateForm, ScheduleForm, CostForm
+from .forms import PlanCreateForm, ScheduleForm, CostForm, CostCategoryForm
 
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
@@ -178,7 +178,70 @@ def plan_reorder(request):
     return JsonResponse({"status":"ok"})         
 
 
+
 # plan_cost_edit.html
+#　カテゴリー新規作成
+@login_required
+def cost_category_create(request, pk):
+    plan = get_object_or_404(Plan, pk=pk)
+
+    if request.method == "POST":
+        form = CostCategoryForm(request.POST)
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.plan = plan
+            category.save()
+            return redirect("plans:plan_detail", pk=plan.id)
+    else:
+        form = CostCategoryForm()
+
+    return render(request, "plans/plan_cost_edit.html", {
+        "category_form": form,
+        "plan": plan,
+        "mode": "category_create",
+    })
+    
+
+# plan_cost_edit.html
+#　カテゴリー既存編集 
+@login_required
+def cost_category_edit(request, pk, category_id):
+    plan = get_object_or_404(Plan, pk=pk)
+    category = get_object_or_404(CostCategory, pk=category_id, plan=plan)
+
+    if request.method == "POST":
+        form = CostCategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect("plans:plan_detail", pk=plan.id)
+    else:
+        form = CostCategoryForm(instance=category)
+
+    return render(request, "plans/plan_cost_edit.html", {
+        "category_form": form,
+        "plan": plan,
+        "category": category,
+        "mode": "category_edit",
+    })
+    
+
+@login_required
+def cost_category_delete(request, pk, category_id):
+    plan = get_object_or_404(Plan, pk=pk)
+    category = get_object_or_404(CostCategory, pk=category_id, plan=plan)
+
+    if request.method == "POST":
+        category.delete()
+        return redirect("plans:plan_detail", pk=plan.id)
+
+    return render(request, "plans/cost_category_delete.html", {
+        "plan": plan,
+        "category": category,
+    })    
+
+
+# plan_cost_edit.html
+#　項目編集時
 @login_required
 def plan_cost_edit(request, pk, cost_id=None):
     plan = get_object_or_404(Plan, pk=pk)
@@ -219,6 +282,7 @@ def cost_delete(request, pk, cost_id):
         "plan": plan,
         "cost": cost,
     })
+ 
     
 # schedule_edit.html
 # 新規追加時

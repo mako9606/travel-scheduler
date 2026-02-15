@@ -62,4 +62,9 @@ class CostForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         if plan:
-            self.fields["category"].queryset = CostCategory.objects.filter(plan=plan)    
+            self.fields["category"].queryset = CostCategory.objects.filter(plan=plan)
+            
+class CostCategoryForm(forms.ModelForm):
+    class Meta:
+        model = CostCategory
+        fields = ["name"]            
