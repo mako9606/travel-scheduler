@@ -21,5 +21,5 @@ urlpatterns = [
     path("schedule/<int:pk>/edit/", views.schedule_edit, name="schedule_edit"), #編集時用
     path("schedule/create/", views.schedule_create, name="schedule_create"), #新規追加用
     path("schedule/reorder/", views.schedule_reorder, name="schedule_reorder"),#目的地の順番入れ替え用
-    path("schedule-memo/", views.schedule_memo, name="schedule_memo"),
+    path("schedule-memo/<int:day_id>/", views.schedule_memo, name="schedule_memo"),
 ]

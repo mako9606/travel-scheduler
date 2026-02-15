@@ -7,10 +7,13 @@
 </head>
 
 <body>
-    <div class="page-title">{{ object.plan_name }}</div>
+    <div class="page-title">{{ plan.plan_name }}</div>
     <form method="POST" class="form-container">
         {% csrf_token %}
 
+        <textarea name="memo" class="memo-area">
+            {{ day.memo }}
+        </textarea>
 
         <button type="submit" class="btn">完了</button>
 

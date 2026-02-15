@@ -51,11 +51,26 @@
         <div class="tab-content tab-memo">
 
             <div class="memo-paper">
-                <p class="memo-text">
-                    初日の集合時間　〇〇駅に8時
-                </p>
+                {% if request.GET.memo_edit %}
+                    <textarea name="plan_memo" class="memo-textarea">
+                        {{ object.memo }}
+                    </textarea>
 
-                <button type="button" class="memo-edit-btn">メモ編集</button>
+                    <button type="submit" class="memo-complete-btn">完了</button>
+                
+                {% else %}
+                    <p class="memo-text">
+                        {% if object.memo %}
+                            {{ object.memo }}
+                        {% else %}
+                            ・メモはありません。
+                        {% endif %}
+                    </p>
+
+                    <a href="?memo_edit=1" class="memo-edit-btn">
+                        メモ編集
+                    </a>
+                {% endif %}
             </div>
 
         </div>
@@ -74,7 +89,7 @@
                         {% endif %}
                     </p>
 
-                    <a href="{% url 'plans:schedule_memo' %}" class="memo-edit-btn">
+                    <a href="{% url 'plans:schedule_memo' row.day.id  %}" class="memo-edit-btn">
                         メモ編集
                     </a>
 
@@ -217,6 +232,18 @@
         document.addEventListener("DOMContentLoaded", () => {
             const params = new URLSearchParams(window.location.search);
             const dayId = params.get("day_schedule_id");
+            const memoTab = params.get("memo_tab");
+
+            if (memoTab) {
+                const memoContent = document.querySelector(".tab-memo");
+                const memoBtn = document.querySelector('.tab-btn[data-target=".tab-memo"]');
+
+                if (memoContent && memoBtn) {
+                    memoContent.classList.add("active");
+                    memoBtn.classList.add("active");
+                    return;
+                }
+            }
 
             // いったん全部リセット
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));

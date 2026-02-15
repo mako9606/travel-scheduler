@@ -163,6 +163,16 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
         context["total_cost"] = total_cost
         context["date_list"] = date_list
         return context
+    
+    #メモタブ編集
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if "plan_memo" in request.POST:
+            self.object.memo = request.POST.get("plan_memo", "")
+            self.object.save(update_fields=["memo"])
+
+        return redirect(f"{reverse('plans:plan_detail', kwargs={'pk': self.object.pk})}?memo_tab=1")
 
 
 # プランの順番入れ替え
@@ -393,5 +403,19 @@ def schedule_reorder(request):
     return JsonResponse({"status": "ok"})  
    
     
-def schedule_memo(request):
-    return render(request, "plans/schedule_memo.html")
+def schedule_memo(request, day_id):
+    day = get_object_or_404(DaySchedule, pk=day_id)
+
+    if request.method == "POST":
+        day.memo = request.POST.get("memo", "")
+        day.save(update_fields=["memo"])
+        return redirect("plans:plan_detail", pk=day.plan.pk)
+
+    return render(
+        request,
+        "plans/schedule_memo.html",
+        {
+            "day": day,
+            "plan": day.plan,
+        }
+    )
