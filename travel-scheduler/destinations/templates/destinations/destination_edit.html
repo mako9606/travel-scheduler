@@ -24,43 +24,45 @@
 
 
         <label>目的地名</label>
-        <input type="text" name="name" placeholder="目的地名 入力" value="{{ destination.name|default:'' }}" required>
-        
+        {{ form.name }}
+
         <label>住所</label>
-        <input type="text" name="address" placeholder="住所 入力" value="{{ destination.address|default:'' }}" required>
+        {{ form.address }}
 
         <label>MAP</label>
         <a href="{% url 'destinations:map_destination' %}" class="btn map-link">GoogleMap</a>
+        {{ form.latitude }}
+        {{ form.longitude }}
 
         <label>定休日</label>
         <div class="select-buttons">
 
             <input type="checkbox" name="closed_days" id="mon" value="mon"
-                {% if destination and 'mon' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'mon' in destination.closed_day %}checked{% endif %}>
             <label for="mon" class="select-btn">月</label>
 
             <input type="checkbox" name="closed_days" id="tue" value="tue"
-                {% if destination and 'tue' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'tue' in destination.closed_day %}checked{% endif %}>
             <label for="tue" class="select-btn">火</label>
 
             <input type="checkbox" name="closed_days" id="wed" value="wed"
-                {% if destination and 'wed' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'wed' in destination.closed_day %}checked{% endif %}>
             <label for="wed" class="select-btn">水</label>
 
             <input type="checkbox" name="closed_days" id="thu" value="thu"
-                {% if destination and 'thu' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'thu' in destination.closed_day %}checked{% endif %}>
             <label for="thu" class="select-btn">木</label>
 
             <input type="checkbox" name="closed_days" id="fri" value="fri"
-                {% if destination and 'fri' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'fri' in destination.closed_day %}checked{% endif %}>
             <label for="fri" class="select-btn">金</label>
 
             <input type="checkbox" name="closed_days" id="sat" value="sat"
-                {% if destination and 'sat' in destination.closed_days %}checked{% endif %}>
+                {% if destination and 'sat' in destination.closed_day %}checked{% endif %}>
             <label for="sat" class="select-btn">土</label>
 
             <input type="checkbox" name="closed_days" id="sun" value="sun"
-            {% if destination and 'sun' in destination.closed_days %}checked{% endif %}>
+            {% if destination and 'sun' in destination.closed_day %}checked{% endif %}>
             <label for="sun" class="select-btn">日</label>
 
         </div>
@@ -101,8 +103,7 @@
         <input type="text" name="rink" placeholder="入力" value="{{ destination.link|default:'' }}">
 
         <label>メモ</label>
-        <input type="text" name="memo" placeholder="入力" value="{{ destination.memo|default:'' }}">
-
+        {{ form.memo }}
 
         <button type="submit" class="btn">完了</button>
     </form>

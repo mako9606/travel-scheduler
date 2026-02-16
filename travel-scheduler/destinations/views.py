@@ -34,9 +34,10 @@ def destination_create(request):
             destination = form.save(commit=False)
             destination.user = request.user
             destination.save()
-        return redirect(
-            f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
-        )
+            
+            return redirect(
+                f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
+            )
     
     else:
         form = DestinationForm()

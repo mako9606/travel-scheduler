@@ -7,4 +7,12 @@ class DestinationForm(forms.ModelForm):
         model = Destination
         fields = [
             "name",
+            "address",
+            "latitude",
+            "longitude",
+            "memo",
         ]
+        widgets = {
+            "latitude": forms.HiddenInput(),
+            "longitude": forms.HiddenInput(),
+        }
