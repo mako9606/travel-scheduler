@@ -12,11 +12,14 @@
     <div class="modal-overlay">
         <div class="form-container modal-box">
 
-            <p class="modal-message">パン屋ピンを削除しますか？</p>
+            <p class="modal-message">"{{ pin.name }}ピン"を削除しますか？</p>
             
             <div class="delete-actions">
-                <a href="{% url 'destinations:map_destination' %}" class="btn-delete">削除</a>
-                <a href="{% url 'destinations:map_pin_edit' %}" class="btn-cancel">戻る</a>
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete">削除</button>
+                </form>
+                <a href="{% url 'destinations:map_pin_edit' destination.id %}" class="btn-cancel">戻る</a>
             </div>
                 
         </div>

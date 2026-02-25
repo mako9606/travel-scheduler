@@ -1,5 +1,5 @@
 <head>
-<!-- 画面設計図　スライド21 -->
+<!-- 画面設計図　スライド22 -->
     <title>地点登録画面</title>
 
     {% load static %}
@@ -16,14 +16,48 @@
         <input type="text" name="q" placeholder="目的地名 入力" value="{{ q }}">
         <button type="submit" class="search-btn">検索</button>
 
+
         <p>ピン選択</P>
-        <p>ピン選択表示</P>
+        {% for pin in pins %}
+            <a href="{% url 'destinations:map_destination' destination.id %}?pin_id={{ pin.id }}">
+                {{ pin.name }}
+            </a>
+        {% endfor %}
 
 
-        <a href="{% url 'destinations:map_pin_edit' %}" class="edit-btn">編集</a>
-        <a href="{% url 'destinations:destination_edit' destination.id  %}" class="btn">登録</a>
+        <p>選択中のピン</p>
+        {% if selected_pin %}
+            <div>
+                {{ selected_pin.name }}
+            </div>
+        {% else %}
+             <p>まだピンが選択されていません</p>
+        {% endif %}
 
+        <a href="{% url 'destinations:map_pin_edit' destination.id %}"
+            class="edit-btn">
+                ピン編集
+        </a>
+        <button type="submit" class="btn">登録</button>
+        <!-- <input type="hidden" name="lat" value="{{ lat }}"> -->
+        <!-- <input type="hidden" name="lng" value="{{ lng }}"> -->
 
     </form>
 
+    <div id="map" style="height:400px;"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzTxW_yYKsF1KuCOYGslVvoIpwaVifXIY"></script>
+
+    <script>
+        function initMap() {
+            const defaultLocation = { lat: 35.681236, lng: 139.767125 }; // 東京駅
+
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 13,
+                center: defaultLocation,
+            });
+        }
+
+        window.onload = initMap;
+    </script>
 </body> 

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from plans.models import DaySchedule
-from .models import Destination
-from .forms import DestinationForm
+from .models import Destination, MapPin
+from .forms import DestinationForm, MapPinForm
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
@@ -27,7 +27,10 @@ def destination_search(request):
 def destination_create(request):
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
-
+    
+    lat = request.GET.get("lat")
+    lng = request.GET.get("lng")
+    
     if request.method == "POST":
         form = DestinationForm(request.POST)
         if form.is_valid():
@@ -40,7 +43,10 @@ def destination_create(request):
             )
     
     else:
-        form = DestinationForm()
+        form = DestinationForm(initial={
+            "latitude": lat,
+            "longitude": lng,
+        })
 
     return render(
         request,
@@ -56,6 +62,9 @@ def destination_create(request):
 def destination_edit(request, pk):    
     destination = get_object_or_404(Destination, pk=pk)
     
+    lat = request.GET.get("lat")
+    lng = request.GET.get("lng")
+    
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
 
@@ -66,18 +75,27 @@ def destination_edit(request, pk):
             destination.user = request.user
             destination.save()
         
-        if day:
-            # プラン内
-            return redirect(
-                reverse("plans:schedule_create")
-                + f"?day_schedule_id={day.id}&destination_id={destination.id}"
-            )
+            if day:
+                # プラン内
+                return redirect(
+                    reverse("plans:schedule_create")
+                    + f"?day_schedule_id={day.id}&destination_id={destination.id}"
+                )
 
-        # プラン外　→　検索画面に遷移
-        return redirect("destinations:destination_search")
+                # プラン外　→　検索画面に遷移
+            return redirect("destinations:destination_search")
     
     else:
-        form = DestinationForm(instance=destination)
+        if lat and lng:
+            form = DestinationForm(
+                instance=destination,
+                initial={
+                    "latitude": lat,
+                    "longitude": lng,
+                }
+            )
+        else:
+            form = DestinationForm(instance=destination)
 
     return render(
         request,
@@ -125,18 +143,111 @@ def destination_detail(request, pk):
 
 
 #  map_destination.html
-def map_destination(request):
-    q = request.POST.get("q", "") if request.method == "POST" else ""
+def map_destination(request, pk):
+    destination = get_object_or_404(Destination, pk=pk)
+    pins = destination.pins.all().order_by("order")
+    
+    selected_pin_id = request.GET.get("pin_id")
+    selected_pin = None
+
+    if selected_pin_id:
+        selected_pin = get_object_or_404(
+            MapPin,
+            pk=selected_pin_id,
+            destination=destination
+        )
 
     context = {
-        "q": q,
+        "destination": destination,
+        "pins": pins,
+        "selected_pin": selected_pin,
     }
+
     return render(request, "destinations/map_destination.html", context)
 
 
-def map_pin_edit(request):
-    return render(request, "destinations/map_pin_edit.html")
+#def map_pin_create(request, destination_id):
+    #destination = get_object_or_404(Destination, pk=destination_id)
+
+    #if request.method == "POST":
+        #form = MapPinForm(request.POST)
+        #if form.is_valid():
+            #pin = form.save(commit=False)
+            #pin.destination = destination
+            #pin.save()
+            #return redirect("destinations:map_destination", pk=destination.id)
+    #else:
+        #form = MapPinForm()
+
+    #return render(request, "destinations/map_pin_edit.html", {
+        #"form": form,
+        #"destination": destination,
+    #})
+
+def map_pin_edit(request, destination_id):
+    
+    destination = get_object_or_404(Destination, pk=destination_id)
+    pins = destination.pins.all().order_by("order")
+    
+     # GETパラメータから選択ピン取得
+    selected_pin = None
+    pin_id = request.GET.get("pin_id")
+    
+    print("destination_id:", destination_id)
+    print("pin_id:", pin_id)
+    print("method:", request.method)
+
+    if pin_id:
+        selected_pin = get_object_or_404(
+            MapPin,
+            pk=pin_id,
+            destination=destination
+        )
+
+    # 追加処理（pin_idなし）
+    if request.method == "POST" and request.POST.get("action") == "add":
+        form = MapPinForm(request.POST)
+        if form.is_valid():
+            new_pin = form.save(commit=False)
+            new_pin.destination = destination
+            new_pin.save()
+            return redirect("destinations:map_destination", pk=destination.id)
+
+    # 編集処理（pin_idあり）
+    if request.method == "POST" and selected_pin:
+        selected_pin.name = request.POST.get("name")
+        selected_pin.save()
+        return redirect(
+            f"/destinations/map/{destination.id}/pin/edit/?pin_id={selected_pin.id}"
+        )
+
+    form = MapPinForm()
+
+    return render(
+        request,
+        "destinations/map_pin_edit.html",
+        {
+            "destination": destination,
+            "pins": pins,
+            "form": form,
+            "selected_pin": selected_pin,
+        }
+    )
 
 
-def map_pin_delete(request):
-    return render(request, "destinations/map_pin_delete.html")
+def map_pin_delete(request, destination_id, pin_id):
+    destination = get_object_or_404(Destination, pk=destination_id)
+    pin = get_object_or_404(MapPin, pk=pin_id, destination=destination)
+
+    if request.method == "POST":
+        pin.delete()
+        return redirect("destinations:map_destination", pk=destination.id)
+
+    return render(
+        request,
+        "destinations/map_pin_delete.html",
+        {
+            "destination": destination,
+            "pin": pin,
+        }
+    )

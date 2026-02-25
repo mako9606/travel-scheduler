@@ -1,5 +1,5 @@
 <head>
-<!-- 画面設計図　スライド22 -->
+<!-- 画面設計図　スライド23 -->
     <title>ピン追加・編集画面</title>
 
     {% load static %}
@@ -8,25 +8,54 @@
 
 <body>
 
-    <div class="page-title"></div>
+    <div class="page-title">{{ destination.name }}</div>
 
-    <form method="POST" class="form-container">
+    <form method="POST" action="{% url 'destinations:map_pin_edit' destination.id %}"
+        class="form-container">
         {% csrf_token %}
 
+        <!-- ピンの追加　-->
         <label>ピン追加</label>
-        <input type="text" name="pin-name" placeholder="ラベル名 入力">
-        <a href="{% url 'destinations:map_destination' %}" class="btn">追加選択</a>
-
-        <p>ピン選択</P>
-
-        <label>ラベル名　編集</label>
-        <input type="text" name="pin-name" placeholder="変更名 入力">
-        <a href="{% url 'destinations:map_destination' %}" class="btn">変更</a>
-
-        <a href="{% url 'destinations:map_pin_delete' %}" class="delete-btn">削除</a>
-
-
-
+        {{ form.name }}
+        <button type="submit" name="action" value="add">追加選択</button>
     </form>
+    
+    <!-- ピンの選択　-->
+    <form method="GET"
+      action="{% url 'destinations:map_pin_edit' destination.id %}"
+      class="form-container">
+
+        <label>ピン選択</label>
+        <select name="pin_id" onchange="this.form.submit()">
+            <option value="">選択してください</option>
+
+            {% for pin in pins %}
+                <option value="{{ pin.id }}"
+                    {% if selected_pin and selected_pin.id == pin.id %}selected{% endif %}>
+                    {{ pin.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>  
+
+    <!-- ピンのラベル編集　-->
+    {% if selected_pin %}
+        <form method="POST"
+          action="{% url 'destinations:map_pin_edit' destination.id %}?pin_id={{ selected_pin.id }}"
+          class="form-container">
+            {% csrf_token %}
+
+            <label>ラベル名　編集</label>
+            <input type="text" name="name" value="{{ selected_pin.name }}">
+
+            <button type="submit" class="btn">変更</button>
+        </form>
+
+        <!-- ピンの削除　-->
+        <a href="{% url 'destinations:map_pin_delete' destination.id selected_pin.id %}" class="delete-btn">
+            削除
+        </a>
+
+    {% endif %}
 
 </body> 

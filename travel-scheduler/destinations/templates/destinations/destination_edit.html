@@ -30,9 +30,14 @@
         {{ form.address }}
 
         <label>MAP</label>
-        <a href="{% url 'destinations:map_destination' %}" class="btn map-link">GoogleMap</a>
+        <a href="{% url 'destinations:map_destination' destination.id %}"
+            class="btn map-link">GoogleMap
+        </a>
         {{ form.latitude }}
         {{ form.longitude }}
+
+        <p>lat: {{ form.latitude.value }}</p>
+        <p>lng: {{ form.longitude.value }}</p>
 
         <label>定休日</label>
         <div class="select-buttons">
