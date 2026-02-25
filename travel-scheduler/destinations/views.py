@@ -156,6 +156,16 @@ def map_destination(request, pk):
             pk=selected_pin_id,
             destination=destination
         )
+        
+    if request.method == "POST":
+        lat = request.POST.get("lat")
+        lng = request.POST.get("lng")
+
+        if lat and lng and selected_pin:
+            destination.latitude = lat
+            destination.longitude = lng
+            destination.save()
+        return redirect("destinations:destination_edit", pk=destination.pk)  
 
     context = {
         "destination": destination,

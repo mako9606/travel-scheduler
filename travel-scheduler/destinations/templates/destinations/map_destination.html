@@ -39,8 +39,8 @@
                 ピン編集
         </a>
         <button type="submit" class="btn">登録</button>
-        <!-- <input type="hidden" name="lat" value="{{ lat }}"> -->
-        <!-- <input type="hidden" name="lng" value="{{ lng }}"> -->
+        <input type="hidden" name="lat" value="{{ lat }}">
+        <input type="hidden" name="lng" value="{{ lng }}">
 
     </form>
 
@@ -50,11 +50,46 @@
 
     <script>
         function initMap() {
-            const defaultLocation = { lat: 35.681236, lng: 139.767125 }; // 東京駅
+            const defaultLocation = { lat: 35.681236, lng: 139.767125 };
 
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 13,
                 center: defaultLocation,
+            });
+
+            let marker = null;
+
+            const savedLat = {{ destination.latitude|default:"null" }};
+            const savedLng = {{ destination.longitude|default:"null" }};
+
+            if (savedLat !== null && savedLng !== null && !isNaN(savedLat) && !isNaN(savedLng)) {
+                const savedLocation = {
+                    lat: parseFloat(savedLat),
+                    lng: parseFloat(savedLng)
+                };
+
+                marker = new google.maps.Marker({
+                    position: savedLocation,
+                    map: map,
+                });
+
+                map.setCenter(savedLocation);
+            }
+
+
+            map.addListener("click", function(event) {
+
+                if (marker) {
+                    marker.setMap(null);
+                }
+
+                marker = new google.maps.Marker({
+                    position: event.latLng,
+                    map: map,
+                });
+
+                document.querySelector('input[name="lat"]').value = event.latLng.lat();
+                document.querySelector('input[name="lng"]').value = event.latLng.lng();
             });
         }
 
