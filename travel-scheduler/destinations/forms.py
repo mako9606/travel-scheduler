@@ -17,7 +17,7 @@ class DestinationForm(forms.ModelForm):
             "longitude": forms.HiddenInput(),
         }
         
-        
+
 class MapPinForm(forms.ModelForm):
     class Meta:
         model = MapPin

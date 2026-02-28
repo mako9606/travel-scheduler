@@ -13,7 +13,7 @@
     <form method="POST" class="form-container">
         {% csrf_token %}
 
-        <input type="text" name="q" placeholder="目的地名 入力" value="{{ q }}">
+        <input type="text" name="q" placeholder="住所 入力" value="{{ q }}">
         <button type="submit" class="search-btn">検索</button>
 
 
@@ -74,8 +74,10 @@
                 });
 
                 map.setCenter(savedLocation);
-            }
 
+                document.querySelector('input[name="lat"]').value = savedLocation.lat;
+                document.querySelector('input[name="lng"]').value = savedLocation.lng;
+            }
 
             map.addListener("click", function(event) {
 
