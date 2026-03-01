@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'plans',
     'destinations',
     'memos',
+    'account.apps.AccountConfig',
 ]
 
 MIDDLEWARE = [
