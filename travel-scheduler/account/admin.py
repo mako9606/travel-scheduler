@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import ShortcutType, UserShortcut
 
-# Register your models here.
+admin.site.register(ShortcutType)
+admin.site.register(UserShortcut)
