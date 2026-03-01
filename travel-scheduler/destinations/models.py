@@ -13,19 +13,7 @@ class Destination(models.Model):
     closed_day = models.CharField(max_length=20, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    pin_type = models.ForeignKey(
-        "PinType",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="destinations"
-    )
     memo = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return self.name
     
     
 class MapPin(models.Model):
@@ -45,14 +33,3 @@ class MapPin(models.Model):
     def __str__(self):
         return f"{self.destination.name} - {self.name}"    
     
-    
-class PinType(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    type_name = models.CharField(max_length=50)
-    is_private = models.BooleanField(default=False)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.type_name

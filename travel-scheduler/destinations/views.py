@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from plans.models import DaySchedule
-from .models import Destination, PinType, MapPin
+from .models import Destination, MapPin
 from .forms import DestinationForm, MapPinForm
 from django.urls import reverse
 from django.http import HttpResponseRedirect
