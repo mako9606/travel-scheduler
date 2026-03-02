@@ -18,4 +18,18 @@
     <p>is_authenticated: {{ request.user.is_authenticated }}</p>
     <p>user: {{ request.user }}</p>
 
+
+    <h2>ショートカット</h2>
+    <ul>
+    {% for shortcut in shortcuts %}
+        <li>
+            <a href="{{ shortcut.url }}">
+                {{ shortcut.position }} :
+                {{ shortcut.shortcut_type.display_name }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+
+
 </body>

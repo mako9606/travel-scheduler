@@ -5,9 +5,34 @@
 </head>
 
 <body>
-    <h1>アカウント画面</h1>
+    <div class="login-title">パスワード再設定</div>
 
-    <label>ホーム画面カスタム選択</label>
+    <form method="POST">
+        {% csrf_token %}
+
+        <p>左</p>
+        <select name="left_shortcut" onchange="this.form.submit()">
+            {% for type in shortcut_types %}
+                <option value="{{ type.id }}"
+                    {% if left_selected == type.id %}selected{% endif %}>
+                    {{ type.display_name }}
+                </option>
+            {% endfor %}
+        </select>
+
+       <p>右</p>
+       <select name="right_shortcut" onchange="this.form.submit()">
+            <option value="">-- 未選択 --</option>
+
+            {% for type in shortcut_types %}
+                <option value="{{ type.id }}"
+                    {% if right_selected == type.id %}selected{% endif %}>
+                    {{ type.display_name }}
+                </option>
+            {% endfor %}
+        </select>
+    
+    </form>
 
     <br>ホーム画面表示</br>
     <a href="{% url 'account:edit_email' %}" class="btn-second">メールアドレス編集</a>

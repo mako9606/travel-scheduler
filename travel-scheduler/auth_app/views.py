@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from account.models import UserShortcut
+from account.utils import get_shortcut_url
+
 
 def login_view(request):
     if request.method == "POST":
@@ -41,4 +44,20 @@ def signup_view(request):
 @login_required
 def home_view(request):
     print(request.user, request.user.is_authenticated)
-    return render(request, 'auth_app/home.html')
+    
+    shortcuts = UserShortcut.objects.filter(
+        user=request.user
+    ).select_related("shortcut_type").order_by("position")
+    
+    for shortcut in shortcuts:
+        shortcut.url = get_shortcut_url(
+        shortcut.shortcut_type.action_key
+    )
+    
+    return render(
+        request,
+        "auth_app/home.html",
+        {
+            "shortcuts": shortcuts,
+        }
+    )

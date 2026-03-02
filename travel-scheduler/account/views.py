@@ -6,9 +6,53 @@ from django.contrib.auth import update_session_auth_hash
 
 from .forms import AccountEditForm
 
+from account.models import UserShortcut, ShortcutType
 
+
+@login_required
 def account(request):
-    return render(request, 'account/account.html')
+
+    if request.method == "POST":
+        left_id = request.POST.get("left_shortcut")
+        right_id = request.POST.get("right_shortcut")
+
+        if left_id:
+            UserShortcut.objects.update_or_create(
+                user=request.user,
+                position=1,
+                defaults={"shortcut_type_id": left_id},
+            )
+
+        if right_id:
+            UserShortcut.objects.update_or_create(
+                user=request.user,
+                position=2,
+                defaults={"shortcut_type_id": right_id},
+            )
+        else:
+            UserShortcut.objects.filter(
+                user=request.user,
+                position=2
+            ).delete()    
+
+        return redirect("account:account")
+
+    shortcut_types = ShortcutType.objects.all()
+
+    shortcuts = UserShortcut.objects.filter(user=request.user)
+
+    left_selected = shortcuts.filter(position=1).first()
+    right_selected = shortcuts.filter(position=2).first()
+
+    return render(
+        request,
+        "account/account.html",
+        {
+            "shortcut_types": shortcut_types,
+            "left_selected": left_selected.shortcut_type_id if left_selected else None,
+            "right_selected": right_selected.shortcut_type_id if right_selected else None,
+        },
+    )
 
 
 #　edit_email.html
