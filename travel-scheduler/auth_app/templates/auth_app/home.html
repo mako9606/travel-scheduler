@@ -1,13 +1,13 @@
 <head>
 
 <title>ホーム画面</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'auth_app/home.css' %}">
 
 </head>
 
 <body>
-    <h1>ホーム画面</h1>
-
-    <p>あとでちゃんと作る</p>
+    <div class="login-title" class="form-container" >home</div>
 
     <p>
         <a href="{% url 'plans:plan_list' %}">
@@ -20,16 +20,33 @@
 
 
     <h2>ショートカット</h2>
-    <ul>
-    {% for shortcut in shortcuts %}
-        <li>
-            <a href="{{ shortcut.url }}">
-                {{ shortcut.position }} :
-                {{ shortcut.shortcut_type.display_name }}
-            </a>
-        </li>
-    {% endfor %}
-    </ul>
+    <div class="swipe-wrap">
+        <div class="swipe-track">
 
+            <!-- 左ページ -->
+            <section class="page">
+                <iframe
+                    src="{{ left_shortcut.url }}"
+                    class="shortcut-frame">
+                </iframe>
+            </section>
+
+            <!-- 右ページ -->
+            <section class="page">
+                <h2>右</h2>
+                {% if right_shortcut %}
+                    <iframe
+                        src="{{ right_shortcut.url }}"
+                        class="shortcut-frame">
+                    </iframe>
+                {% else %}
+                    <div class="empty-page">
+                        未選択です
+                    </div>
+                {% endif %}
+            </section>
+
+        </div>
+    </div>
 
 </body>

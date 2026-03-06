@@ -143,3 +143,4 @@ AUTHENTICATION_BACKENDS = [
     "auth_app.backends.EmailBackend",
 ]
 
+X_FRAME_OPTIONS = "SAMEORIGIN"

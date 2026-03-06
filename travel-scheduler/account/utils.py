@@ -8,25 +8,14 @@ def create_default_shortcuts(user):
     if UserShortcut.objects.filter(user=user).exists():
         return
 
-    shortcut_order = [
-        "plan_list",
-        "plan_day",
-        "plan_map",
-        "plan_cost",
-        "plan_memo",
-        "memo",
-    ]
+    memo_type = ShortcutType.objects.get(action_key="memo")
 
-    for index, action_key in enumerate(shortcut_order, start=1):
-        shortcut_type = ShortcutType.objects.get(
-            action_key=action_key
-        )
-
-        UserShortcut.objects.create(
-            user=user,
-            shortcut_type=shortcut_type,
-            position=index,
-        )
+    # 左 = メモ
+    UserShortcut.objects.create(
+        user=user,
+        shortcut_type=memo_type,
+        position=1,
+    )
         
 
 SHORTCUT_URL_MAP = {
