@@ -1,24 +1,30 @@
-<head>
 <!-- 画面設計図　スライド8 -->
-    <title>プランリスト画面</title>
-
+    {% extends "base.html" %}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'plans/plan_list.css' %}">
-</head>
 
-<body>
+    {% block title %}
+        プランリスト画面
+    {% endblock %}
 
-    <div class="page-title">プランリスト</div>
+    {% block css %}
+        <link rel="stylesheet" href="{% static 'plans/plan_list.css' %}?v=2">
+    {% endblock %}
+
+    {% block header %}
+    {% include "header.html" with header_title="プランリスト" header_icons='<a href="/memos/" class="icon-btn">📝</a><a href="/" class="icon-btn">🏠</a>' %}
+    {% endblock %}
+
+    {% block content %}
 
     <main class="plan-list" id="plan-list">
 
         {% for plan in plans %}
-        <div class="plan-item" data-id="{{ plan.id }}">
-            <div class="plan-name">{{ plan.plan_name }}</div>
-            <div class="plan-date">
-                {{ plan.start_date }} 〜 {{ plan.end_date }}
+            <div class="plan-item" data-id="{{ plan.id }}">
+                <div class="plan-name">{{ plan.plan_name }}</div>
+                <div class="plan-date">
+                    {{ plan.start_date }} 〜 {{ plan.end_date }}
+                </div>
             </div>
-        </div>
         {% empty%}
             <p>まだプランがありません。</p>
         {% endfor %}
@@ -27,15 +33,16 @@
 
     <a href="{% url 'plans:plan_create' %}" class="add-btn">＋</a>
 
-</body> 
+    {% endblock %}
 
 
-
+{% block js %}
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
 const el = document.getElementById("plan-list");
 
+if (el) {
 Sortable.create(el, {
   animation: 150,
   onEnd: function () {
@@ -54,6 +61,7 @@ Sortable.create(el, {
     });
   }
 });
+}
 
 document.querySelectorAll(".plan-item").forEach(item => {
   item.addEventListener("click", function () {
@@ -63,3 +71,4 @@ document.querySelectorAll(".plan-item").forEach(item => {
 });
 </script>
 
+{% endblock %}
