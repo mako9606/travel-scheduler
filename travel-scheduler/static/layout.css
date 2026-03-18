@@ -97,3 +97,67 @@ label {
     transform: scale(0.97);
     border: 2px solid #592d13;
 }
+
+/* 完了ボタン */
+.btn{
+   padding: 10px 20px;
+   text-decoration: none;
+   display: block;
+   background-color: #ffa158ff; 
+   border: 2px solid #592d13;
+   color: #592d13;
+   border-radius: 5px;
+   font-size: 16px;
+   font-weight: bold;
+   margin-top: 12px;
+   width: fit-content;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.btn:active{
+    background-color: #ff8c3a;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
+
+/* 削除ボタン */
+.delete-btn{
+   padding: 10px 20px;
+   text-decoration: none;
+   display: block;
+   background-color: white; 
+   border: 2px solid #592d13;
+   color: #990000;
+   border-radius: 5px;
+   font-size: 16px;
+   font-weight: bold;
+   margin-top: 12px;
+   width: fit-content;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.delete-btn:active{
+    background-color: white;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
+
+.edit-btn{
+   padding: 10px 20px;
+   text-decoration: none;
+   display: block; 
+   background-color: #ffa158ff; 
+   border: 2px solid #592d13;
+   color: #592d13;
+   border-radius: 5px; 
+   font-weight: bold;
+   margin-top: 12px;
+   width: fit-content;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.edit-btn:active{
+    background-color: #ff8c3a;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}

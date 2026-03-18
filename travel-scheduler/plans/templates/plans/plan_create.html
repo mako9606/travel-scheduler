@@ -1,27 +1,32 @@
-<head>
-<!-- 画面設計図　スライド9 -->
-    <title>新規プラン設定画面</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'plans/plan_create.css' %}">
-</head>
+{% block title %}
+新規プラン設定画面
+{% endblock %}
 
-<body>
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'plans/plan_create.css' %}?v=1">
+{% endblock %}
 
-    <div class="page-title"></div>
-    <form method="POST" class="form-container">
-        {% csrf_token %}
+{% block header %}
+{% include "header.html" with header_title="プラン作成" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">📋</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
 
-        <label>旅行タイトル</label>
-        {{ form.plan_name }}
+{% block content %}
+<form method="POST" class="container">
+    {% csrf_token %}
 
-        <label>出発日</label>
-        {{ form.start_date }}
-        
-        <label>帰宅日</label>
-        {{ form.end_date }}
+    <label>旅行タイトル</label>
+    {{ form.plan_name }}
 
-        <button type="submit" class="btn">完了</button>
+    <label>出発日</label>
+    {{ form.start_date }}
 
-    </form>
-</body>    
+    <label>帰宅日</label>
+    {{ form.end_date }}
+
+    <button type="submit" class="btn">完了</button>
+</form>
+{% endblock %}

@@ -4,9 +4,6 @@ from .models import Plan
 from .models import Schedule
 from .models import Cost, CostCategory
 
-from datetime import date
-
-
 
 
 class PlanCreateForm(forms.ModelForm):
@@ -14,13 +11,16 @@ class PlanCreateForm(forms.ModelForm):
         model = Plan
         fields = ["plan_name", "start_date", "end_date"]
         widgets = {
-            "start_date": forms.SelectDateWidget(
-                years=range(date.today().year, date.today().year + 6),
-                empty_label=("年", "月", "日"),
+            "plan_name": forms.TextInput(
+                attrs={
+                    "placeholder": "旅行タイトル  入力"
+                }
             ),
-            "end_date": forms.SelectDateWidget(
-                years=range(date.today().year, date.today().year + 6),
-                empty_label=("年", "月", "日"),
+            "start_date": forms.DateInput(
+                attrs={"type": "date"}
+            ),
+            "end_date": forms.DateInput(
+                attrs={"type": "date"}
             ),
         }
         
