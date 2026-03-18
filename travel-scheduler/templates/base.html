@@ -3,23 +3,25 @@
 {% load static %}
 
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %}</title>
 
-{% block css %}{% endblock %}
+    {% block css %}{% endblock %}
 </head>
 
 <body>
+    <div class="container">
+        {% block header %}{% endblock %}
 
-{% block header %}{% endblock %}
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
 
-<main>
-{% block content %}
-{% endblock %}
-</main>
-
-{% block js %}{% endblock %}
+        {% block js %}{% endblock %}
+    </div>   
 </body>
 
 </html>

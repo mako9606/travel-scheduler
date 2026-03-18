@@ -7,19 +7,21 @@
     {% endblock %}
 
     {% block css %}
+        <link rel="stylesheet" href="{% static 'layout.css' %}">
         <link rel="stylesheet" href="{% static 'plans/plan_list.css' %}?v=2">
     {% endblock %}
 
     {% block header %}
-    {% include "header.html" with header_title="プランリスト" header_icons='<a href="/memos/" class="icon-btn">📝</a><a href="/" class="icon-btn">🏠</a>' %}
+    {% include "header.html" with header_title="プランリスト" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
     {% endblock %}
 
     {% block content %}
-
-    <main class="plan-list" id="plan-list">
+    <div class="plan-list" id="plan-list">
 
         {% for plan in plans %}
-            <div class="plan-item" data-id="{{ plan.id }}">
+            <div class="plan-item"
+                 data-id="{{ plan.id }}"
+                 data-detail-url="{% url 'plans:plan_detail' plan.id %}">
                 <div class="plan-name">{{ plan.plan_name }}</div>
                 <div class="plan-date">
                     {{ plan.start_date }} 〜 {{ plan.end_date }}
@@ -29,12 +31,11 @@
             <p>まだプランがありません。</p>
         {% endfor %}
 
-    </main> 
+    </div> 
 
     <a href="{% url 'plans:plan_create' %}" class="add-btn">＋</a>
 
     {% endblock %}
-
 
 {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
@@ -65,8 +66,8 @@ Sortable.create(el, {
 
 document.querySelectorAll(".plan-item").forEach(item => {
   item.addEventListener("click", function () {
-    const id = this.dataset.id;
-    window.location.href = `/plans/detail/${id}/`;
+    const detailUrl = this.dataset.detailUrl;
+    window.location.href = detailUrl;
   });
 });
 </script>

@@ -1,0 +1,99 @@
+body {
+    text-align: left;
+    font-size: 17px;
+    color: #592d13;
+    background-color: #f7f7f7ff;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0 auto;
+    position: relative;
+}
+
+
+.container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* 緑帯 */
+.page-title {
+    background: #b7d2b1ff;
+    padding: 10px;
+    color: #447d37;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px auto 10px auto;
+    box-sizing: border-box;
+}
+
+label {
+    display: block;
+    font-size: 16px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+/* ヘッダー */
+.header {
+    background: #b7d2b1ff;
+    padding: 10px;
+    color: #447d37;
+    font-size: 20px;
+    font-weight: bold;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    font-size: 20px;
+}
+
+.header-icons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* アイコンボタン */
+.icon-btn {
+    text-decoration: none;
+    font-size: 20px;
+}
+
+
+/* 追加丸ボタン */
+.add-btn{
+   text-decoration: none;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-color: #ffa158ff; 
+   border: 2px solid #592d13;
+   color: #592d13;
+   font-size: 22px;
+   font-weight: bold;
+   margin-top: 12px;
+
+  /* ボタンの丸 */
+   width: 56px;
+   height: 56px;
+   border-radius: 50%;
+
+  /* 画面内固定 */
+   position: fixed;
+   bottom: 24px;
+   right: 24px;
+   width: 64px;
+   height: 64px;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.button:active{
+    background-color: #ff8c3a;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
