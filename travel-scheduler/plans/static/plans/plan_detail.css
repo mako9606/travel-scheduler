@@ -1,60 +1,56 @@
-/* タイトルの緑背景 */
-.page-title {
-    background: #b7d2b1ff;
-    padding: 10px;
-    color: #447d37;
-    font-size: 20px;
-    font-weight: bold;
-    width: 90%;
-    max-width: 380px;
-    margin: 20px auto 10px auto;
+/* タブ中身を下までのばす */
+form.container{
+    padding: 0;
     box-sizing: border-box;
-}
 
-.form-container{
-    width: 90%;
-    max-width: 380px;
-    margin: 0 auto;
-}
-
-body{
-    text-align: left;
-    font-size: 17px;
-    color: #592d13;
-    background-color: #f7f7f7ff;
-    display: block;
-    padding-top: 30px;
-    padding-bottom: 30px;
-}
-
-label{
-    display: block;
-    font-size: 16px;
-    margin-top: 15px;
-    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100dvh - 48px);
 }
 
 /* タブ全体 */
 .tab-menu{
     display: flex;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin-top: 26px;
     margin-bottom: 0;
+    gap: 0;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* 各タブ */
 .tab-btn{
-    padding: 10px 14px;
+    flex: 0 0 auto;
+    min-width: 68px;
+    padding: 12px 12px;
     background: white;
-    border-bottom: 2px solid #ccc;  /* 非選択は下線を表示する */
-    font-size: 14px;
+    border: 1px solid #ccc;
+    border-bottom: 2px solid #ccc; /* 非選択は下線を表示する */
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.3;
+    text-align: center;
     cursor: pointer;
-    margin-right: 4px;
+    margin-right: 0;
+    box-sizing: border-box;
+    color: #592d13;
+
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 各タブ   クリック・タップした瞬間 に適用される状態 */
 .tab-btn.active{
     font-weight: bold;
+    background: white;
     border-bottom: 2px solid white;
     z-index: 2;
+    color: #592d13;
 }
 
 /* タブの中身 */
@@ -63,34 +59,19 @@ label{
     padding: 16px;
     border: 1px solid #ccc;
     border-top: none;
-    margin-top: -2px;
+    margin-top: -1px;
     background-color: white;
+    min-height: 0;
+    box-sizing: border-box;
+    flex: 1;
 }
 
 /* タブの中身  クリック・タップした瞬間 に適用される状態*/
 .tab-content.active{
     display: block;
+    flex: 1; 
 }
 
-.edit-btn{
-   padding: 10px 20px;
-   text-decoration: none;
-   display: block; 
-   background-color: #ffa158ff; 
-   border: 2px solid #592d13;
-   color: #592d13;
-   border-radius: 5px; 
-   font-weight: bold;
-   margin-top: 12px;
-   width: fit-content;
-}
-
-/* クリック・タップした瞬間 に適用される状態 */
-.edit-btn:active{
-    background-color: #ff8c3a;
-    transform: scale(0.97);
-    border: 2px solid #592d13;
-}
 
 /* タブ中身　～メモ～ */
 .memo-paper{
@@ -113,13 +94,36 @@ label{
 
 
 /* タブ中身　～詳細情報～ */
+.detail-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 22px;
+    gap: 16px;
+}
+
+.detail-label{
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #592d13;
+    line-height: 1.4;
+}
+
+.detail-value{
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #592d13;
+    line-height: 1.4;
+    text-align: right;
+}
 
 /* メンバーを追加するのリンク */
 .member-add{
-    text-align: right;
     display: inline-block;
-    margin-top: 10px;
-    font-size: 14px;
+    margin-top: 4px;
+    font-size: 15px;
     color: #4285f4;
     text-decoration: underline;
     cursor: pointer;
@@ -185,7 +189,7 @@ label{
   font-size: 18px
 }
 
-.destination-btn
+.destination-btn,
 .add-btn{
    padding: 10px 20px;
    text-decoration: none;

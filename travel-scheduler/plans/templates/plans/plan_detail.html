@@ -1,14 +1,21 @@
-<head>
-<!-- 画面設計図　スライド10~34 -->
-    <title>プラン詳細画面（詳細情報）</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}">
-</head>
+{% block title %}
+プラン詳細画面（詳細情報）
+{% endblock %}
 
-<body>
-    <div class="page-title">{{ object.plan_name }}</div>
-    <form method="POST" class="form-container">
+{% block css %}
+<link rel="stylesheet" href="{% static 'layout.css' %}">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=1">
+{% endblock %}
+
+{% block header %}
+{% include "header.html" with header_title=object.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">📋</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
+
+{% block content %}
+    <form method="POST" class="container">
         {% csrf_token %}
 
         <div class="tab-menu">
@@ -27,20 +34,36 @@
         
         <!-- 画面設計図　スライド10 プラン詳細画面（詳細情報） -->
         <div class="tab-content tab-detail">
-            <p>旅行タイトル</p>
-            <p>{{ object.plan_name }}</P>
+            <div class="detail-row">
+                <p class="detail-label">旅行タイトル</p>
+                <p class="detail-value">{{ object.plan_name }}</P>
+            </div>    
 
-            <p>出発日</p>
-            <p>{{ object.start_date }}</P>
+            <div class="detail-row">    
+                <p class="detail-label">出発日</p>
+                <p class="detail-value">{{ object.start_date }}</P>
+            </div>    
 
-            <p>帰宅日</p>
-            <p>{{ object.end_date }}</P>
+            <div class="detail-row">   
+                <p class="detail-label">帰宅日</p>
+                <p class="detail-value">{{ object.end_date }}</P>
+            </div>    
 
-            <p>予定費用</p>
+            <div class="detail-row">    
+                <p class="detail-label">予定費用</p>
+                <p class="detail-value"></p>
+            </div>
 
-            <p>実際費用</p>
+            <div class="detail-row">
+                <p class="detail-label">実際費用</p>
+                <p class="detail-value"></p>
+            </div>
 
-            <p>メンバーとの共有</p>
+            <div class="detail-row">
+                <p class="detail-label">メンバーとの共有</p>
+                <p class="detail-value"></p>
+            </div>
+
             <a class="member-add">メンバーを追加する</a>
             <a href="{% url 'plans:share_revoke' %}" class="revoke-btn">URLを失効</a>
 
@@ -347,4 +370,4 @@
     });
     </script>
 
-</body>
+{% endblock %}

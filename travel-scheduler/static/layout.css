@@ -142,11 +142,12 @@ label {
     border: 2px solid #592d13;
 }
 
+/* 編集ボタン */
 .edit-btn{
    padding: 10px 20px;
    text-decoration: none;
    display: block; 
-   background-color: #ffa158ff; 
+   background-color: #dccf7fff; 
    border: 2px solid #592d13;
    color: #592d13;
    border-radius: 5px; 
