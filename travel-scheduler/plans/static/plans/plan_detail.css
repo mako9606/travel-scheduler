@@ -119,10 +119,39 @@ form.container{
     text-align: right;
 }
 
+.share-member-row{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.share-member-label{
+    margin: 0;
+    width: 110px;
+    font-size: 15px;
+    color: #592d13;
+}
+
+.share-member-name{
+    margin: 0;
+    flex: 1;
+    font-size: 15px;
+    color: #592d13;
+}
+
+.revoke-btn{
+    font-size: 15px;
+    color: #990000;
+    text-decoration: underline;
+    margin-left: 12px;
+}
+
 /* メンバーを追加するのリンク */
 .member-add{
     display: inline-block;
-    margin-top: 4px;
+    margin-top: 8px;
+    margin-bottom: 18px;
     font-size: 15px;
     color: #4285f4;
     text-decoration: underline;
@@ -177,6 +206,13 @@ form.container{
   background: #f5f5f5;
   padding: 8px;
   border-radius: 4px;
+}
+
+.share-note{
+  margin-top: 12px;
+  font-size: 12px;
+  color: #592d13;
+  text-align: center;
 }
 
 /* タブ中身　～1日詳細～ */

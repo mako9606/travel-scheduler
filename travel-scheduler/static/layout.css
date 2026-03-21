@@ -19,12 +19,15 @@ body {
 
 /* 緑帯 */
 .page-title {
+    width: 100%;
+    max-width: 480px;
+    padding: 10px 14px;
     background: #b7d2b1ff;
     padding: 10px;
     color: #447d37;
     font-size: 20px;
     font-weight: bold;
-    margin: 20px auto 10px auto;
+    margin: 20px auto;
     box-sizing: border-box;
 }
 

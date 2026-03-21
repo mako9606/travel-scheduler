@@ -49,25 +49,49 @@
                 <p class="detail-value">{{ object.end_date }}</P>
             </div>    
 
-            <div class="detail-row">    
-                <p class="detail-label">予定費用</p>
-                <p class="detail-value"></p>
-            </div>
-
             <div class="detail-row">
-                <p class="detail-label">実際費用</p>
-                <p class="detail-value"></p>
+                <p class="detail-label">費用合計</p>
+                <p class="detail-value">{{ total_cost }}円</p>
             </div>
 
             <div class="detail-row">
                 <p class="detail-label">メンバーとの共有</p>
-                <p class="detail-value"></p>
+                <p class="detail-value">{{ share_status }}</p>
             </div>
+            
+            {% if share_members %}
+                {% for member in share_members %}
+                    <div class="share-member-row">
+                        {% if forloop.first %}
+                            <p class="share-member-label">共有メンバー：</p>
+                        {% else %}
+                            <p class="share-member-label"></p>
+                        {% endif %}
+
+                        <p class="share-member-name">{{ member.member_name }}</p>
+
+                        <a href="{% url 'plans:share_revoke' member.id %}" class="revoke-btn">URLを失効</a>
+                    </div>
+                {% endfor %}
+            {% endif %}
 
             <a class="member-add">メンバーを追加する</a>
-            <a href="{% url 'plans:share_revoke' %}" class="revoke-btn">URLを失効</a>
-
             <a href="{% url 'plans:plan_edit' %}" class="edit-btn">編集</a>
+        </div>
+
+        <!-- スライド13　共有URL表示（モーダル）-->
+        <div class="share-modal">
+            <div class="share-modal-content">
+                <button type="button" class="share-modal-close">×</button>
+
+                <p class="share-title">共有URL</p>
+
+                <p class="share-url">
+                    https://example.com/plan/share?token=xxxx
+                </p>
+
+                <p class="share-note">共有したい相手に送ってください。</p>
+            </div>  
         </div>
         
         <!-- 画面設計図　スライド16 プラン詳細画面（メモ）-->
@@ -224,18 +248,6 @@
 
     </form>
 
-    <!-- スライド13　共有URL表示（モーダル）-->
-    <div class="share-modal">
-        <div class="share-modal-content">
-            <button type="button" class="share-modal-close">×</button>
-
-            <p class="share-title">共有URL</p>
-
-            <p class="share-url">
-                https://example.com/plan/share?token=xxxx
-            </p>
-        </div>  
-    </div>
 
     <script>
         document.querySelectorAll('.tab-btn').forEach((btn) =>{

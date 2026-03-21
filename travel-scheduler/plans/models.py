@@ -25,6 +25,19 @@ class Plan(models.Model):
     def __str__(self):
         return self.plan_name
 
+class PlanShareMember(models.Model):
+    plan = models.ForeignKey(
+        Plan,
+        on_delete=models.CASCADE,
+        related_name="share_members"
+    )
+    member_name = models.CharField(max_length=100)
+    token = models.CharField(max_length=255, unique=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.plan.plan_name} - {self.member_name}"
 
 
 class DaySchedule(models.Model):

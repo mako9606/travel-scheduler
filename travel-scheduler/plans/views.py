@@ -12,7 +12,7 @@ from django.http import JsonResponse
 
 from datetime import date, timedelta
 
-from .models import Plan, DaySchedule, Schedule, Cost, CostCategory
+from .models import Plan, DaySchedule, Schedule, Cost, CostCategory, PlanShareMember
 from destinations.models import Destination
 
 from .forms import PlanCreateForm, ScheduleForm, CostForm, CostCategoryForm
@@ -41,8 +41,20 @@ def plan_delete(request):
 def plan_share(request):
     return render(request, 'plans/plan_share.html')
 
-def share_revoke(request):
-    return render(request, 'plans/share_revoke.html')
+# share_revoke.html
+@login_required
+def share_revoke(request, member_id):
+    member = get_object_or_404(PlanShareMember, pk=member_id) 
+    
+    if request.method == "POST":
+        member.is_active = False
+        member.save(update_fields=["is_active"])
+        return redirect("plans:plan_detail", pk=member.plan.id)
+
+    return render(request, "plans/share_revoke.html", {
+        "member": member,
+        "plan": member.plan,
+    })
 
 
 # plan_create.html
@@ -162,7 +174,15 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
         context["categories"] = categories
         context["total_cost"] = total_cost
         context["date_list"] = date_list
+        
+        #共有について
+        share_members = plan.share_members.filter(is_active=True)
+
+        context["share_members"] = share_members
+        context["share_status"] = "有" if share_members.exists() else "無"
+        
         return context
+    
     
     #メモタブ編集
     def post(self, request, *args, **kwargs):
