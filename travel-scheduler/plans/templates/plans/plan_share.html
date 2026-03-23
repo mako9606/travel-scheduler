@@ -1,50 +1,68 @@
 <head>
-<!-- 画面設計図　スライド14 -->
+<!-- 画面設計図　スライド15 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>共有URL閲覧画面</title>
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'plans/plan_share.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'plans/plan_share.css' %}?v=2">
 </head>
 
 <body>
 
     <!-- 有効期限内　-->
-    <div class="share-container is-valid" style="display:none;">
-        <div class="page-title">{{ object.plan_name }}</div>
+    {% if is_valid %}
+    <div class="container">
+    <div class="page-title">{{ plan.plan_name }}</div>
+
+    <div class="share-container is-valid">
 
         <form method="POST" class="form-container">
             {% csrf_token %}
+
+            {% if error_message %}
+                <p class="error-message">{{ error_message }}</p>
+            {% endif %}
         
             <h1>☆☆旅行を閲覧しますか？</h1>
 
-            <label>アカウント ログイン</label>
+            <label class="section-label">アカウント ログイン</label>
 
-            <label>メールアドレス</label>
-            <input type="email" name="email" placeholder="メールアドレス 入力" required>
-            <label>パスワード</label>
-            <input type="password" name="password" placeholder="********" required>
+            <label class="field-label">メールアドレス</label>
+            <input type="email" name="email" placeholder="メールアドレス 入力">
+            
+            <label class="field-label">パスワード</label>
+            <input type="password" name="password" placeholder="********">
 
-            <a href="{% url 'plans:plan_detail' %}" class="btn">ログイン</a>
-            <a href="{% url 'account:password_reset' %}" class="forgot">パスワード忘れた方</a>
+            <div class="login-action-row">
+                <button type="submit" name="action" value="login" class="btn">ログインして閲覧</button>
+                <a href="{% url 'account:password_reset' %}" class="forgot">パスワード忘れた方</a>
+            </div>
 
-            <label>アカウント お持ちじゃない方</label>
+            <label class="section-label">アカウント お持ちじゃない方</label>
 
-            <label>アカウント名</label>
-            <input type="text" name="username" placeholder="アカウント名 入力" required>
+            <label class="field-label">アカウント名</label>
+            <input type="text" name="username" placeholder="アカウント名 入力">
 
-            <a href="{% url 'plans:plan_detail' %}" class="btn">閲覧</a>
+            <button type="submit" name="action" value="view" class="btn">閲覧</button>
 
         </form>
     </div>
-
-
-    <!-- 有効期限外　-->
-    <div class="share-container is-invalid" style="display:block;">
-
-        <div class="form-container">
-            <h1>URLの有効期限が切れています。</h1>
-            <h2>送信者から新しいURLを受け取ってください。</h2>
-        </div>
-
     </div>
+    <!-- 有効期限外　-->
+    {% else %}
+        
+        <div class="container">
+        <div class="page-title">{{ plan.plan_name }}</div>
+
+        <div class="share-container is-invalid">
+
+            <div class="form-container invalid-container">
+                <h1>URLの有効期限が<br>切れています。</h1>
+                <h2>送信者から新しいURLを<br>受け取ってください。</h2>
+            </div>
+        </div>
+        </div>
+    {% endif %}    
 </body>

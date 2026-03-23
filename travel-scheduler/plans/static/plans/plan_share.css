@@ -1,76 +1,117 @@
-/* タイトルの緑背景 */
-.page-title {
-    background: #b7d2b1ff;
-    padding: 10px;
-    color: #447d37;
-    font-size: 20px;
-    font-weight: bold;
-    width: 90%;
-    max-width: 380px;
-    margin: 20px auto 10px auto;
+/* 有効期限内 */
+.share-container{
+    width: 100%;
+    margin: 0;
+    padding: 0 16px;
     box-sizing: border-box;
-    
 }
 
 .form-container{
-    width: 90%;
-    max-width: 380px;
-    margin: 0 auto;
+    width: 100%;
+    min-height: 620px;
+    background-color: #efefefff;
+    border: 1px solid #cfcfcf;
+    box-sizing: border-box;
+    padding: 40px 20px 28px;
 }
 
-body{
-    text-align: left;
-    font-size: 17px;
-    color: #592d13;
-    background-color: #f7f7f7ff;
-    display: block;
-    padding-top: 30px;
-    padding-bottom: 30px;
+.form-container h1{
+    margin: 14px 0 18px;
+    padding-bottom: 10px;
+    font-size: 25px;
+    line-height: 1.5;
+    font-weight: 700;
+    border-bottom: 1px solid #bdbdbd;
+    text-align: center;
 }
 
-label{
+.form-container .section-label{
     display: block;
-    font-size: 16px;
-    margin-top: 15px;
-    margin-bottom: 5px;
+    font-size: 18px;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.form-container .field-label{
+    display: block;
+    font-size: 15px;
+    margin-top: 0;
+    margin-bottom: 6px;
+    line-height: 1.4;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"]{
+    display: block;
     width: 100%;
-    padding: 12px;
-    font-size: 16px;
+    padding: 8px 10px;
+    font-size: 14px;
     border: 1px solid #595959;
     box-sizing: border-box;
-
+    margin-bottom: 16px;
 }
 
-.btn{
-   padding: 10px 20px;
-   text-decoration: none;
-   display: block;
-   background-color: #ffa158ff; 
-   border: 2px solid #592d13;
-   color: #592d13;
-   border-radius: 5px;
-   font-size: 16px;
-   font-weight: bold;
-   margin-top: 12px;
-   width: fit-content;
+.login-action-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
 }
 
-/* クリック・タップした瞬間 に適用される状態 */
-.btn:active{
-    background-color: #ff8c3a;
-    transform: scale(0.97);
-    border: 2px solid #592d13;
-}
 
 /* パスワード忘れた方のリンク */
 .forgot {
     text-align: right;
     display: block;
-    margin-top: 10px;
+    margin: 0;
+    font-size: 16px;
+    width: fit-content;
+    text-decoration: underline;
+    line-height: 1.2;
+}
+
+.error-message{
+    margin: 0 0 14px;
     font-size: 14px;
+    font-weight: 700;
+    color: #990000;
+    text-align: center;
+}
+
+
+/* 有効期限外 */
+.share-container.is-invalid{
+    width: 100%;
+    padding: 170px 24px 0;
+    box-sizing: border-box;
+}
+
+.invalid-container{
+    max-width: 480px;
+    min-height: 250px;
+    background-color: #efefefff;
+    border: 1px solid #cfcfcf;
+    box-sizing: border-box;
+    padding: 30px 18px 24px;
+    text-align: center;
+}
+
+
+.invalid-container h1{
+    margin: 0 0 26px;
+    font-size: 24px;
+    line-height: 1.6;
+    font-weight: 600;
+    color: #592d13;
+}
+
+.invalid-container h2{
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: #592d13;
 }

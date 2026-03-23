@@ -11,7 +11,11 @@
 {% endblock %}
 
 {% block header %}
-{% include "header.html" with header_title=object.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">📋</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+    {% if is_owner %}
+        {% include "header.html" with header_title=object.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">📋</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+    {% else %}
+        {% include "header.html" with header_title=object.plan_name header_icons='' %}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -58,47 +62,53 @@
                 <p class="detail-label">メンバーとの共有</p>
                 <p class="detail-value">{{ share_status }}</p>
             </div>
-            
-            {% if share_members %}
-                {% for member in share_members %}
-                    <div class="share-member-row">
-                        {% if forloop.first %}
-                            <p class="share-member-label">共有メンバー：</p>
-                        {% else %}
-                            <p class="share-member-label"></p>
-                        {% endif %}
+            {% if is_owner %}
+                {% if share_members %}
+                    {% for member in share_members %}
+                        <div class="share-member-row">
+                            {% if forloop.first %}
+                                <p class="share-member-label">共有メンバー：</p>
+                            {% else %}
+                                <p class="share-member-label"></p>
+                            {% endif %}
 
-                        <p class="share-member-name">{{ member.member_name }}</p>
+                            <p class="share-member-name">{{ member.member_name }}</p>
 
-                        <a href="{% url 'plans:share_revoke' member.id %}" class="revoke-btn">URLを失効</a>
-                    </div>
-                {% endfor %}
-            {% endif %}
+                            <a href="{% url 'plans:share_revoke' member.id %}" class="revoke-btn">URLを失効</a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
 
-            <a class="member-add">メンバーを追加する</a>
-            <a href="{% url 'plans:plan_edit' %}" class="edit-btn">編集</a>
+                <a class="member-add">メンバーを追加する</a>
+
+                <div class="detail-edit-row">
+                    <a href="{% url 'plans:plan_edit' %}" class="edit-btn">編集</a>
+                </div>
+            {% endif %}            
         </div>
 
         <!-- スライド13　共有URL表示（モーダル）-->
-        <div class="share-modal">
-            <div class="share-modal-content">
-                <button type="button" class="share-modal-close">×</button>
+        {% if is_owner %}
+            <div class="share-modal">
+                <div class="share-modal-content">
+                    <button type="button" class="share-modal-close">×</button>
 
-                <p class="share-title">共有URL</p>
+                    <p class="share-title">共有URL</p>
 
-                <p class="share-url">
+                    <p class="share-url">
                     https://example.com/plan/share?token=xxxx
-                </p>
+                    </p>
 
-                <p class="share-note">共有したい相手に送ってください。</p>
-            </div>  
-        </div>
+                    <p class="share-note">共有したい相手に送ってください。</p>
+                </div>  
+            </div>
+        {% endif %}
         
         <!-- 画面設計図　スライド16 プラン詳細画面（メモ）-->
         <div class="tab-content tab-memo">
 
             <div class="memo-paper">
-                {% if request.GET.memo_edit %}
+                {% if is_owner and request.GET.memo_edit %}
                     <textarea name="plan_memo" class="memo-textarea">
                         {{ object.memo }}
                     </textarea>
@@ -114,10 +124,12 @@
                         {% endif %}
                     </p>
 
-                    <a href="?memo_edit=1" class="memo-edit-btn">
-                        メモ編集
-                    </a>
-                {% endif %}
+                    {% if is_owner %}
+                        <a href="?memo_edit=1" class="memo-edit-btn">
+                            メモ編集
+                        </a>
+                    {% endif %}
+                {% endif %}    
             </div>
 
         </div>
@@ -136,42 +148,65 @@
                         {% endif %}
                     </p>
 
-                    <a href="{% url 'plans:schedule_memo' row.day.id  %}" class="memo-edit-btn">
-                        メモ編集
-                    </a>
-
+                    {% if is_owner %}
+                        <a href="{% url 'plans:schedule_memo' row.day.id  %}" class="memo-edit-btn">
+                            メモ編集
+                        </a>
+                    {% endif %} 
                 </div>
             
                 {% if row.day %}
                     {% for schedule in row.schedules %}
 
-                        {% if schedule.destination %}
-                            <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
-                                class="schedule-row" data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
-                        {% else %}
-                            <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row"
-                                data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
-                        {% endif %}    
+                        {% if is_owner %}
+                            {% if schedule.destination %}
+                                <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
+                                    class="schedule-row" data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
+                            {% else %}
+                                <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row"
+                                    data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
+                            {% endif %}    
 
-                            <span class="time">
-                                {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
-                            </span>
+                                <span class="time">
+                                    {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                                </span>
                         
-                            <span class="destination">
-                                {% if schedule.destination %}
-                                    {{ schedule.destination.name }}
-                                {% else %}
-                                    目的地未設定
-                                {% endif %}
-                            </span>
-                        </a> 
+                                <span class="destination">
+                                    {% if schedule.destination %}
+                                        {{ schedule.destination.name }}
+                                    {% else %}
+                                        目的地未設定
+                                    {% endif %}
+                                </span>
+                            </a>
+                        
+                        {% else %}
+                            {% if schedule.destination %}
+                                <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
+                                    class="schedule-row">
+                                    <span class="time">
+                                        {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                                    </span>
+
+                                    <span class="destination">{{ schedule.destination.name }}</span>
+                                </a>
+                            {% else %}
+                                <div class="schedule-row">
+                                    <span class="time">
+                                        {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                                    </span>
+
+                                    <span class="destination">目的地未設定</span>
+                                </div>
+                            {% endif %}
+                        {% endif %}    
 
                     {% empty %}
                         <p class="no-schedule">予定はありません。</p>
                     {% endfor %}
                 {% endif %}
 
-                {% if row.day and row.day.id %}
+                {% if is_owner and row.day and row.day.id %}
                     <a href="{% url 'destinations:destination_search' %}?day_schedule_id={{ row.day.id }}" class="destination-btn">目的地検索</a>
                 {% endif %}
             </div>
@@ -222,27 +257,37 @@
                                 <div class="cost-item">
                                     <p class="cost-name">{{ cost.name }}</p>
                                     <p class="cost-amount">¥{{ cost.amount }}</p>
-                                    <a class="cost-edit-icon"
-                                        href="{% url 'plans:plan_cost_edit_item' object.id cost.id %}">
-                                        ✏️
-                                    </a>
-                                    <a href="{% url 'plans:cost_delete' object.id cost.id %}" class="cost-delete-icon">
-                                        🗑
-                                    </a>
+                                    {% if is_owner %}
+                                        <a class="cost-edit-icon"
+                                            href="{% url 'plans:plan_cost_edit_item' object.id cost.id %}">
+                                            ✏️
+                                        </a>
+                                    {% endif %}
+                                    {% if is_owner %}    
+                                        <a href="{% url 'plans:cost_delete' object.id cost.id %}" class="cost-delete-icon">
+                                            🗑
+                                        </a>
+                                    
+                                    {% endif %}    
                                 </div>    
-                            {% endfor %}    
-                                
-                                <a href="{% url 'plans:cost_category_edit' object.id category.id %}">
-                                    カテゴリー編集
-                                </a>
+                            {% endfor %}
 
-                                <p>費用はまだありません。</p>
+                                {% if is_owner %}    
+                                    <a href="{% url 'plans:cost_category_edit' object.id category.id %}">
+                                        カテゴリー編集
+                                    </a>
+                                {% endif %}
+
+                            <p>費用はまだありません。</p>
+
                         </div>
                     </div>    
                 {% endfor %}
             </div>    
 
-            <a href="{% url 'plans:plan_cost_edit' object.id %}" class="cost-add-btn">＋</a>
+            {% if is_owner %}
+                <a href="{% url 'plans:plan_cost_edit' object.id %}" class="cost-add-btn">＋</a>
+            {% endif %} 
 
         </div>
 
@@ -328,40 +373,42 @@
 
     </script>
     
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    {% if is_owner %}
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
-    <script>// 目的地の順番並び替えを有効化
-        document.querySelectorAll('.tab-content').forEach((tab) => {
-            new Sortable(tab, {
-                animation: 150,
-                draggable: '.schedule-row',
-                handle: '.schedule-row',
+        <script>// 目的地の順番並び替えを有効化
+            document.querySelectorAll('.tab-content').forEach((tab) => {
+                new Sortable(tab, {
+                    animation: 150,
+                    draggable: '.schedule-row',
+                    handle: '.schedule-row',
 
-                onEnd: function () {
-                    const rows = tab.querySelectorAll('.schedule-row');
-                    if (!rows.length) return;
+                    onEnd: function () {
+                        const rows = tab.querySelectorAll('.schedule-row');
+                        if (!rows.length) return;
 
-                    const formData = new FormData();
-                    rows.forEach(row => {
-                        const id = row.dataset.scheduleId;
-                        if (!id) return;   // ← schedule-idを持たない行は無視をするって意味
-                        formData.append('order[]', id);
-                    });
+                        const formData = new FormData();
+                        rows.forEach(row => {
+                            const id = row.dataset.scheduleId;
+                            if (!id) return;   // ← schedule-idを持たない行は無視をするって意味
+                            formData.append('order[]', id);
+                        });
 
-                    // day_id は、行が持っている day_schedule_id を利用
-                    formData.append("day_id", rows[0].dataset.dayId);
+                        // day_id は、行が持っている day_schedule_id を利用
+                        formData.append("day_id", rows[0].dataset.dayId);
 
-                    fetch("{% url 'plans:schedule_reorder' %}", {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": "{{ csrf_token }}",
-                        },
-                        body: formData,
-                    });
-                },
+                        fetch("{% url 'plans:schedule_reorder' %}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": "{{ csrf_token }}",
+                            },
+                            body: formData,
+                        });
+                    },
+                });
             });
-        });
-    </script>
+        </script>
+    {% endif %}    
 
     <script> // 費用タブの▽開閉
     document.addEventListener("DOMContentLoaded", () => {    

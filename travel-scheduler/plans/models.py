@@ -1,7 +1,8 @@
 from destinations.models import Destination
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.utils import timezone
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -24,6 +25,10 @@ class Plan(models.Model):
     
     def __str__(self):
         return self.plan_name
+    
+    
+def default_expires_at():
+    return timezone.now() + timedelta(days=180)    
 
 class PlanShareMember(models.Model):
     plan = models.ForeignKey(
@@ -35,6 +40,7 @@ class PlanShareMember(models.Model):
     token = models.CharField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(default=default_expires_at)
 
     def __str__(self):
         return f"{self.plan.plan_name} - {self.member_name}"

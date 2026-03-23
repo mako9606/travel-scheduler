@@ -158,6 +158,12 @@ form.container{
     cursor: pointer;
 }
 
+.detail-edit-row{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
 /* メンバーを追加するための共有URL　モーダル */
 .share-modal {
   position: fixed;

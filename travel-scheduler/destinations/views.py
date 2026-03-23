@@ -62,6 +62,9 @@ def destination_create(request):
 def destination_edit(request, pk):    
     destination = get_object_or_404(Destination, pk=pk)
     
+    if destination.user != request.user:
+        return redirect("plans:plan_list")
+    
     lat = request.GET.get("lat")
     lng = request.GET.get("lng")
     
@@ -135,10 +138,18 @@ def destination_detail(request, pk):
         day = get_object_or_404(DaySchedule, pk=day_schedule_id)
         is_registered = day.schedules.filter(destination=destination).exists()
         
+    is_owner = request.user.is_authenticated and destination.user == request.user
+    is_shared_viewer = day and request.session.get("shared_plan_id") == day.plan.id
+
+    if not is_owner and not is_shared_viewer:
+        return redirect("plans:plan_list")
+
     return render(request, "destinations/destination_detail.html", {
         "destination": destination,
         "day": day,
         "is_registered": is_registered,
+        "is_owner": is_owner,
+        "is_shared_viewer": is_shared_viewer,
     })
 
 

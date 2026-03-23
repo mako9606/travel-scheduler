@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DetailView, DeleteView
 from django.views import View
@@ -8,7 +9,7 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Max, Sum
 from django.http import JsonResponse
-
+from django.utils import timezone
 
 from datetime import date, timedelta
 
@@ -38,8 +39,69 @@ def plan_edit(request):
 def plan_delete(request):
     return render(request, 'plans/plan_delete.html')
 
-def plan_share(request):
-    return render(request, 'plans/plan_share.html')
+
+def plan_share(request, token):
+    member = get_object_or_404(PlanShareMember, token=token)
+    plan = member.plan
+
+    is_valid = member.is_active and member.expires_at >= timezone.now()
+
+    if request.method == "POST" and is_valid:
+        action = request.POST.get("action")
+
+        if action == "login":
+            email = request.POST.get("email", "").strip()
+            password = request.POST.get("password", "")
+
+            if not email or not password:
+                return render(request, "plans/plan_share.html", {
+                    "member": member,
+                    "plan": plan,
+                    "is_valid": is_valid,
+                    "error_message": "メールアドレスとパスワードを入力してください。",
+                })
+
+            user = authenticate(request, username=email, password=password)
+
+            if user is None:
+                return render(request, "plans/plan_share.html", {
+                    "member": member,
+                    "plan": plan,
+                    "is_valid": is_valid,
+                    "error_message": "メールアドレスまたはパスワードが正しくありません。",
+                })
+
+            login(request, user)
+
+            request.session["shared_plan_id"] = plan.id
+            request.session["shared_member_id"] = member.id
+            request.session["shared_viewer_name"] = user.username
+
+            return redirect("plans:plan_detail", pk=plan.id)
+
+
+        if action == "view":
+           username = request.POST.get("username", "").strip()
+
+        if not username:
+            return render(request, "plans/plan_share.html", {
+                "member": member,
+                "plan": plan,
+                "is_valid": is_valid,
+                "error_message": "アカウント名を入力してください。",
+            })
+
+        request.session["shared_plan_id"] = plan.id
+        request.session["shared_member_id"] = member.id
+        request.session["shared_viewer_name"] = username
+
+        return redirect("plans:plan_detail", pk=plan.id) 
+        
+    return render(request, 'plans/plan_share.html', {
+        'member': member,
+        'plan': member.plan,
+        "is_valid": is_valid,
+    })
 
 # share_revoke.html
 @login_required
@@ -88,9 +150,20 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
 
 
     
-class PlanDetailView(LoginRequiredMixin, DetailView):
+class PlanDetailView(DetailView):
     model = Plan
     template_name = "plans/plan_detail.html"
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        is_owner = request.user.is_authenticated and self.object.user == request.user
+        is_shared_viewer = request.session.get("shared_plan_id") == self.object.id
+
+        if not is_owner and not is_shared_viewer:
+            return redirect("plans:plan_list")
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -181,12 +254,23 @@ class PlanDetailView(LoginRequiredMixin, DetailView):
         context["share_members"] = share_members
         context["share_status"] = "有" if share_members.exists() else "無"
         
+        is_owner = self.request.user.is_authenticated and plan.user == self.request.user
+        is_shared_viewer = self.request.session.get("shared_plan_id") == plan.id
+
+        context["is_owner"] = is_owner
+        context["is_shared_viewer"] = is_shared_viewer
+        context["shared_viewer_name"] = self.request.session.get("shared_viewer_name", "")
+        
         return context
     
     
     #メモタブ編集
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+        
+        is_owner = request.user.is_authenticated and self.object.user == request.user
+        if not is_owner:
+            return redirect("plans:plan_detail", pk=self.object.pk)
 
         if "plan_memo" in request.POST:
             self.object.memo = request.POST.get("plan_memo", "")
