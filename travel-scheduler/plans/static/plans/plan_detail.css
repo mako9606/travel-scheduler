@@ -19,6 +19,7 @@ form.container{
     margin-bottom: 0;
     gap: 0;
     -webkit-overflow-scrolling: touch;
+    border-bottom: 2px solid #ccc; /* 非選択は下線を表示する */
 }
 
 /* 各タブ */
@@ -28,7 +29,6 @@ form.container{
     padding: 12px 12px;
     background: white;
     border: 1px solid #ccc;
-    border-bottom: 2px solid #ccc; /* 非選択は下線を表示する */
     font-size: 16px;
     font-weight: bold;
     line-height: 1.3;
@@ -94,11 +94,16 @@ form.container{
 
 
 /* タブ中身　～詳細情報～ */
+
+.tab-detail{
+    padding-top: 40px;
+}
+
 .detail-row{
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 22px;
+    margin-bottom: 40px;
     gap: 16px;
 }
 
@@ -159,9 +164,14 @@ form.container{
 }
 
 .detail-edit-row{
-    display: flex;
-    justify-content: flex-end;
+    width: 100%;
     margin-top: 8px;
+    text-align: right;
+}
+
+.detail-edit-row .edit-btn{
+    display: inline-block;
+    margin-top: 0;
 }
 
 /* メンバーを追加するための共有URL　モーダル */

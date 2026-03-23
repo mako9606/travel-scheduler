@@ -1,15 +1,21 @@
-<head>
-<!-- 画面設計図　スライド11 -->
-    <title>既存プラン編集画面</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
+{% block title %}
+プラン詳細画面（詳細情報）
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
     <link rel="stylesheet" href="{% static 'plans/plan_edit.css' %}">
-</head>
+{% endblock %}
 
-<body>
+{% block header %}
+    {% include "header.html" with header_title=object.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">📋</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
 
-    <div class="page-title"></div>
-    <form method="POST" class="form-container">
+{% block content %}
+    <form method="POST" class="container">    
         {% csrf_token %}
 
         <div class="tab-menu">
@@ -89,9 +95,8 @@
 
         </div>
 
-        <a href="{% url 'plans:plan_detail' %}" class="btn">完了</a>
-        <a href="{% url 'plans:plan_delete' %}" class="delete-btn">削除</a>
+        <a href="{% url 'plans:plan_detail' plan.pk %}" class="btn">完了</a>
+        <a href="{% url 'plans:plan_delete' plan.pk %}" class="delete-btn">削除</a>
 
     </form>
-
-</body>        
+{% endblock %}  

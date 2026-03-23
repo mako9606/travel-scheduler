@@ -33,11 +33,19 @@ def plan_list(request):
         {"plans": plans}
     )
 
-def plan_edit(request):
-    return render(request, 'plans/plan_edit.html')
+@login_required
+def plan_edit(request, pk):
+    plan = get_object_or_404(Plan, pk=pk, user=request.user)
+    return render(request, 'plans/plan_edit.html', {
+        'plan': plan,
+    })
 
-def plan_delete(request):
-    return render(request, 'plans/plan_delete.html')
+@login_required
+def plan_delete(request, pk):
+    plan = get_object_or_404(Plan, pk=pk, user=request.user)
+    return render(request, 'plans/plan_delete.html', {
+        'plan': plan,
+    })
 
 
 def plan_share(request, token):
