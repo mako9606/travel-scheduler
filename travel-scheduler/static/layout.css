@@ -48,6 +48,13 @@ label {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: 480px;
+    z-index: 30;
+    box-sizing: border-box;
 }
 
 .header-title {
@@ -87,8 +94,8 @@ label {
 
   /* 画面内固定 */
    position: fixed;
-   bottom: 24px;
-   right: 24px;
+   bottom: max(24px, calc((100vh - 600px) / 2 + 24px));
+   right: max(24px, calc((100vw - 480px) / 2 + 24px));
    width: 64px;
    height: 64px;
 }
@@ -160,7 +167,7 @@ label {
 
 /* クリック・タップした瞬間 に適用される状態 */
 .edit-btn:active{
-    background-color: #ff8c3a;
+    background-color: #c8b85f;
     transform: scale(0.97);
     border: 2px solid #592d13;
 }

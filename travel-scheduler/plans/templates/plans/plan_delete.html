@@ -1,31 +1,36 @@
 <head>
 <!-- 画面設計図　スライド12 -->
-<title>プラン詳細画面（詳細情報　削除）</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>プラン詳細画面（詳細情報　削除）</title>
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'plans/plan_delete.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'plans/plan_delete.css' %}?v=2">
 
 </head>
 
-<body>
-    <div class="page-title">☆☆旅行</div>
-    
+<body>    
     <div class="modal-overlay">
+        <div class="page-title">{{ plan.plan_name }}</div>
+
         <div class="form-container modal-box">
 
-            <p class="modal-message"> "☆☆旅行”を削除しますか？</p>
+            <p class="modal-message"> "{{ plan.plan_name }}”を削除しますか？</p>
             
             <div class="delete-actions">
-                <form method="POST" action="{% url 'plans:plan_list' %}">
+                <form method="POST" action="{% url 'plans:plan_delete' plan.pk %}">
                     {% csrf_token %}
                     <button type="submit" class="btn-delete">
                         削除
                     </button>
                 </form>    
 
+                <a href="{% url 'plans:plan_edit' plan.pk %}" class="btn-cancel">戻る</a>
 
-            <a href="{% url 'plans:plan_edit' %}" class="btn-cancel">戻る</a>
+            </div>
         </div>
-    </div>
 
+    </div>
 </body>

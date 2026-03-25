@@ -36,15 +36,60 @@ def plan_list(request):
 @login_required
 def plan_edit(request, pk):
     plan = get_object_or_404(Plan, pk=pk, user=request.user)
-    return render(request, 'plans/plan_edit.html', {
-        'plan': plan,
+
+    current_year = date.today().year
+    years = range(current_year - 10, current_year + 60)
+    months = range(1, 13)
+    days = range(1, 32)
+
+    if request.method == "POST":
+        plan_name = request.POST.get("plan_name", "").strip()
+
+        start_year = request.POST.get("start_year")
+        start_month = request.POST.get("start_month")
+        start_day = request.POST.get("start_day")
+
+        end_year = request.POST.get("end_year")
+        end_month = request.POST.get("end_month")
+        end_day = request.POST.get("end_day")
+
+        if plan_name:
+            plan.plan_name = plan_name
+
+        if start_year and start_month and start_day:
+            plan.start_date = date(
+                int(start_year),
+                int(start_month),
+                int(start_day),
+            )
+
+        if end_year and end_month and end_day:
+            plan.end_date = date(
+                int(end_year),
+                int(end_month),
+                int(end_day),
+            )
+
+        plan.save()
+        return redirect("plans:plan_detail", pk=plan.pk)
+
+    return render(request, "plans/plan_edit.html", {
+        "plan": plan,
+        "years": years,
+        "months": months,
+        "days": days,
     })
 
 @login_required
 def plan_delete(request, pk):
     plan = get_object_or_404(Plan, pk=pk, user=request.user)
-    return render(request, 'plans/plan_delete.html', {
-        'plan': plan,
+
+    if request.method == "POST":
+        plan.delete()
+        return redirect("plans:plan_list")
+
+    return render(request, "plans/plan_delete.html", {
+        "plan": plan,
     })
 
 
@@ -269,6 +314,9 @@ class PlanDetailView(DetailView):
         context["is_shared_viewer"] = is_shared_viewer
         context["shared_viewer_name"] = self.request.session.get("shared_viewer_name", "")
         
+        tab_order = self.request.session.get(f"tab_order_{plan.pk}")
+        context["tab_order"] = tab_order or []
+        
         return context
     
     
@@ -281,10 +329,21 @@ class PlanDetailView(DetailView):
             return redirect("plans:plan_detail", pk=self.object.pk)
 
         if "plan_memo" in request.POST:
-            self.object.memo = request.POST.get("plan_memo", "")
+            self.object.memo = request.POST.get("plan_memo", "").strip()
             self.object.save(update_fields=["memo"])
 
         return redirect(f"{reverse('plans:plan_detail', kwargs={'pk': self.object.pk})}?memo_tab=1")
+
+# タブの順番入れ替え
+@require_POST
+@login_required
+def tab_reorder(request, pk):
+    plan = get_object_or_404(Plan, pk=pk, user=request.user)
+
+    order = request.POST.getlist("order[]")
+    request.session[f"tab_order_{plan.pk}"] = order
+
+    return JsonResponse({"status": "ok"})
 
 
 # プランの順番入れ替え

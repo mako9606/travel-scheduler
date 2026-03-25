@@ -1,48 +1,101 @@
-/* タブ全体 */
-.tab-menu{
-    display: flex;
-    margin-bottom: 0;
+form.container{
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* 各タブ */
-.tab-btn{
-    padding: 10px 14px;
+/* タブ */
+.detail-tab{
+    display: inline-block;
+    margin-top: 26px;
+    margin-left: 0;
+    margin-bottom: -1px;
+    padding: 10px 16px;
     background: white;
-    border-bottom: 2px solid #ccc;  /* 非選択は下線を表示する */
-    font-size: 14px;
-    cursor: pointer;
-    margin-right: 4px;
-}
-
-/* 各タブ   クリック・タップした瞬間 に適用される状態 */
-.tab-btn.active{
+    border: 1px solid #ccc;
+    border-bottom: none;
+    color: #592d13;
+    font-size: 16px;
     font-weight: bold;
-    border-bottom: 2px solid white;
-    z-index: 2;
+    line-height: 1.3;
+    box-sizing: border-box;
 }
 
-/* タブの中身 */
 .tab-content{
     display: none;
-    padding: 16px;
-    border: 1px solid #ccc;
-    border-top: none;
-    margin-top: -2px;
-    background-color: white;
 }
 
-/* タブの中身  クリック・タップした瞬間 に適用される状態*/
 .tab-content.active{
-    display: block;
+    display: flex;
+    flex: 1;
+    margin: 0;
+    padding: 20px 16px 16px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    flex-direction: column;
+    min-height: calc(100dvh - 48px);
 }
-
 
 .form-group{
     margin-bottom: 20px;
 }
 
+/* ラベル */
+.form-group label{
+    margin-top: 30px;
+    display: block;
+    margin-bottom: 8px;
+    color: #592d13;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+/* テキスト入力 */
+.form-group input[type="text"]{
+    width: 100%;
+    max-width: 380px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: #592d13;
+    border: 1px solid #999;
+    background: white;
+}
+
+/* 年月日の横並び */
+.date-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-row select{
+    height: 32px;
+    padding: 0 6px;
+    font-size: 16px;
+    text-align: center;
+    text-align-last: center;
+    color: #592d13;
+    border: 1px solid #999;
+    background: white;
+    box-sizing: border-box;
+    border-radius: 6px;
+}
+
+.date-row select[name$="year"]{
+    width: 74px;
+}
+
+.date-row select[name$="month"],
+.date-row select[name$="day"]{
+    width: 52px;
+}
 
 /* ボタン同士の間隔をあける　*/
-.delete-btn + .btn {
-    margin-top: 10px;
+.edit-action-buttons{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
 }

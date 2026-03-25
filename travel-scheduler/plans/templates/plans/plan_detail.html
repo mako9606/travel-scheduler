@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'layout.css' %}">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=8">
 {% endblock %}
 
 {% block header %}
@@ -23,17 +23,23 @@
         {% csrf_token %}
 
         <div class="tab-menu">
-            <button type="button" class="tab-btn" data-target=".tab-memo">メモ</button>
+            <button type="button" class="tab-btn" data-target=".tab-memo" data-tab-key="memo">メモ</button>
 
-            {% for row in schedule_rows %} 
-            <button type="button" class="tab-btn" data-target=".tab-schedule-{{ forloop.counter }}" {% if row.day %}data-day-id="{{ row.day.id }}"{% endif %}>
-                {{ row.date|date:"n/j" }}
-            </button>
+            {% for row in schedule_rows %}
+                <button
+                    type="button"
+                    class="tab-btn"
+                    data-target=".tab-schedule-{{ forloop.counter }}"
+                    {% if row.day %}data-day-id="{{ row.day.id }}"{% endif %}
+                    {% if row.day %}data-tab-key="day-{{ row.day.id }}"{% endif %}
+                >
+                    {{ row.date|date:"n/j" }}
+                </button>
             {% endfor %}
             
-            <button type="button" class="tab-btn" data-target=".tab-detail">詳細情報</button>
-            <button type="button" class="tab-btn" data-target=".tab-map">map</button>
-            <button type="button" class="tab-btn" data-target=".tab-cost">費用</button>
+            <button type="button" class="tab-btn" data-target=".tab-detail" data-tab-key="detail">詳細情報</button>
+            <button type="button" class="tab-btn" data-target=".tab-map" data-tab-key="map">map</button>
+            <button type="button" class="tab-btn" data-target=".tab-cost" data-tab-key="cost">費用</button>
         </div>    
         
         <!-- 画面設計図　スライド10 プラン詳細画面（詳細情報） -->
@@ -109,9 +115,7 @@
 
             <div class="memo-paper">
                 {% if is_owner and request.GET.memo_edit %}
-                    <textarea name="plan_memo" class="memo-textarea">
-                        {{ object.memo }}
-                    </textarea>
+                    <textarea name="plan_memo" class="memo-textarea" placeholder="メモ　入力　画面">{{ object.memo }}</textarea>
 
                     <button type="submit" class="memo-complete-btn">完了</button>
                 
@@ -120,12 +124,12 @@
                         {% if object.memo %}
                             {{ object.memo }}
                         {% else %}
-                            ・メモはありません。
+                            メモはありません。
                         {% endif %}
                     </p>
 
                     {% if is_owner %}
-                        <a href="?memo_edit=1" class="memo-edit-btn">
+                        <a href="?memo_tab=1&memo_edit=1" class="memo-edit-btn">
                             メモ編集
                         </a>
                     {% endif %}
@@ -293,7 +297,55 @@
 
     </form>
 
+    
+    {% if is_owner %}
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const tabMenu = document.querySelector('.tab-menu');
 
+                if (!tabMenu) return;
+
+                // 保存済み順で並べ直す
+                const savedOrder = [
+                    {% for key in tab_order %}
+                        "{{ key }}",
+                    {% endfor %}
+                ];
+
+                if (savedOrder.length > 0) {
+                    savedOrder.forEach((key) => {
+                        const btn = tabMenu.querySelector(`.tab-btn[data-tab-key="${key}"]`);
+                        if (btn) {
+                            tabMenu.appendChild(btn);
+                        }
+                    });
+                }
+
+                // ドラッグで並べ替え
+                new Sortable(tabMenu, {
+                    animation: 150,
+                    draggable: '.tab-btn',
+                    onEnd: function () {
+                        const formData = new FormData();
+
+                        tabMenu.querySelectorAll('.tab-btn').forEach((btn) => {
+                            formData.append('order[]', btn.dataset.tabKey);
+                        });
+
+                        fetch("{% url 'plans:tab_reorder' object.pk %}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": "{{ csrf_token }}",
+                            },
+                            body: formData,
+                        });
+                    }
+                });
+            });
+        </script>
+    {% endif %} 
+    
     <script>
         document.querySelectorAll('.tab-btn').forEach((btn) =>{
             btn.addEventListener('click', () => {
@@ -376,7 +428,7 @@
     {% if is_owner %}
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
-        <script>// 目的地の順番並び替えを有効化
+        <script>// 目的地の順番並び替え
             document.querySelectorAll('.tab-content').forEach((tab) => {
                 new Sortable(tab, {
                     animation: 150,

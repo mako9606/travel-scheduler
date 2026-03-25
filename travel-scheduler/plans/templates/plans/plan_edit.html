@@ -11,31 +11,19 @@
 {% endblock %}
 
 {% block header %}
-    {% include "header.html" with header_title=object.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">📋</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+    {% include "header.html" with header_title=plan.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">📋</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
 {% endblock %}
 
 {% block content %}
     <form method="POST" class="container">    
         {% csrf_token %}
 
-        <div class="tab-menu">
-            <button type="button" class="tab-btn" data-target=".tab-memo">メモ</button>
+        <div class="detail-tab">詳細情報</div> 
 
-            {% for day in date_list %} 
-            <button type="button" class="tab-btn {% if forloop.first %}active{% endif %}" data-target=".tab-schedule-{{ forloop.counter }}">
-                {{ day|date:"n/j" }}
-            </button>
-            {% endfor %}
-            
-            <button type="button" class="tab-btn" data-target=".tab-detail">詳細情報</button>
-            <button type="button" class="tab-btn" data-target=".tab-map">map</button>
-            <button type="button" class="tab-btn" data-target=".tab-cost">費用</button>
-        </div>  
-
-        <div class="tab-content.active">
+        <div class="tab-content active">
             <div class="form-group">
                 <label>旅行タイトル</label>
-                <input type="text" placeholder="既存の旅行タイトルを入れたい">
+                <input type="text" name="plan_name" value="{{ plan.plan_name }}">
             </div>
 
             <div class="form-group">
@@ -43,26 +31,29 @@
 
             <div class="date-row">
 
-                <select name="end_year">
+                <select name="start_year">
                     <option value="">年</option>
-                    <option>2025</option>
-                    <option>2026</option>
-                    <option>2027</option>
+                    {% for year in years %}
+                        <option value="{{ year }}" {% if year == plan.start_date.year %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
                 </select>
+                <span class="date-unit">年</span>
 
                 <select name="start_month">
                     <option value="">月</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                    {% for month in months %}
+                        <option value="{{ month }}" {% if month == plan.start_date.month %}selected{% endif %}>{{ month }}</option>
+                    {% endfor %}
                 </select>
+                <span class="date-unit">月</span>
 
                 <select name="start_day">
                     <option value="">日</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                    {% for day in days %}
+                        <option value="{{ day }}" {% if day == plan.start_date.day %}selected{% endif %}>{{ day }}</option>
+                    {% endfor %}
                 </select>
+                <span class="date-unit">日</span>
 
             </div>
 
@@ -71,32 +62,35 @@
        
                 <select name="end_year">
                     <option value="">年</option>
-                    <option>2025</option>
-                    <option>2026</option>
-                    <option>2027</option>
+                    {% for year in years %}
+                        <option value="{{ year }}" {% if year == plan.end_date.year %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
                 </select>
+                <span class="date-unit">年</span>
 
                 <select name="end_month">
                     <option value="">月</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                    {% for month in months %}
+                        <option value="{{ month }}" {% if month == plan.end_date.month %}selected{% endif %}>{{ month }}</option>
+                    {% endfor %}
                 </select>
+                <span class="date-unit">月</span>
 
                 <select name="end_day">
                     <option value="">日</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                    {% for day in days %}
+                        <option value="{{ day }}"  {% if day == plan.end_date.day %}selected{% endif %}>{{ day }}</option>
+                    {% endfor %}
                 </select>
+                <span class="date-unit">日</span>
 
             </div>
-        </div>
+        
 
-        </div>
-
-        <a href="{% url 'plans:plan_detail' plan.pk %}" class="btn">完了</a>
-        <a href="{% url 'plans:plan_delete' plan.pk %}" class="delete-btn">削除</a>
-
+            <div class="edit-action-buttons">
+                <button type="submit" class="btn">完了</button>
+                <a href="{% url 'plans:plan_delete' plan.pk %}" class="delete-btn">削除</a>
+            </div>
+        </div>    
     </form>
 {% endblock %}  
