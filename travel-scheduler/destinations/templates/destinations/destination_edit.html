@@ -30,9 +30,11 @@
         {{ form.address }}
 
         <label>MAP</label>
-        <a href="{% url 'destinations:map_destination' destination.id %}"
-            class="btn map-link">GoogleMap
-        </a>
+        {% if destination %}
+            <a href="{% url 'destinations:map_destination' destination.id %}"
+                class="btn map-link">GoogleMap
+            </a>
+        {% endif %}    
         {{ form.latitude }}
         {{ form.longitude }}
 

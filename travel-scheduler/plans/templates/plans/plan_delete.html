@@ -17,7 +17,7 @@
 
         <div class="form-container modal-box">
 
-            <p class="modal-message"> "{{ plan.plan_name }}”を削除しますか？</p>
+            <p class="modal-message"> "{{ plan.plan_name }}"を削除しますか？</p>
             
             <div class="delete-actions">
                 <form method="POST" action="{% url 'plans:plan_delete' plan.pk %}">

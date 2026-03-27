@@ -141,7 +141,71 @@
         <!-- 画面設計図　スライド18 プラン詳細画面（1日詳細）-->
         {% for row in schedule_rows %}
             <div class="tab-content tab-schedule-{{ forloop.counter }}"{% if row.day %}data-day-id="{{ row.day.id }}"{% endif %}>
-                <p>{{ row.date|date:"n/j" }}の予定</p>
+            <div class="schedule-tab-body">
+                {% if row.day %}
+                    {% for schedule in row.schedules %}
+
+                        <div class="schedule-item">
+                            <div class="schedule-time">{{ schedule.arrival_time }}</div>
+
+                            {% if is_owner %}
+                                {% if schedule.destination %}
+                                    <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
+                                        class="schedule-row" data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
+                                        <div class="schedule-card-body">
+                                            <div class="destination">
+                                                {{ schedule.destination.name }}
+                                            </div>
+                                            <div class="schedule-subtext">
+                                                {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row"
+                                        data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
+                                        <div class="schedule-card-body">
+                                            <div class="destination">目的地未設定</div>
+                                            <div class="schedule-subtext">
+                                                {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endif %}
+
+                            {% else %}
+                                {% if schedule.destination %}
+                                    <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
+                                        class="schedule-row">
+                                        <div class="schedule-card-body">
+                                            <div class="destination">{{ schedule.destination.name }}</div>
+                                            <div class="schedule-subtext">
+                                                {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% else %}
+                                    <div class="schedule-row schedule-row-empty">
+                                        <div class="schedule-card-body">
+                                            <div class="destination">目的地未設定</div>
+                                            <div class="schedule-subtext">
+                                                {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}    
+                        </div>
+
+                    {% empty %}
+                        <p class="no-schedule">予定が登録されてません</p>
+                    {% endfor %}
+                {% endif %}
+
+                {% if is_owner and row.day and row.day.id %}
+                    <a href="{% url 'destinations:destination_search' %}?day_schedule_id={{ row.day.id }}" class="destination-btn">目的地<br>検索</a>
+                    <a href="{% url 'destinations:destination_create' %}?day_schedule_id={{ row.day.id }}" class="add-btn">＋</a>
+                {% endif %}
 
                 <div class="schedule-memo">
                     <p class="memo-text">
@@ -157,62 +221,9 @@
                             メモ編集
                         </a>
                     {% endif %} 
+
                 </div>
-            
-                {% if row.day %}
-                    {% for schedule in row.schedules %}
-
-                        {% if is_owner %}
-                            {% if schedule.destination %}
-                                <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
-                                    class="schedule-row" data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
-                            {% else %}
-                                <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row"
-                                    data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
-                            {% endif %}    
-
-                                <span class="time">
-                                    {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
-                                </span>
-                        
-                                <span class="destination">
-                                    {% if schedule.destination %}
-                                        {{ schedule.destination.name }}
-                                    {% else %}
-                                        目的地未設定
-                                    {% endif %}
-                                </span>
-                            </a>
-                        
-                        {% else %}
-                            {% if schedule.destination %}
-                                <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}"
-                                    class="schedule-row">
-                                    <span class="time">
-                                        {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
-                                    </span>
-
-                                    <span class="destination">{{ schedule.destination.name }}</span>
-                                </a>
-                            {% else %}
-                                <div class="schedule-row">
-                                    <span class="time">
-                                        {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
-                                    </span>
-
-                                    <span class="destination">目的地未設定</span>
-                                </div>
-                            {% endif %}
-                        {% endif %}    
-
-                    {% empty %}
-                        <p class="no-schedule">予定はありません。</p>
-                    {% endfor %}
-                {% endif %}
-
-                {% if is_owner and row.day and row.day.id %}
-                    <a href="{% url 'destinations:destination_search' %}?day_schedule_id={{ row.day.id }}" class="destination-btn">目的地検索</a>
-                {% endif %}
+            </div>
             </div>
         {% endfor %}
 

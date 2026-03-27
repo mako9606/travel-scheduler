@@ -1,22 +1,31 @@
 <head>
 <!-- 画面設計図　スライド27 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>プラン詳細画面（１日詳細　メモ編集）</title>
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'plans/schedule_memo.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'plans/schedule_memo.css' %}?v=7">
 </head>
 
 <body>
     <div class="page-title">{{ plan.plan_name }}</div>
-    <form method="POST" class="form-container">
+    <form method="POST" class="container">
         {% csrf_token %}
 
-        <textarea name="memo" class="memo-area">
-            {{ day.memo }}
-        </textarea>
+        <div class="tab-menu schedule-memo-tab-menu">
+            <div class="tab-btn active">
+                {{ day.date|date:"n/j" }}
+            </div>
+        </div>
 
-        <button type="submit" class="btn">完了</button>
+        <div class="memo-paper">
+            <textarea name="memo" class="memo-textarea" placeholder="メモ　入力　画面">{{ day.memo }}</textarea>
+
+            <button type="submit" class="btn">完了</button>
+        </div>
 
     </form>
 
-</body>     
+</body>

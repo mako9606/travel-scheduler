@@ -576,6 +576,7 @@ def schedule_reorder(request):
     
 def schedule_memo(request, day_id):
     day = get_object_or_404(DaySchedule, pk=day_id)
+    plan = day.plan
 
     if request.method == "POST":
         day.memo = request.POST.get("memo", "")
@@ -587,6 +588,6 @@ def schedule_memo(request, day_id):
         "plans/schedule_memo.html",
         {
             "day": day,
-            "plan": day.plan,
+            "plan": plan,
         }
     )
