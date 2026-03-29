@@ -1,51 +1,66 @@
-<head>
-<!-- 画面設計図　スライド25 -->
-    <title>目的地詳細画面</title>
+<!-- 画面設計図　スライド21 27 既存プラン詳細画面 -->
+<div class="modal-overlay">
+    
+    <div class="modal-box">
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}">
-</head>
+        <div class="container">
 
-<body>
+            <button type="button" class="modal-close" onclick="history.back()">×</button>
 
-    <div class="page-title">目的地詳細画面</div>
-    <div class="modal-overlay">
-        <div class="modal-box">
+            <p class="destination-name">{{ destination.name }}</p>
 
-            <div class="form-container">
-
-                <button type="button" class="modal-close" onclick="history.back()">×</button>
-
-                <label>営業時間</label>
-                <p>{{ destination.open_time }} ～ {{ destination.close_time }}</p>
-
-                <label>定休日</label>
-                <p>{{ destination.closed_days }}</p>
-
-                <label>駐車場</label>
-                <p>{{ destination.parking }}</p>
-
-                <label>入場料</label>
-                <p>{{ destination.price }} 円</p>
-
-                {% if is_owner %}
-                    {% if day and is_registered %} <!-- 1日詳細タブの詳細画面を見た時のボタン -->
-                        <a href="{% url 'destinations:destination_edit' destination.id %}">編集</a>
-                    
-                    {% elif day and not is_registered %} <!-- プラン内の目的地検索画面→詳細画面を見た時のボタン -->
-                        <a href="{% url 'destinations:destination_edit' destination.id %}?day_schedule_id={{ day.id }}" class="edit-btn">
-                            編集
-                        </a>
-                        <a href="{% url 'plans:schedule_create' %}?day_schedule_id={{ day.id }}&destination_id={{ destination.id }}" class="btn">
-                            予定に設定
-                        </a>
-                    {% else %} <!-- プラン外の目的地検索画面→詳細画面を見た時のボタン -->
-                        <a href="{% url 'destinations:destination_edit' destination.id %}">編集</a>
-                    {% endif %}
-                {% endif %}
+            <div class="detail-row">
+                <label>住所</label>
+                <p>{{ destination.address }}</p>
             </div>
 
-        </div>    
-    </div>
+            <div class="detail-row">
+                <label>営業時間</label>
+                <p>{{ destination.open_at }} ～ {{ destination.close_at }}</p>
+            </div>
 
-</body>    
+            <div class="detail-row">
+                <label>定休日</label>
+                <p>{{ destination.closed_day }}</p>
+            </div>
+
+            <div class="detail-row">
+                <label>駐車場</label>
+                <p>{{ destination.parking }}</p>
+            </div>
+
+            <div class="detail-row">
+                <label>入場料</label>
+                <p>{{ destination.price }} 円</p>
+            </div>
+
+            <div class="detail-row">    
+                <label>リンク</label>
+                <p>{{ destination.url }}</p>
+            </div>
+
+            <div class="detail-row">    
+                <label>メモ</label>
+                <p>{{ destination.memo }}</p>
+            </div>
+            
+            {% if is_owner %}
+                {% if day and is_registered %} <!-- 1日詳細タブの詳細画面を見た時のボタン -->
+                    <a href="{% url 'destinations:destination_edit' destination.id %}" class="small-edit-btn">編集</a>
+                    
+                {% elif day and not is_registered %} <!-- プラン内の目的地検索画面→詳細画面を見た時のボタン -->
+                    <a href="{% url 'destinations:destination_edit' destination.id %}?day_schedule_id={{ day.id }}" class="small-edit-btn">
+                        編集
+                    </a>
+                    <a href="{% url 'plans:schedule_create' %}?day_schedule_id={{ day.id }}&destination_id={{ destination.id }}" class="btn">
+                        予定に設定
+                    </a>
+                {% else %} <!-- プラン外の目的地検索画面→詳細画面を見た時のボタン -->
+                    <a href="{% url 'destinations:destination_edit' destination.id %}" class="small-edit-btn">編集</a>
+                {% endif %}
+            {% endif %}
+
+        </div>
+
+    </div>    
+</div>

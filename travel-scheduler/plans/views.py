@@ -317,6 +317,32 @@ class PlanDetailView(DetailView):
         tab_order = self.request.session.get(f"tab_order_{plan.pk}")
         context["tab_order"] = tab_order or []
         
+        destination_modal = None
+        destination_modal_day = None
+        destination_modal_is_registered = False
+
+        destination_modal_id = self.request.GET.get("destination_modal_id")
+        day_schedule_id = self.request.GET.get("day_schedule_id")
+
+        if destination_modal_id:
+            destination_modal = Destination.objects.filter(pk=destination_modal_id).first()
+
+        if day_schedule_id:
+            destination_modal_day = DaySchedule.objects.filter(
+                pk=day_schedule_id,
+                plan=plan
+            ).first()
+
+        if destination_modal and destination_modal_day:
+            destination_modal_is_registered = Schedule.objects.filter(
+                day=destination_modal_day,
+                destination=destination_modal
+            ).exists()
+
+        context["destination_modal"] = destination_modal
+        context["destination_modal_day"] = destination_modal_day
+        context["destination_modal_is_registered"] = destination_modal_is_registered
+        
         return context
     
     

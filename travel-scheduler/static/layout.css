@@ -151,7 +151,7 @@ label {
     border: 2px solid #592d13;
 }
 
-/* 編集ボタン */
+/* 編集ボタン 大 */
 .edit-btn{
    padding: 10px 20px;
    text-decoration: none;
@@ -167,6 +167,28 @@ label {
 
 /* クリック・タップした瞬間 に適用される状態 */
 .edit-btn:active{
+    background-color: #c8b85f;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
+
+/* 編集ボタン 小 */
+.small-edit-btn{
+   padding: 8px 16px;
+   text-decoration: none;
+   display: block;
+   background-color: #dccf7fff; 
+   border: 2px solid #592d13;
+   color: #592d13;
+   border-radius: 5px;
+   font-size: 14px;
+   font-weight: bold;
+   margin-top: 12px;
+   width: fit-content;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.small-edit-btn:active{
     background-color: #c8b85f;
     transform: scale(0.97);
     border: 2px solid #592d13;

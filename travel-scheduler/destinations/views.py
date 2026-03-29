@@ -131,26 +131,23 @@ def destination_detail(request, pk):
     destination = get_object_or_404(Destination, pk=pk)
 
     day = None
-    is_registered = False
-
     day_schedule_id = request.GET.get("day_schedule_id")
     if day_schedule_id:
         day = get_object_or_404(DaySchedule, pk=day_schedule_id)
-        is_registered = day.schedules.filter(destination=destination).exists()
-        
+
     is_owner = request.user.is_authenticated and destination.user == request.user
     is_shared_viewer = day and request.session.get("shared_plan_id") == day.plan.id
 
     if not is_owner and not is_shared_viewer:
         return redirect("plans:plan_list")
 
-    return render(request, "destinations/destination_detail.html", {
-        "destination": destination,
-        "day": day,
-        "is_registered": is_registered,
-        "is_owner": is_owner,
-        "is_shared_viewer": is_shared_viewer,
-    })
+    if not day:
+        return redirect("plans:plan_list")
+
+    return redirect(
+        f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}"
+        f"?day_schedule_id={day.id}&destination_modal_id={destination.id}"
+    )
 
 
 #  map_destination.html

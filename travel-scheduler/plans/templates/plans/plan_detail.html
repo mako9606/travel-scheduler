@@ -8,6 +8,7 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
 <link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=8">
+<link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=3">
 {% endblock %}
 
 {% block header %}
@@ -226,6 +227,10 @@
             </div>
             </div>
         {% endfor %}
+
+        {% if destination_modal %}
+            {% include "destinations/destination_detail.html" with destination=destination_modal day=destination_modal_day is_registered=destination_modal_is_registered %}
+        {% endif %}
 
 
         <!-- 画面設計図　スライド29 プラン詳細画面（MAP）-->

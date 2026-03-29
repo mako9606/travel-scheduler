@@ -8,6 +8,10 @@ class DestinationForm(forms.ModelForm):
         fields = [
             "name",
             "address",
+            "url",
+            "open_at",
+            "close_at",
+            "closed_day",   
             "latitude",
             "longitude",
             "memo",
