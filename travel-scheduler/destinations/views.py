@@ -36,6 +36,10 @@ def destination_create(request):
         if form.is_valid():
             destination = form.save(commit=False)
             destination.user = request.user
+
+            closed_days = request.POST.getlist("closed_day")
+            destination.closed_day = ",".join(closed_days)
+
             destination.save()
             
             return redirect(
@@ -76,6 +80,10 @@ def destination_edit(request, pk):
         if form.is_valid():
             destination = form.save(commit=False)
             destination.user = request.user
+
+            closed_days = request.POST.getlist("closed_day")
+            destination.closed_day = ",".join(closed_days)
+
             destination.save()
         
             if day:

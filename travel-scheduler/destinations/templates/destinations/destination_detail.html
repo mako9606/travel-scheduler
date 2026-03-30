@@ -16,27 +16,75 @@
 
             <div class="detail-row">
                 <label>営業時間</label>
-                <p>{{ destination.open_at }} ～ {{ destination.close_at }}</p>
+                <p>
+                    {% if destination.open_at %}
+                        {{ destination.open_at|time:"G:i" }}
+                    {% else %}
+                        ー
+                    {% endif %}
+                    ～
+                    {% if destination.close_at %}
+                        {{ destination.close_at|time:"G:i" }}
+                    {% else %}
+                        ー
+                    {% endif %}
+</p>
             </div>
 
             <div class="detail-row">
                 <label>定休日</label>
-                <p>{{ destination.closed_day }}</p>
+                <p>
+                    {% if destination.closed_day %}
+                        {% if "mon" in destination.closed_day %}月{% endif %}
+                        {% if "tue" in destination.closed_day %}{% if "mon" in destination.closed_day %},{% endif %}火{% endif %}
+                        {% if "wed" in destination.closed_day %}
+                            {% if "mon" in destination.closed_day or "tue" in destination.closed_day %},{% endif %}水
+                        {% endif %}
+                        {% if "thu" in destination.closed_day %}
+                            {% if "mon" in destination.closed_day or "tue" in destination.closed_day or "wed" in destination.closed_day %},{% endif %}木
+                        {% endif %}
+                        {% if "fri" in destination.closed_day %}
+                            {% if "mon" in destination.closed_day or "tue" in destination.closed_day or "wed" in destination.closed_day or "thu" in destination.closed_day %},{% endif %}金
+                        {% endif %}
+                        {% if "sat" in destination.closed_day %}
+                            {% if "mon" in destination.closed_day or "tue" in destination.closed_day or "wed" in destination.closed_day or "thu" in destination.closed_day or "fri" in destination.closed_day %},{% endif %}土
+                        {% endif %}
+                        {% if "sun" in destination.closed_day %}
+                            {% if "mon" in destination.closed_day or "tue" in destination.closed_day or "wed" in destination.closed_day or "thu" in destination.closed_day or "fri" in destination.closed_day or "sat" in destination.closed_day %},{% endif %}日
+                        {% endif %}
+                    {% else %}
+                        ー
+                    {% endif %}
+                </p>
             </div>
 
             <div class="detail-row">
                 <label>駐車場</label>
-                <p>{{ destination.parking }}</p>
+                <p>
+                    {% if destination.parking_available %}有{% else %}無{% endif %}
+                    {% if destination.parking_fee %}　{{ destination.parking_fee }}円{% endif %}
+                </p>
             </div>
 
             <div class="detail-row">
                 <label>入場料</label>
-                <p>{{ destination.price }} 円</p>
+                <p>
+                    {% if destination.admission_available %}有{% else %}無{% endif %}
+                    {% if destination.admission_fee %}　{{ destination.admission_fee }}円{% endif %}
+                </p>
             </div>
 
             <div class="detail-row">    
                 <label>リンク</label>
-                <p>{{ destination.url }}</p>
+                <p>
+                    {% if destination.url %}
+                        <a href="{{ destination.url }}" target="_blank" rel="noopener noreferrer">
+                            {{ destination.url }}
+                        </a>
+                    {% else %}
+                        
+                    {% endif %}
+                </p>
             </div>
 
             <div class="detail-row">    

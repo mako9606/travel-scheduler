@@ -44,31 +44,31 @@
         <label>定休日</label>
         <div class="select-buttons">
 
-            <input type="checkbox" name="closed_days" id="mon" value="mon"
+            <input type="checkbox" name="closed_day" id="mon" value="mon"
                 {% if destination and 'mon' in destination.closed_day %}checked{% endif %}>
             <label for="mon" class="select-btn">月</label>
 
-            <input type="checkbox" name="closed_days" id="tue" value="tue"
+            <input type="checkbox" name="closed_day" id="tue" value="tue"
                 {% if destination and 'tue' in destination.closed_day %}checked{% endif %}>
             <label for="tue" class="select-btn">火</label>
 
-            <input type="checkbox" name="closed_days" id="wed" value="wed"
+            <input type="checkbox" name="closed_day" id="wed" value="wed"
                 {% if destination and 'wed' in destination.closed_day %}checked{% endif %}>
             <label for="wed" class="select-btn">水</label>
 
-            <input type="checkbox" name="closed_days" id="thu" value="thu"
+            <input type="checkbox" name="closed_day" id="thu" value="thu"
                 {% if destination and 'thu' in destination.closed_day %}checked{% endif %}>
             <label for="thu" class="select-btn">木</label>
 
-            <input type="checkbox" name="closed_days" id="fri" value="fri"
+            <input type="checkbox" name="closed_day" id="fri" value="fri"
                 {% if destination and 'fri' in destination.closed_day %}checked{% endif %}>
             <label for="fri" class="select-btn">金</label>
 
-            <input type="checkbox" name="closed_days" id="sat" value="sat"
+            <input type="checkbox" name="closed_day" id="sat" value="sat"
                 {% if destination and 'sat' in destination.closed_day %}checked{% endif %}>
             <label for="sat" class="select-btn">土</label>
 
-            <input type="checkbox" name="closed_days" id="sun" value="sun"
+            <input type="checkbox" name="closed_day" id="sun" value="sun"
             {% if destination and 'sun' in destination.closed_day %}checked{% endif %}>
             <label for="sun" class="select-btn">日</label>
 
@@ -77,37 +77,37 @@
 
         <label>営業時間</label>
         <div class="time-range">
-            <input type="time" name="open_time" value="{{ destination.open_time|default:'' }}">
+            <input type="time" name="open_at" value="{{ destination.open_at|default:'' }}">
             <span>〜</span>
-            <input type="time" name="close_time" value="{{ destination.close_time|default:'' }}">
+            <input type="time" name="close_at" value="{{ destination.close_at|default:'' }}">
         </div>
 
         <label>駐車場</label>
         <div class="select-buttons">
-            <input type="radio" name="parking_type" id="parking_yes" value="yes"
-                {% if destination.parking == 'yes' %}checked{% endif %}>
+            <input type="radio" name="parking_available" id="parking_yes" value="True"
+                {% if destination and destination.parking_available %}checked{% endif %}>
             <label for="parking_yes" class="select-btn">有</label>
 
-            <input type="radio" name="parking_type" id="parking_no" value="no"
-                {% if destination.parking == 'no' %}checked{% endif %}>
+            <input type="radio" name="parking_available" id="parking_no" value="False"
+                {% if destination and not destination.parking_available %}checked{% endif %}>
             <label for="parking_no" class="select-btn">無</label>
         </div>
-        <input type="text" name="parking" placeholder="金額 入力" value="{{ destination.parking|default:'' }}"><p>円</p>
+        <input type="text" name="parking_fee" placeholder="金額 入力"value="{{ destination.parking_fee|default:'' }}">円
 
         <label>入場料</label>
         <div class="select-buttons">
-            <input type="radio" name="ticket_type" id="ticket_yes" value="yes"
-                {% if destination.ticket == 'yes' %}checked{% endif %}>
+            <input type="radio" name="admission_available" id="ticket_yes" value="True"
+                {% if destination and destination.admission_available %}checked{% endif %}>
             <label for="ticket_yes" class="select-btn">有</label>
 
-            <input type="radio" name="ticket_type" id="ticket_no" value="no"
-                {% if destination.ticket == 'no' %}checked{% endif %}>
+            <input type="radio" name="admission_available" id="ticket_no" value="False"
+                {% if destination and not destination.admission_available %}checked{% endif %}>
             <label for="ticket_no" class="select-btn">無</label>
         </div>
-        <input type="text" name="ticket" placeholder="金額 入力" value="{{ destination.ticket|default:'' }}"><p>円</p>
+        <input type="text" name="admission_fee" placeholder="金額 入力" value="{{ destination.admission_fee|default:'' }}">円
 
         <label>リンク</label>
-        <input type="text" name="rink" placeholder="入力" value="{{ destination.link|default:'' }}">
+        <input type="text"  name="url" placeholder="入力" value="{{ destination.url|default:'' }}">
 
         <label>メモ</label>
         {{ form.memo }}
