@@ -42,9 +42,20 @@ def destination_create(request):
 
             destination.save()
             
-            return redirect(
-                f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
-            )
+            action = request.POST.get("action")
+
+            if action == "save_and_set" and day:
+                return redirect(
+                    reverse("plans:schedule_create")
+                    + f"?day_schedule_id={day.id}&destination_id={destination.id}"
+                )
+
+            if day:
+                return redirect(
+                    f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
+                )
+
+            return redirect("destinations:destination_search")
     
     else:
         form = DestinationForm(initial={
@@ -86,14 +97,20 @@ def destination_edit(request, pk):
 
             destination.save()
         
-            if day:
-                # プラン内
+            action = request.POST.get("action")
+
+            if action == "save_and_set" and day:
                 return redirect(
                     reverse("plans:schedule_create")
                     + f"?day_schedule_id={day.id}&destination_id={destination.id}"
                 )
 
-                # プラン外　→　検索画面に遷移
+            if day: # プラン内
+                return redirect(
+                    f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
+                )
+
+            # プラン外　→　検索画面に遷移
             return redirect("destinations:destination_search")
     
     else:

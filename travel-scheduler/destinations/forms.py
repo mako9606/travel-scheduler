@@ -23,6 +23,9 @@ class DestinationForm(forms.ModelForm):
         widgets = {
             "latitude": forms.HiddenInput(),
             "longitude": forms.HiddenInput(),
+            "name": forms.TextInput(attrs={"placeholder": "目的地名　入力"}),
+            "address": forms.TextInput(attrs={"placeholder": "住所　入力"}),
+            "memo": forms.Textarea(attrs={"placeholder": "入力"}),
         }
         
 

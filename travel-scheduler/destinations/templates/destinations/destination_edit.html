@@ -1,21 +1,28 @@
-<head>
-<!-- 画面設計図　スライド20 -->
-    <title>目的地設定・編集　画面</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}">
-</head>
+{% block title %}
+目的地設定・編集　画面
+{% endblock %}
 
-<body>
-    <div class="page-title"></div>
-    <form method="POST"
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=7">
+{% endblock %}
+
+{% block header %}
+    {% include "header.html" with header_title="" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
+
+{% block content %} 
+    <form id="destination-form"
+        method="POST"
         action="{% if destination %}
                     {% url 'destinations:destination_edit' destination.id %}
                 {% else %}
                     {% url 'destinations:destination_create' %}
                 {% endif %}"
-        class="form-container">
-        
+        class="container">
         {% csrf_token %}
 
         {% if day %}
@@ -31,15 +38,15 @@
 
         <label>MAP</label>
         {% if destination %}
-            <a href="{% url 'destinations:map_destination' destination.id %}"
-                class="btn map-link">GoogleMap
+            <a href="{% url 'destinations:map_destination' destination.id %}"class="btn map-link">
+                GoogleMap
             </a>
+        {% else %}
+            <a href="#" class="btn map-link">GoogleMap</a>   
         {% endif %}    
         {{ form.latitude }}
         {{ form.longitude }}
 
-        <p>lat: {{ form.latitude.value }}</p>
-        <p>lng: {{ form.longitude.value }}</p>
 
         <label>定休日</label>
         <div class="select-buttons">
@@ -92,7 +99,10 @@
                 {% if destination and not destination.parking_available %}checked{% endif %}>
             <label for="parking_no" class="select-btn">無</label>
         </div>
-        <input type="text" name="parking_fee" placeholder="金額 入力"value="{{ destination.parking_fee|default:'' }}">円
+        <div class="fee-row">
+            <input type="text" name="parking_fee" placeholder="金額 入力" value="{{ destination.parking_fee|default:'' }}">
+            <span class="yen-label">円</span>
+        </div>
 
         <label>入場料</label>
         <div class="select-buttons">
@@ -104,7 +114,10 @@
                 {% if destination and not destination.admission_available %}checked{% endif %}>
             <label for="ticket_no" class="select-btn">無</label>
         </div>
-        <input type="text" name="admission_fee" placeholder="金額 入力" value="{{ destination.admission_fee|default:'' }}">円
+        <div class="fee-row">
+            <input type="text" name="admission_fee" placeholder="金額 入力" value="{{ destination.admission_fee|default:'' }}">
+            <span class="yen-label">円</span>
+        </div>
 
         <label>リンク</label>
         <input type="text"  name="url" placeholder="入力" value="{{ destination.url|default:'' }}">
@@ -112,25 +125,28 @@
         <label>メモ</label>
         {{ form.memo }}
 
-        <button type="submit" class="btn">完了</button>
     </form>
 
-    <!-- 削除 -->
-    {% if destination %}
-    <form method="POST" action="{% url 'destinations:destination_delete' destination.id %}">
-        {% csrf_token %}
-        {% if day %}
-            <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
+    <div class="button-row container">
+        <div class="main-buttons">
+            <button type="submit" name="action" value="save" class="btn" form="destination-form">完了</button>
+        
+            {% if day %}
+                <button type="submit" name="action" value="save_and_set" class="btn" form="destination-form">予定に設定</button>
+            {% endif %}
+        </div>
+
+        <!-- 削除 -->
+        {% if destination %}
+        <form method="POST"
+            action="{% url 'destinations:destination_delete' destination.id %}"
+            class="delete-form edit-delete">
+            {% csrf_token %}
+            {% if day %}
+                <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
+            {% endif %}
+            <button type="submit" class="delete-btn">削除</button>
+        </form>
         {% endif %}
-        <button type="submit" class="delete-btn">削除</button>
-    </form>
-    {% endif %}
-
-    <!-- 予定に設定 -->
-    {% if day and destination %}
-        <a href="{% url 'plans:schedule_create' %}?day_schedule_id={{ day.id }}&destination_id={{ destination.id }}"
-           class="btn">
-            予定に設定
-        </a>
-    {% endif %}
-</body>
+    </div>
+{% endblock %}

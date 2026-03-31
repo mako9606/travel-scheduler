@@ -13,7 +13,7 @@
 
 {% block header %}
     {% if is_owner %}
-        {% include "header.html" with header_title=object.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">📋</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+        {% include "header.html" with header_title=object.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
     {% else %}
         {% include "header.html" with header_title=object.plan_name header_icons='' %}
     {% endif %}
