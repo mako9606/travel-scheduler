@@ -229,7 +229,7 @@
         {% endfor %}
 
         {% if destination_modal %}
-            {% include "destinations/destination_detail.html" with destination=destination_modal day=destination_modal_day is_registered=destination_modal_is_registered %}
+            {% include "destinations/destination_detail.html" with destination=destination_modal day=destination_modal_day is_registered=destination_modal_is_registered is_owner=is_owner source="plan_detail" %}
         {% endif %}
 
 

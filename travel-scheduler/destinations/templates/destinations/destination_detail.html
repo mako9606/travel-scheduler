@@ -97,7 +97,7 @@
                     <a href="{% url 'destinations:destination_edit' destination.id %}" class="small-edit-btn">編集</a>
                     
                 {% elif day and not is_registered %} <!-- プラン内の目的地検索画面→詳細画面を見た時のボタン -->
-                    <a href="{% url 'destinations:destination_edit' destination.id %}?day_schedule_id={{ day.id }}" class="small-edit-btn">
+                    <a href="{% url 'destinations:destination_edit' destination.id %}?day_schedule_id={{ day.id }}{% if source == 'search' %}&from=search{% endif %}" class="small-edit-btn">
                         編集
                     </a>
                     <a href="{% url 'plans:schedule_create' %}?day_schedule_id={{ day.id }}&destination_id={{ destination.id }}" class="btn">

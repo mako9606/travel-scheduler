@@ -1,49 +1,48 @@
-<head>
-<!-- 画面設計図　スライド24 -->
-    <title>目的地検索画面</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}">
-</head>
+{% block title %}
+目的地検索画面
+{% endblock %}
 
-<body>
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=2">
+{% endblock %}
 
-    <div class="page-title">目的地検索</div>
+{% block header %}
+    {% include "header.html" with header_title="目的地検索" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
 
-    <form method="GET" class="form-container"
+{% block content %} 
+    <form method="GET" class="destination-search-form"
         action="{% url 'destinations:destination_search' %}">
-        {% csrf_token %}
 
         {% if day %}
             <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
         {% endif %}
 
-        <input type="text" name="q" placeholder="目的地名 入力" value="{{ q }}">
-        <button type="submit" class="search-btn">検索</button>
+        <div class="search-row">
+            <input type="text" name="q" placeholder="目的地名 入力" value="{{ q }}">
+            <button type="submit" class="search-btn">検索</button>
+        </div>
 
              {% if q %}
                 {% if destinations %}
-                    <ul>
+                    <div class="search-result-list">
                         {% for d in destinations %}
-                            <li>
-                                {% if day %}
-                                    <a href="{% url 'destinations:destination_detail' d.id %}?day_schedule_id={{ day.id }}">
-                                        {{ d.name }}
-                                    </a>
-
-                                {% else %}
-                                    <a href="{% url 'destinations:destination_detail' d.id %}">
-                                        {{ d.name }}
-                                    </a>
-
-                                {% endif %}
-                            </li>
+                            <a class="search-result-item"
+                                href="{% url 'destinations:destination_detail' d.id %}{% if day %}?day_schedule_id={{ day.id }}&from=search{% else %}?from=search{% endif %}">
+                                <p class="search-result-name">{{ d.name }}</p>
+                                <p class="search-result-address">{{ d.address }}</p>
+                            </a>
                         {% endfor %}
-                    </ul>
+                    </div>
                 {% else %}
-                    <p>目的地がありません</p>
+                    <p class="empty-message">目的地がありません</p>
                 {% endif %}
             {% endif %}
+
             {% if day %} <!-- プラン内：目的地を追加 -->
                 <a href="{% url 'destinations:destination_create' %}?day_schedule_id={{ day.id }}" class="add-btn">＋</a>
             {% else %} <!-- プラン外：目的地を追加 -->
@@ -51,4 +50,9 @@
             {% endif %}
 
     </form>
-</body> 
+
+    {% if modal_destination %}
+        {% include "destinations/destination_detail.html" with destination=modal_destination day=day is_owner=is_owner is_registered=False source="search" %}
+    {% endif %}
+
+{% endblock %}

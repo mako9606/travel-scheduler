@@ -12,14 +12,29 @@ def destination_search(request):
 
     if day_schedule_id:
         day = get_object_or_404(DaySchedule, pk=day_schedule_id)
-
+        
     q = request.GET.get("q", "")
     destinations = Destination.objects.filter(name__icontains=q) if q else []
+
+    destination_modal_id = request.GET.get("destination_modal_id")
+    modal_destination = None
+    if destination_modal_id:
+        modal_destination = get_object_or_404(Destination, pk=destination_modal_id)
+
+    if day:
+        is_owner = request.user.is_authenticated and day.plan.user == request.user
+        is_shared_viewer = request.session.get("shared_plan_id") == day.plan.id
+    else:
+        is_owner = request.user.is_authenticated
+        is_shared_viewer = False
 
     return render(request, "destinations/destination_search.html", {
         "day": day,
         "q": q,
         "destinations": destinations,
+        "modal_destination": modal_destination,
+        "is_owner": is_owner,
+        "is_shared_viewer": is_shared_viewer,
     })
 
 
@@ -44,15 +59,10 @@ def destination_create(request):
             
             action = request.POST.get("action")
 
-            if action == "save_and_set" and day:
+            if day:
                 return redirect(
                     reverse("plans:schedule_create")
                     + f"?day_schedule_id={day.id}&destination_id={destination.id}"
-                )
-
-            if day:
-                return redirect(
-                    f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
                 )
 
             return redirect("destinations:destination_search")
@@ -84,6 +94,7 @@ def destination_edit(request, pk):
     lng = request.GET.get("lng")
     
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
+    from_page = request.GET.get("from") or request.POST.get("from")
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
 
     if request.method == "POST":
@@ -97,21 +108,16 @@ def destination_edit(request, pk):
 
             destination.save()
         
-            action = request.POST.get("action")
-
-            if action == "save_and_set" and day:
-                return redirect(
-                    reverse("plans:schedule_create")
-                    + f"?day_schedule_id={day.id}&destination_id={destination.id}"
-                )
-
             if day: # プラン内
-                return redirect(
-                    f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
-                )
+                url = reverse("destinations:destination_detail", kwargs={"pk": destination.id}) + f"?day_schedule_id={day.id}"
+                if from_page == "search":
+                    url += "&from=search"
+                return redirect(url)
 
             # プラン外　→　検索画面に遷移
-            return redirect("destinations:destination_search")
+            return redirect(
+                reverse("destinations:destination_detail", kwargs={"pk": destination.id})
+            )
     
     else:
         if lat and lng:
@@ -132,6 +138,7 @@ def destination_edit(request, pk):
             "form": form,
             "destination": destination,
             "day": day,
+            "from_page": from_page,
         }
     )
 
@@ -159,21 +166,31 @@ def destination_detail(request, pk):
     day_schedule_id = request.GET.get("day_schedule_id")
     if day_schedule_id:
         day = get_object_or_404(DaySchedule, pk=day_schedule_id)
+        
+    from_page = request.GET.get("from")    
 
     is_owner = request.user.is_authenticated and destination.user == request.user
     is_shared_viewer = day and request.session.get("shared_plan_id") == day.plan.id
 
     if not is_owner and not is_shared_viewer:
         return redirect("plans:plan_list")
+    
+    if from_page == "search":
+        url = reverse("destinations:destination_search") + f"?destination_modal_id={destination.id}"
+        if day:
+            url += f"&day_schedule_id={day.id}"
+        return redirect(url)
 
-    if not day:
-        return redirect("plans:plan_list")
+    if day:
+        return redirect(
+            f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}"
+            f"?day_schedule_id={day.id}&destination_modal_id={destination.id}"
+        )
 
     return redirect(
-        f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}"
-        f"?day_schedule_id={day.id}&destination_modal_id={destination.id}"
+        f"{reverse('destinations:destination_search')}"
+        f"?destination_modal_id={destination.id}"
     )
-
 
 #  map_destination.html
 def map_destination(request, pk):

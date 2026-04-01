@@ -29,6 +29,9 @@
             <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
         {% endif %}
 
+        {% if from_page %}
+            <input type="hidden" name="from" value="{{ from_page }}">
+        {% endif %}
 
         <label>目的地名</label>
         {{ form.name }}
