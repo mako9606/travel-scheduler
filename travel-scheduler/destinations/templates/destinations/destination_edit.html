@@ -145,15 +145,15 @@
 
         <!-- 削除 -->
         {% if destination %}
-        <form method="POST"
-            action="{% url 'destinations:destination_delete' destination.id %}"
-            class="delete-form edit-delete">
-            {% csrf_token %}
             {% if day %}
-                <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
+                <a href="{% url 'destinations:destination_delete' destination.id %}?day_schedule_id={{ day.id }}{% if from_page %}&from={{ from_page }}{% endif %}{% if schedule_id %}&schedule_id={{ schedule_id }}{% endif %}" class="delete-btn">
+                    削除
+                </a>
+            {% else %}
+                <a href="{% url 'destinations:destination_delete' destination.id %}{% if from_page or schedule_id %}?{% endif %}{% if from_page %}from={{ from_page }}{% endif %}{% if from_page and schedule_id %}&{% endif %}{% if schedule_id %}schedule_id={{ schedule_id }}{% endif %}" class="delete-btn">
+                    削除
+                </a>
             {% endif %}
-            <button type="submit" class="delete-btn">削除</button>
-        </form>
         {% endif %}
     </div>
 {% endblock %}

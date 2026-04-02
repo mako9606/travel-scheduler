@@ -7,17 +7,17 @@
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'destinations/destination_delete.css' %}">
+    <link rel="stylesheet" href="{% static 'destinations/destination_delete.css' %}?v=1">
 
 </head>
 
 <body>
-    <div class="page-title"></div>
+    <div class="page-title">{{ destination.name }}</div>
     
     <div class="modal-overlay">
         <div class="form-container modal-box">
 
-            <p class="modal-message"> "目的地"を削除しますか？</p>
+            <p class="modal-message"> "{{ destination.name }}"を削除しますか？</p>
             
             <div class="delete-actions">
                 <form method="POST" action="{% url 'destinations:destination_delete' destination.id %}">
@@ -25,17 +25,29 @@
                     {% if day %}
                         <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
                     {% endif %}
+
                     {% if from_page %}
                         <input type="hidden" name="from" value="{{ from_page }}">
                     {% endif %}
+
+                    {% if schedule_id %}
+                        <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+                    {% endif %}
+
                     <button type="submit" class="btn-delete">削除</button>
                 </form>    
 
+                {% if day %}
+                    <a href="{% url 'destinations:destination_edit' destination.id %}?day_schedule_id={{ day.id }}{% if from_page %}&from={{ from_page }}{% endif %}{% if schedule_id %}&schedule_id={{ schedule_id }}{% endif %}" class="btn-cancel">
+                        戻る
+                    </a>
+                {% else %}
+                    <a href="{% url 'destinations:destination_edit' destination.id %}{% if from_page or schedule_id %}?{% endif %}{% if from_page %}from={{ from_page }}{% endif %}{% if from_page and schedule_id %}&{% endif %}{% if schedule_id %}schedule_id={{ schedule_id }}{% endif %}" class="btn-cancel">
+                        戻る
+                    </a>
+                {% endif %}
+            </div>
 
-            <a href="{% url 'destinations:destination_edit' destination.id  %}?day_schedule_id={{ day.id }}
-                {% if from_page %}&from={{ from_page }}{% endif %}{% elif from_page %}?from={{ from_page }}{% endif %}" class="btn-cancel">
-                戻る
-            </a>
         </div>
     </div>
 

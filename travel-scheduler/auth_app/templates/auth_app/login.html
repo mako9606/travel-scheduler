@@ -1,26 +1,57 @@
-<head>
-<!-- 画面設計図　スライド２ -->
-    <title>ログイン画面</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'auth_app/login.css' %}">
-</head>
+{% block title %}
+    home
+{% endblock %}
 
-<body>
-    <div class="login-title">ログイン</div>
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'auth_app/login.css' %}?v=1">
+{% endblock %}
 
-    <form method="POST" action="{% url 'auth_app:login' %}">
-        {% csrf_token %}
-       
-        {{ form.non_field_errors }}    
+{% block header %}
+    {% include "header.html" with header_title="ログイン" %}
+{% endblock %}
 
-        <input type="email" name="username">
-        <input type="password" name="password">
+{% block content %}
+<form method="POST" action="{% url 'auth_app:login' %}" class="login-form">
+    {% csrf_token %}
+     
+    {% if error_message %}
+        <p class="login-error">{{ error_message }}</p>
+    {% endif %}
+    
+    {{ form.non_field_errors }}    
 
-        <a href="{% url 'account:password_reset' %}" class="forgot">パスワード忘れた方</a>
+    <div class="login-field">
+        <label for="id_username">メールアドレス</label>
+        <input
+            type="email"
+            id="id_username"
+            name="username"
+            placeholder="メールアドレス　入力"
+            value="{{ request.POST.username|default:'' }}"
+            autocomplete="username"
+        >
+    </div>
 
+    <div class="login-field">
+        <label for="id_password">パスワード</label>
+        <input
+            type="password"
+            id="id_password"
+            name="password"
+            placeholder="＊＊＊＊＊＊＊＊"
+            autocomplete="current-password"
+        >
+    </div>
+
+    <div class="login-actions">
         <button class="btn" type="submit">ログイン</button>
-        <a href="{% url 'auth_app:signup' %}" class="btn">アカウント登録</a>
-    </form>
+        <a href="{% url 'account:password_reset' %}" class="forgot">パスワード忘れた方</a>
+    </div>
 
-</body>
+    <a href="{% url 'auth_app:signup' %}" class="btn register-btn">アカウント登録</a>
+</form>
+{% endblock %}

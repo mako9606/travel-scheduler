@@ -148,16 +148,18 @@ def destination_edit(request, pk):
 
 
 # destination_delete.html  
-def destination_delete(request):
+def destination_delete(request, pk):
     destination = get_object_or_404(Destination, pk=pk)
 
-    day = None
+    if destination.user != request.user:
+        return redirect("plans:plan_list")
+
     day_schedule_id = request.POST.get("day_schedule_id") or request.GET.get("day_schedule_id")
-    if day_schedule_id:
-        day = get_object_or_404(DaySchedule, pk=day_schedule_id)
-
     from_page = request.POST.get("from") or request.GET.get("from")
+    schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule_id")
 
+    day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
+    
     if request.method == "POST":
         # ここは削除対象の仕様確認後に確定
         destination.delete()
@@ -175,6 +177,7 @@ def destination_delete(request):
             "destination": destination,
             "day": day,
             "from_page": from_page,
+            "schedule_id": schedule_id,
         }
     )
     

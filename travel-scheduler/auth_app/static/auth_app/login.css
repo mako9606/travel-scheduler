@@ -1,81 +1,77 @@
-/* タイトルの緑背景 */
-.login-title {
-    background: #b7d2b1ff;
-    padding: 10px;
-    color: #447d37;
-    font-size: 20px;
+.login-form {
+    padding: 80px 16px 0;
+    box-sizing: border-box;
+}
+
+.login-field {
+    margin-top: 30px;
+}
+
+.login-field:first-of-type {
+    margin-top: 24px;
+}
+
+.login-field label {
+    display: block;
+    font-size: 16px;
     font-weight: bold;
-    width: 90%;
-    max-width: 380px;
-    margin: 20px auto 10px auto;
-    box-sizing: border-box;
-    
-}
-
-.form-container{
-    width: 90%;
-    max-width: 380px;
-    margin: 0 auto;
-}
-
-body{
-    text-align: left;
-    font-size: 17px;
     color: #592d13;
-    background-color: #f7f7f7ff;
-    display: block;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    margin-bottom: 14px;
+    line-height: 1.4;
 }
 
-label{
-    display: block;
-    font-size: 16px;
-    margin-top: 15px;
-    margin-bottom: 5px;
-}
-
-input[type="email"],
-input[type="password"]{
+.login-form input[type="email"],
+.login-form input[type="password"] {
     width: 100%;
-    padding: 12px;
+    height: 40px;
+    padding: 8px 10px;
     font-size: 16px;
-    border: 1px solid #595959;
+    color: #592d13;
+    border: 1px solid #7f7f7f;
+    background-color: #ffffff;
     box-sizing: border-box;
-
 }
 
-.btn{
-   padding: 10px 20px;
-   text-decoration: none;
-   display: block;
-   background-color: #ffa158ff; 
-   border: 2px solid #592d13;
-   color: #592d13;
-   border-radius: 5px;
-   font-size: 16px;
-   font-weight: bold;
-   margin-top: 12px;
-   width: fit-content;
+.login-form input::placeholder {
+    color: #c9c9c9;
 }
 
-/* ボタン同士の間隔をあける　*/
-button + .btn {
-    margin-top: 10px;
+.login-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 36px;
 }
 
-/* クリック・タップした瞬間 に適用される状態 */
-.btn:active{
-    background-color: #ff8c3a;
-    transform: scale(0.97);
-    border: 2px solid #592d13;
+.login-actions .btn {
+    margin-top: 0;
+    flex-shrink: 0;
 }
-
 
 /* パスワード忘れた方のリンク */
 .forgot {
     text-align: right;
-    display: block;
-    margin-top: 10px;
+    display: inline-block;
+    margin-top: 0;
     font-size: 14px;
+    line-height: 1.4;
+}
+
+.register-btn {
+    margin-top: 24px;
+}
+
+.errorlist,
+.nonfield {
+    margin: 0 0 12px;
+    padding-left: 18px;
+    color: #990000;
+}
+
+.login-error {
+    margin: 0 0 16px;
+    color: #990000;
+    font-size: 14px;
+    line-height: 1.4;
 }

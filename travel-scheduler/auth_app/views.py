@@ -19,6 +19,13 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return redirect("auth_app:home")
+        
+        return render(
+            request,
+            "auth_app/login.html",
+            {"error_message": "メールアドレスまたはパスワードが違います。"}
+        )
+
     return render(request, "auth_app/login.html")
     
     
