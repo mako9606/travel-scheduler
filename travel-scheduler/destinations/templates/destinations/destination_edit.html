@@ -33,6 +33,10 @@
             <input type="hidden" name="from" value="{{ from_page }}">
         {% endif %}
 
+        {% if schedule_id %}
+            <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+        {% endif %}
+
         <label>目的地名</label>
         {{ form.name }}
 

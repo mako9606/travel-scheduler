@@ -323,6 +323,7 @@ class PlanDetailView(DetailView):
 
         destination_modal_id = self.request.GET.get("destination_modal_id")
         day_schedule_id = self.request.GET.get("day_schedule_id")
+        destination_modal_schedule_id = self.request.GET.get("schedule_id")
 
         if destination_modal_id:
             destination_modal = Destination.objects.filter(pk=destination_modal_id).first()
@@ -342,6 +343,7 @@ class PlanDetailView(DetailView):
         context["destination_modal"] = destination_modal
         context["destination_modal_day"] = destination_modal_day
         context["destination_modal_is_registered"] = destination_modal_is_registered
+        context["destination_modal_schedule_id"] = destination_modal_schedule_id
         
         return context
     
@@ -616,4 +618,24 @@ def schedule_memo(request, day_id):
             "day": day,
             "plan": plan,
         }
+    )
+
+@login_required    
+def schedule_remove(request, pk):
+    if request.method != "POST":
+        return redirect("plans:plan_list")
+
+    schedule = get_object_or_404(
+        Schedule.objects.select_related("day__plan"),
+        pk=pk,
+        day__plan__user=request.user,
+    )
+
+    day = schedule.day
+    plan = day.plan
+
+    schedule.delete()
+    
+    return redirect(
+        f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?day_schedule_id={day.id}"
     )

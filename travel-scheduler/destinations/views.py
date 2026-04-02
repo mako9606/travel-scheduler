@@ -96,6 +96,7 @@ def destination_edit(request, pk):
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     from_page = request.GET.get("from") or request.POST.get("from")
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
+    schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule_id")
 
     if request.method == "POST":
         form = DestinationForm(request.POST, instance=destination)
@@ -108,10 +109,12 @@ def destination_edit(request, pk):
 
             destination.save()
         
-            if day: # プラン内
+            if day:  # プラン内
                 url = reverse("destinations:destination_detail", kwargs={"pk": destination.id}) + f"?day_schedule_id={day.id}"
                 if from_page == "search":
                     url += "&from=search"
+                if schedule_id:
+                    url += f"&schedule_id={schedule_id}"
                 return redirect(url)
 
             # プラン外　→　検索画面に遷移
@@ -139,23 +142,41 @@ def destination_edit(request, pk):
             "destination": destination,
             "day": day,
             "from_page": from_page,
+            "schedule_id": schedule_id,
         }
     )
 
 
 # destination_delete.html  
 def destination_delete(request):
+    destination = get_object_or_404(Destination, pk=pk)
+
+    day = None
+    day_schedule_id = request.POST.get("day_schedule_id") or request.GET.get("day_schedule_id")
+    if day_schedule_id:
+        day = get_object_or_404(DaySchedule, pk=day_schedule_id)
+
+    from_page = request.POST.get("from") or request.GET.get("from")
+
     if request.method == "POST":
-        day_id = request.POST.get("day_schedule_id")
+        # ここは削除対象の仕様確認後に確定
+        destination.delete()
 
-        if day_id:
-            day = get_object_or_404(DaySchedule, pk=day_id)
-            plan = day.plan 
-            # 削除ボタン後 plan_detail（day付き）に遷移
-            return redirect('plans:plan_detail', pk=plan.id)
+        if day:
+            return redirect(
+                f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}?day_schedule_id={day.id}"
+            )
+        return redirect("destinations:destination_search")
 
-    # GET：削除確認画面
-    return render(request, 'destinations/destination_delete.html')
+    return render(
+        request,
+        "destinations/destination_delete.html",
+        {
+            "destination": destination,
+            "day": day,
+            "from_page": from_page,
+        }
+    )
     
 
 # destination_detail.html
@@ -164,6 +185,8 @@ def destination_detail(request, pk):
 
     day = None
     day_schedule_id = request.GET.get("day_schedule_id")
+    schedule_id = request.GET.get("schedule_id")
+    
     if day_schedule_id:
         day = get_object_or_404(DaySchedule, pk=day_schedule_id)
         
@@ -180,12 +203,15 @@ def destination_detail(request, pk):
         if day:
             url += f"&day_schedule_id={day.id}"
         return redirect(url)
-
+    
     if day:
-        return redirect(
+        url = (
             f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}"
             f"?day_schedule_id={day.id}&destination_modal_id={destination.id}"
         )
+        if schedule_id:
+            url += f"&schedule_id={schedule_id}"
+        return redirect(url)
 
     return redirect(
         f"{reverse('destinations:destination_search')}"

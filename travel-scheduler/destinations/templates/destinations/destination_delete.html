@@ -1,8 +1,12 @@
 <head>
-<!-- 画面設計図　スライド28 -->
+    <!-- 画面設計図　スライド28 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>プラン詳細画面（目的地削除）</title>
 
     {% load static %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
     <link rel="stylesheet" href="{% static 'destinations/destination_delete.css' %}">
 
 </head>
@@ -18,12 +22,20 @@
             <div class="delete-actions">
                 <form method="POST" action="{% url 'destinations:destination_delete' destination.id %}">
                     {% csrf_token %}
-                    <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
+                    {% if day %}
+                        <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
+                    {% endif %}
+                    {% if from_page %}
+                        <input type="hidden" name="from" value="{{ from_page }}">
+                    {% endif %}
                     <button type="submit" class="btn-delete">削除</button>
                 </form>    
 
 
-            <a href="{% url 'destinations:destination_edit' destination.id  %}?day_schedule_id={{ day.id }}" class="btn-cancel">戻る</a>
+            <a href="{% url 'destinations:destination_edit' destination.id  %}?day_schedule_id={{ day.id }}
+                {% if from_page %}&from={{ from_page }}{% endif %}{% elif from_page %}?from={{ from_page }}{% endif %}" class="btn-cancel">
+                戻る
+            </a>
         </div>
     </div>
 

@@ -93,8 +93,19 @@
             </div>
             
             {% if is_owner %}
-                {% if day and is_registered %} <!-- 1日詳細タブの詳細画面を見た時のボタン -->
-                    <a href="{% url 'destinations:destination_edit' destination.id %}" class="small-edit-btn">編集</a>
+                {% if day and is_registered  and source == "plan_detail" and schedule_id %} <!-- 1日詳細タブの詳細画面を見た時のボタン -->
+                    <div class="detail-actions">
+                        <button
+                            type="submit"
+                            class="remove-btn"
+                            formaction="{% url 'plans:schedule_remove' schedule_id %}"
+                            formmethod="post"
+                        >
+                            予定からはずす
+                        </button>
+
+                        <a href="{% url 'destinations:destination_edit' destination.id %}?day_schedule_id={{ day.id }}&schedule_id={{ schedule_id }}" class="small-edit-btn">編集</a>
+                    </div>
                     
                 {% elif day and not is_registered %} <!-- プラン内の目的地検索画面→詳細画面を見た時のボタン -->
                     <a href="{% url 'destinations:destination_edit' destination.id %}?day_schedule_id={{ day.id }}{% if source == 'search' %}&from=search{% endif %}" class="small-edit-btn">
