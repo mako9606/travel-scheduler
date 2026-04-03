@@ -34,6 +34,14 @@ def signup_view(request):
         username = request.POST["username"]
         email = request.POST["email"]
         password = request.POST["password"]
+        password_confirm = request.POST["password_confirm"]
+        
+        if password != password_confirm:
+            return render(
+                request,
+                "auth_app/signup.html",
+                {"error_message": "パスワードが一致しません。"}
+            )
         
         user = User.objects.create_user(
             username=username,

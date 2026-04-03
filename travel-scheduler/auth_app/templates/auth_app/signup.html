@@ -1,29 +1,74 @@
-<head>
-<!-- 画面設計図　スライド3 -->
-<title>アカウント登録画面（初期設定）</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'auth_app/signup.css' %}">
-</head>
+{% block title %}
+    home
+{% endblock %}
 
-<body>
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'auth_app/signup.css' %}?v=1">
+{% endblock %}
 
-    <div class="login-title">アカウント登録</div>
+{% block header %}
+    {% include "header.html" with header_title="アカウント登録" %}
+{% endblock %}
 
-    <form method="POST" class="form-container">
+{% block content %}
+    <form method="POST" class="signup-form">
         {% csrf_token %}
-        <label>アカウント名</label>
-        <input type="text" name="username" placeholder="アカウント名 入力" required>
-        <label>メールアドレス</label>
-        <input type="email" name="email" placeholder="メールアドレス 入力" required>
-        <label>パスワード</label>
-        <input type="password" name="password" placeholder="********" required>
-        <label>パスワード再入力</label>
-        <input type="password" name="password_confirm" placeholder="********" required>
 
-        <button type="submit" class="btn">完了</button>
+        {% if error_message %}
+            <p class="signup-error">{{ error_message }}</p>
+        {% endif %}
 
+        <div class="signup-field">
+            <label for="id_username">アカウント名</label>
+            <input
+                type="text"
+                id="id_username"
+                name="username"
+                placeholder="アカウント名 入力"
+                value="{{ request.POST.username|default:'' }}"
+                required
+            >
+        </div>
+
+        <div class="signup-field">
+            <label for="id_email">メールアドレス</label>
+            <input
+                type="email"
+                id="id_email"
+                name="email"
+                placeholder="メールアドレス 入力"
+                value="{{ request.POST.email|default:'' }}"
+                required
+            >
+        </div>
+
+        <div class="signup-field">
+            <label for="id_password">パスワード</label>
+            <input
+                type="password"
+                id="id_password"
+                name="password"
+                placeholder="＊＊＊＊＊＊＊＊"
+                required
+            >
+        </div>
+
+        <div class="signup-field">
+            <label for="id_password_confirm">パスワード再入力</label>
+            <input
+                type="password"
+                id="id_password_confirm"
+                name="password_confirm"
+                placeholder="＊＊＊＊＊＊＊＊"
+                required
+            >
+        </div>
+
+        <button type="submit" class="btn signup-submit">完了</button>
 
     </form>
-
-</body>
+{% endblock %}
