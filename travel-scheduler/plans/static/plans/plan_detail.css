@@ -460,9 +460,52 @@ form.container{
 
 
 /* タブ中身　～費用～ */
+.tab-content.tab-cost{
+    --cost-fab-size: 64px;
+    --cost-fab-bottom: 200px;
+    --cost-fab-gap: 16px;
+
+    padding-top: 24px;
+    padding-bottom: calc(var(--cost-fab-bottom) + var(--cost-fab-size) + var(--cost-fab-gap));
+    box-sizing: border-box;
+}
+
 .cost-summary{
-    padding-bottom: 12px;
-    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    margin: 60px 0 32px;
+}
+
+.cost-chart{
+    position: relative;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 1px solid #592d13;
+    background: #ffffff;
+    flex-shrink: 0;
+}
+
+.cost-chart::before{
+    content: "";
+    position: absolute;
+    inset: 38px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #592d13;
+    z-index: 1;
+}
+
+.cost-chart-center{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #592d13;
+    z-index: 2;
 }
 
 .cost-summary-amount{
@@ -486,23 +529,36 @@ form.container{
 }
 
 .cost-add-btn {
-   padding: 10px 20px;
-   text-decoration: none;
-   display: flex; /* 中身の文字を中央寄せ */
-   align-items: center; /* 中身の文字を中央寄せ */
-   justify-content: center; /* 中身の文字を中央寄せ */
-   background-color: #ffa158ff; 
-   border: 2px solid #592d13;
-   color: #592d13;
-   width: 48px;  /* 〇ボタン */
-   height: 48px; /* 〇ボタン */
-   border-radius: 50%;   /* 〇ボタン */
-   font-size: 16px;
-   font-size: 16px;
-   font-weight: bold;
-   margin-top: 12px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #ffa158ff;
+    border: 2px solid #592d13;
+    color: white;
+
+    width: 64px;
+    height: 64px;
+    padding: 0;
+    border-radius: 50%;
+
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 1;
+    box-sizing: border-box;
+
+    position: fixed;
+    right: max(24px, calc((100vw - 480px) / 2 + 24px));
+    bottom: 200px;
+    z-index: 15;
 }
 
+.cost-add-btn:active{
+    background-color: #ff8c3a;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
 
 /* 費用の▼タブ */
 .hidden {
@@ -540,8 +596,4 @@ form.container{
   padding-left: 8px;
 }
 
-.cost-list .cost-category-block:nth-of-type(4n+1){ border-left-color:#f59e0b; }
-.cost-list .cost-category-block:nth-of-type(4n+2){ border-left-color:#10b981; }
-.cost-list .cost-category-block:nth-of-type(4n+3){ border-left-color:#3b82f6; }
-.cost-list .cost-category-block:nth-of-type(4n){ border-left-color:#ef4444; }
 

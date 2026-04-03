@@ -1,59 +1,113 @@
-<head>
-<!-- 画面設計図　スライド34 -->
-    <title>プラン詳細画面（費用　編集）</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'plans/plan_cost_edit.css' %}">
-</head>
+{% block title %}
+プラン詳細画面（詳細情報）
+{% endblock %}
 
-<body>
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'plans/plan_cost_edit.css' %}?v=1">
+{% endblock %}
 
-    <div class="page-title">{{ plan.plan_name }}</div>
+{% block header %}
+    {% include "header.html" with header_title=plan.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
 
-    {% if mode == "category_create" or mode == "category_edit" %}
+{% block content %}
+<div class="cost-edit-container">
+    <div class="detail-tab">費用</div>
 
-    <!-- カテゴリー新規作成-->
-    <form method="POST"
-        action="{% if mode == 'category_create' %}
-                    {% url 'plans:cost_category_create' plan.id %}
+    <div class="tab-content active">
+        {% if mode == "category_create" or mode == "category_edit" %}
+
+            <form method="POST"
+                action="{% if mode == 'category_create' %}
+                            {% url 'plans:cost_category_create' plan.id %}
+                        {% else %}
+                            {% url 'plans:cost_category_edit' plan.id category.id %}
+                        {% endif %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>カテゴリー作成</label>
+                    <input type="text"
+                        name="name"
+                        placeholder="カテゴリー名　入力"
+                        value="{% if category_form.name.value %}{{ category_form.name.value }}{% elif category %}{{ category.name }}{% endif %}">
+                </div>
+        
+                {% if mode == "category_edit" %}
+                    <div class="edit-action-buttons">
+                        <button type="submit" class="btn">完了</button>
+                        <a href="{% url 'plans:cost_category_delete' plan.id category.id %}" class="delete-btn">削除</a>
+                    </div>
                 {% else %}
-                    {% url 'plans:cost_category_edit' plan.id category.id %}
-                {% endif %}"
-        class="form-container">
-        {% csrf_token %}
+                    <button type="submit" class="btn">完了</button>
+                {% endif %}
+            </form>
 
-        <label>カテゴリー名</label>
-        <input type="text"
-               name="name"
-               placeholder="カテゴリー名　入力"
-               value="{% if mode == 'category_edit' %}{{ category.name }}{% endif %}">
-        <button type="submit" class="btn">完了</button>
+        {% else %}
 
-        {% if mode == "category_edit" %}
-            <a href="{% url 'plans:cost_category_delete' plan.id category.id %}"
-                class="btn-delete-link">
-                削除する
-            </a>
+            <!-- カテゴリー作成 -->
+            <form method="POST" action="{% url 'plans:cost_category_create' plan.id %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>カテゴリー作成</label>
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="カテゴリー名　入力"
+                        value="{% if category_form.name.value %}{{ category_form.name.value }}{% endif %}">
+                </div>
+
+                <button type="submit" class="btn">完了</button>
+            </form>
+
+            <hr class="section-divider">
+
+            <!-- 費用項目 新規/編集 -->
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>金額カテゴリー</label>
+                    {{ form.category }}
+                </div>
+
+                <div class="form-group">
+                    <label>項目名入力</label>
+                    <input
+                        type="text"
+                        name="{{ form.name.html_name }}"
+                        id="{{ form.name.id_for_label }}"
+                        value="{{ form.name.value|default_if_none:'' }}"
+                        placeholder="項目名　入力"
+                        class="cost-name-input"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>金額入力</label>
+                    <div class="amount-row">
+                        <input
+                            type="number"
+                            name="{{ form.amount.html_name }}"
+                            id="{{ form.amount.id_for_label }}"
+                            value="{{ form.amount.value|default_if_none:'' }}"
+                            placeholder="金額　入力"
+                            class="cost-amount-input"
+                            inputmode="numeric"
+                        >
+                        <span class="yen-unit">円</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">完了</button>
+            </form>
+
         {% endif %}
-    </form>
-    
-    {% else %}
-    
-    <!-- 費用項目 新規/編集 -->
-    <form method="POST" class="form-container">
-        {% csrf_token %}
-
-        <label>金額カテゴリー</label>
-        {{ form.category }}
-
-        <label>項目名</label>
-        {{ form.name }}
-
-        <label>金額</label>
-        {{ form.amount }}
-
-        <button type="submit" class="btn">完了</button>
-    </form>
-    {% endif %}
-
-</body> 
+    </div>
+</div>
+{% endblock %}  

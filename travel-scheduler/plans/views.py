@@ -400,7 +400,7 @@ def cost_category_create(request, pk):
             category = form.save(commit=False)
             category.plan = plan
             category.save()
-            return redirect("plans:plan_detail", pk=plan.id)
+            return redirect(f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?cost_tab=1")
     else:
         form = CostCategoryForm()
 
@@ -422,7 +422,7 @@ def cost_category_edit(request, pk, category_id):
         form = CostCategoryForm(request.POST, instance=category)
         if form.is_valid():
             form.save()
-            return redirect("plans:plan_detail", pk=plan.id)
+            return redirect(f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?cost_tab=1")
     else:
         form = CostCategoryForm(instance=category)
 
@@ -441,7 +441,7 @@ def cost_category_delete(request, pk, category_id):
 
     if request.method == "POST":
         category.delete()
-        return redirect("plans:plan_detail", pk=plan.id)
+        return redirect(f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?cost_tab=1")
 
     return render(request, "plans/cost_category_delete.html", {
         "plan": plan,
@@ -468,12 +468,15 @@ def plan_cost_edit(request, pk, cost_id=None):
             cost = form.save(commit=False)
             cost.plan = plan
             cost.save()
-            return redirect("plans:plan_detail", pk=plan.id)
+            return redirect(f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?cost_tab=1")
     else:
         form = CostForm(plan=plan, instance=cost)
+        
+    category_form = CostCategoryForm()
 
     return render(request, "plans/plan_cost_edit.html",{
             "form": form,
+            "category_form": category_form,
             "plan": plan,
             "cost": cost,
         })
@@ -485,7 +488,7 @@ def cost_delete(request, pk, cost_id):
     
     if request.method == "POST":
         cost.delete()
-        return redirect("plans:plan_detail", pk=plan.id)
+        return redirect(f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?cost_tab=1")
 
     return render(request, "plans/plan_cost_delete.html", {
         "plan": plan,

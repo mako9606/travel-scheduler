@@ -7,7 +7,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=8">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=12">
 <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=3">
 {% endblock %}
 
@@ -249,7 +249,9 @@
             
             <!-- 合計金額 -->
             <div class="cost-summary">
-                <p class="cost-summary-amount">￥{{ total_cost }}</p>
+                <div class="cost-chart" id="costChart">
+                    <div class="cost-chart-center">￥{{ total_cost }}</div>
+                </div>
             </div>
             
             <!-- 費用一覧 -->
@@ -381,14 +383,32 @@
             const params = new URLSearchParams(window.location.search);
             const dayId = params.get("day_schedule_id");
             const memoTab = params.get("memo_tab");
+            const costTab = params.get("cost_tab");
 
             if (memoTab) {
                 const memoContent = document.querySelector(".tab-memo");
                 const memoBtn = document.querySelector('.tab-btn[data-target=".tab-memo"]');
 
                 if (memoContent && memoBtn) {
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
                     memoContent.classList.add("active");
                     memoBtn.classList.add("active");
+                    return;
+                }
+            }
+
+            if (costTab) {
+                const costContent = document.querySelector(".tab-cost");
+                const costBtn = document.querySelector('.tab-btn[data-target=".tab-cost"]');
+
+                if (costContent && costBtn) {
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+                    costContent.classList.add("active");
+                    costBtn.classList.add("active");
                     return;
                 }
             }
@@ -496,5 +516,71 @@
         });
     });
     </script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const chart = document.getElementById("costChart");
+        if (!chart) return;
+
+        const totalCost = Number(String("{{ total_cost|default:0 }}").replace(/[^\d]/g, ""));
+        if (!totalCost) {
+            chart.style.background = "#ffffff";
+        }
+
+        // 固定にしたいカテゴリ
+        const fixedColorMap = {
+            "入場料": "#f59e0b",
+            "駐車場": "#A7D4F2",
+        };
+
+        function getAutoColorFromName(name) {
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+
+            const hue = Math.abs(hash) % 360;
+            return `hsl(${hue}, 70%, 65%)`;
+        }
+
+        function getCategoryColor(name) {
+            return fixedColorMap[name] || getAutoColorFromName(name);
+        }
+
+        const blocks = Array.from(document.querySelectorAll(".cost-list .cost-category-block"));
+
+        const categoryData = blocks.map((block) => {
+            const name = block.querySelector(".category-name")?.textContent?.trim() || "";
+            const totalText = block.querySelector(".category-total")?.textContent || "0";
+            const amount = Number(totalText.replace(/[^\d]/g, ""));
+            const color = getCategoryColor(name);
+
+            // 一覧側にも同じ色を反映
+            block.style.borderLeftColor = color;
+
+            return {
+                name,
+                amount,
+                color,
+            };
+        }).filter(item => item.amount > 0);
+
+        if (!categoryData.length) {
+            chart.style.background = "#ffffff";
+            return;
+        }
+
+        let startDeg = 0;
+        const segments = categoryData.map((item, index) => {
+            const rawDeg = (item.amount / totalCost) * 360;
+            const endDeg = index === categoryData.length - 1 ? 360 : startDeg + rawDeg;
+            const segment = `${item.color} ${startDeg}deg ${endDeg}deg`;
+            startDeg = endDeg;
+            return segment;
+        });
+
+        chart.style.background = `conic-gradient(${segments.join(", ")})`;
+    });
+</script>
 
 {% endblock %}
