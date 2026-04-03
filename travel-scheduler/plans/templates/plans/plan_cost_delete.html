@@ -1,16 +1,19 @@
 <head>
-<!-- 画面設計図　スライド -->
-<title>費用　削除　画面</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>費用　削除　画面</title>
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'plans/plan_cost_delete.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'plans/plan_cost_delete.css' %}?v=3">
 
 </head>
 
 <body>
-    <div class="page-title">{{ plan.plan_name }}</div>
-    
     <div class="modal-overlay">
+        <div class="page-title">{{ plan.plan_name }}</div>
+    
         <div class="form-container modal-box">
 
             <p class="modal-message"> "{{ cost.name }}"を削除しますか？</p>
@@ -23,9 +26,9 @@
                     </button>
                 </form>    
 
+                <a href="{% url 'plans:plan_detail' plan.id %}?cost_tab=1" class="btn-cancel">戻る</a>
+            </div>
 
-            <a href="{% url 'plans:plan_detail' plan.id %}" class="btn-cancel">戻る</a>
         </div>
     </div>
-
 </body>
