@@ -51,6 +51,7 @@ def account(request):
             "shortcut_types": shortcut_types,
             "left_selected": left_selected.shortcut_type_id if left_selected else None,
             "right_selected": right_selected.shortcut_type_id if right_selected else None,
+            "user_obj": request.user,
         },
     )
 

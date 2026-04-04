@@ -1,0 +1,128 @@
+.section-title{
+    margin: 0 25px 14px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #592d13;
+    padding-top: 80px;
+}
+
+
+.shortcut-form{
+    margin: 0 22px;
+}
+
+.shortcut-field{
+    margin-bottom: 16px;
+}
+
+.shortcut-label{
+    display: block;
+    margin-bottom: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #592d13;
+}
+
+.shortcut-select-wrap{
+    position: relative;
+    width: 180px;
+    max-width: 100%;
+}
+
+.shortcut-select{
+    width: 100%;
+    height: 44px;
+    padding: 0 44px 0 16px;
+    border: 1.5px solid #8b5e3c;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #592d13;
+    font-size: 15px;
+    box-sizing: border-box;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.shortcut-select-wrap::after{
+    content: "▼";
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b5e3c;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.shortcut-select:focus{
+    outline: none;
+}
+
+.account-info-card{
+    margin: 28px 20px 0;
+    padding: 20px 24px 12px;
+    border: 1px solid #cfcfcf;
+    background: #f7f7f7ff;
+    box-sizing: border-box;
+}
+
+.account-info-block{
+    margin-bottom: 20px;
+}
+
+.account-info-label{
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #592d13;
+}
+
+.account-info-value{
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: #592d13;
+}
+
+.account-info-mail{
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: #008ecf;
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+.account-password-mask{
+    margin: 0 0 12px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: #592d13;
+}
+
+.logout-row{
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ログアウトボタン */
+.logout-btn{
+   padding: 10px 20px;
+   text-decoration: none;
+   display: block;
+   background-color: white; 
+   border: 2px solid #592d13;
+   color: #990000;
+   border-radius: 5px;
+   font-size: 16px;
+   font-weight: bold;
+
+   width: fit-content;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.logout-btn:active{
+    background-color: white;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
