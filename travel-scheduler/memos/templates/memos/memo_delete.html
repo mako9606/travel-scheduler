@@ -1,30 +1,36 @@
 <head>
-<!-- 画面設計図　スライド7 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>メモ機能画面　（削除）</title>
 
     {% load static %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
     <link rel="stylesheet" href="{% static 'memos/memo_delete.css' %}">
+
 </head>
 
 <body>
-    <div class="page-title">note</div>
-    
     <div class="modal-overlay">
+        <div class="page-title">メモ</div>
+
         <div class="form-container modal-box">
 
             <p class="modal-message"> このメモを削除しますか？</p>
             
             <div class="delete-actions">
-                <form method="POST" action="{% url 'memos:memo_list' %}">
+                <form method="POST" action="{% url 'memos:memo_delete' %}">
                     {% csrf_token %}
+                    <input type="hidden" name="memo_id" value="{{ memo.id }}">
                     <button type="submit" class="btn-delete">
                         削除
                     </button>
                 </form>    
 
+                <a href="{% url 'memos:memo_edit' %}?memo_id={{ memo.id }}" class="btn-cancel">戻る</a>
+            </div>
 
-            <a href="{% url 'memos:memo_edit' %}" class="btn-cancel">戻る</a>
         </div>
-    </div>
 
+    </div>
 </body>

@@ -1,13 +1,20 @@
-<head>
-<!-- 画面設計図　スライド6 -->
-    <title>メモ機能画面　（登録・編集）</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'memos/memo_edit.css' %}">
-</head>
+{% block title %}
+    メモ機能画面　（登録・編集）
+{% endblock %}
 
-<body>
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'memos/memo_edit.css' %}?v=1">
+{% endblock %}
 
+{% block header %}
+    {% include "header.html" with header_title="メモ" header_icons='<a href="/destinations/search/" class="icon-btn">📍</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
+
+{% block content %}
     <form method="post" class="memo-paper">
         {% csrf_token %}
 
@@ -17,9 +24,12 @@
 
         <textarea name="content" class="memo-textarea" placeholder="メモを入力">{{ memo.content|default:'' }}</textarea>
 
-        <button type="submit" class="btn">完了</button>
+        <div class="memo-edit-actions">
+            <button type="submit" class="btn">完了</button>
+
+            {% if memo %}
+                <a href="{% url 'memos:memo_delete' %}?memo_id={{ memo.id }}" class="delete-btn">削除</a>
+            {% endif %}
+        </div>
     </form>
-
-        <a href="{% url 'memos:memo_delete' %}" class="delete-btn">削除</a>
-
-</body>  
+{% endblock %}

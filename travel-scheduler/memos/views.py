@@ -65,4 +65,17 @@ def memo_edit(request):
 
 
 def memo_delete(request):
-    return render(request, "memos/memo_delete.html")
+    memo_id = request.POST.get("memo_id") or request.GET.get("memo_id")
+
+    if not memo_id:
+        return redirect("memos:memo_list")
+
+    memo = get_object_or_404(Memo, id=memo_id, user=request.user)
+
+    if request.method == "POST":
+        memo.delete()
+        return redirect("memos:memo_list")
+
+    return render(request, "memos/memo_delete.html", {
+        "memo": memo,
+    })

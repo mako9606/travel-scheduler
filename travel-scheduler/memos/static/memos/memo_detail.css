@@ -1,42 +1,25 @@
 .memo-list{
     max-width: 360px;
     margin: 0 auto;
-    padding:  16px;
+    padding:  76px 4px 32px;
+    box-sizing: border-box;
 }
 
 .memo-item{
-    --fab-size: 64px;
-    --fab-bottom: 200px;
-    --fab-gap: 16px;
-
-    padding: 0 16px calc(var(--fab-bottom) + var(--fab-size) + var(--fab-gap));
+    background: #ffffff;
+    padding: 20px 16px;
+    border: 1px solid #f0f0f0;
     box-sizing: border-box;
 }
 
-input[type="text"]{
-    width: 100%;
-    padding: 12px;
+.memo-item p{
+    margin: 0;
     font-size: 16px;
-    border: 1px solid #595959;
-    box-sizing: border-box;
+    line-height: 1.6;
+    color: #592d13;
+    word-break: break-word;
 }
 
-.edit-btn{
-   padding: 10px 20px;
-   text-decoration: none;
-   display: block; 
-   background-color: #ffa158ff; 
-   border: 2px solid #592d13;
-   color: #592d13;
-   border-radius: 5px; 
-   font-weight: bold;
-   margin-top: 12px;
-   width: fit-content;
-}
-
-/* クリック・タップした瞬間 に適用される状態 */
-.edit-btn:active{
-    background-color: #ff8c3a;
-    transform: scale(0.97);
-    border: 2px solid #592d13;
+.memo-list .small-edit-btn{
+    margin-top: 14px;
 }

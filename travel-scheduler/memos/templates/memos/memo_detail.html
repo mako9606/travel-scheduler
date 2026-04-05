@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'memos/memo_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'memos/memo_detail.css' %}?v=3">
 {% endblock %}
 
 {% block header %}
@@ -19,12 +19,19 @@
     <main class="memo-list">
 
         <div class="memo-item">
-            <p class="memo-title">{{ memo.title }}</p>
             <p>{{ memo.content|linebreaksbr }}</p>
         </div>
 
-    </main> 
+        <a href="{% url 'memos:memo_edit' %}?memo_id={{ memo.id }}" class="small-edit-btn">メモ編集</a>
 
-    <a href="{% url 'memos:memo_edit' %}?memo_id={{ memo.id }}" class="edit-btn">メモ編集</a>
+        <a
+            href="{% url 'memos:memo_list' %}"
+            class="btn"
+            onclick="if (document.referrer && document.referrer.includes('/memos/list/')) { history.back(); return false; }"
+        >
+            一覧に戻る
+        </a>
+
+    </main> 
 
 {% endblock %}
