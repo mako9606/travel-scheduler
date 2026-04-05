@@ -81,28 +81,32 @@ def edit_email(request):
 @login_required
 def change_password(request):
     if request.method == "POST":
-        old_password = request.POST.get("old_password")
-        new_password = request.POST.get("new_password")
+        old_password = request.POST.get("old_password", "")
+        new_password = request.POST.get("new_password", "")
+        
+        old_password_error = None
+        new_password_errors = []
         
         #現在のパスワードチェック
-        if not request.user.check_password(old_password):
-            return render(request, "account/change_password.html",{
-                "error" : "現在のパスワードがちがいます。"
-            })
-         
-        #新しいパスワードの強度チェック
-        try:
-            validate_password(new_password, request.user)
-        except ValidationError as e:
-            return render(request, "account/change_password.html",{
-                "error" : e.messages
+        if not old_password_error:
+            try:
+                validate_password(new_password, request.user)
+            except ValidationError as e:
+                new_password_errors = e.messages
+
+        if old_password_error or new_password_errors:
+            return render(request, "account/change_password.html", {
+                "old_password_error": old_password_error,
+                "new_password_errors": new_password_errors,
             })        
             
         #パスワード更新    
         request.user.set_password(new_password)
         request.user.save()
         update_session_auth_hash(request, request.user)
-        return redirect("account:password_complete")
+        return render(request, "account/change_password.html", {
+            "show_modal": True,
+        })
     
     return render(request, "account/change_password.html")
 

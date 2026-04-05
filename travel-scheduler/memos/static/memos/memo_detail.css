@@ -1,39 +1,3 @@
-/* タイトルの緑背景 */
-.page-title {
-    background: #b7d2b1ff;
-    padding: 10px;
-    color: #447d37;
-    font-size: 20px;
-    font-weight: bold;
-    width: 90%;
-    max-width: 380px;
-    margin: 20px auto 10px auto;
-    box-sizing: border-box;
-}
-
-.form-container{
-    width: 90%;
-    max-width: 380px;
-    margin: 0 auto;
-}
-
-body{
-    text-align: left;
-    font-size: 17px;
-    color: #592d13;
-    background-color: #f7f7f7ff;
-    display: block;
-    padding-top: 30px;
-    padding-bottom: 30px;
-}
-
-label{
-    display: block;
-    font-size: 16px;
-    margin-top: 15px;
-    margin-bottom: 5px;
-}
-
 .memo-list{
     max-width: 360px;
     margin: 0 auto;
@@ -41,12 +5,12 @@ label{
 }
 
 .memo-item{
-    display: block;
-    background: #fff;
-    padding: 14px;
-    margin-bottom: 12px;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    --fab-size: 64px;
+    --fab-bottom: 200px;
+    --fab-gap: 16px;
+
+    padding: 0 16px calc(var(--fab-bottom) + var(--fab-size) + var(--fab-gap));
+    box-sizing: border-box;
 }
 
 input[type="text"]{

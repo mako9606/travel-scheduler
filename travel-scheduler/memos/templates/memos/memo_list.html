@@ -1,26 +1,46 @@
-<head>
-<!-- 画面設計図　スライド5 -->
-    <title>メモ機能画面</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'memos/memo_list.css' %}">
-</head>
+{% block title %}
+    メモ機能画面
+{% endblock %}
 
-<body>
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'memos/memo_list.css' %}?v=1">
+{% endblock %}
 
-    <div class="page-title">note</div>
+{% block header %}
+    {% include "header.html" with header_title="メモ" header_icons='<a href="/destinations/search/" class="icon-btn">📍</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
 
-    <input type="text" name="q" placeholder="目的地名 入力" value="{{ q }}">
+{% block content %}
+    <form method="get" class="memo-search-form">
+        <div class="search-row">
+            <input
+                type="search"
+                name="q"
+                class="memo-search-input"
+                placeholder="検索"
+                value="{{ q|default:'' }}"
+            >
+            <button type="submit" class="search-btn">検索</button>
+        </div>
+    </form>
 
-    <main class="memo-list">
+    <div class="memo-list">
 
-        <a href="{% url 'memos:memo_detail' %}" class="memo-item">
-            <p  class="memo-title">天気予報</p>
-            <p>天気予報 高知市の今日明日の天気 - 日本気象協会 </p>
-        </a>
+        {% for row in memo_rows %}
+            <a href="{% url 'memos:memo_detail' row.id %}" class="memo-item">
+                <p class="memo-title">{{ row.title }}</p>
+                <p class="memo-summary">{{ row.summary }}</p>
+            </a>
+        {% empty %}
+            <p class="memo-empty">・メモがありません</p>
+        {% endfor %}
 
-    </main> 
+    </div>
 
     <a href="{% url 'memos:memo_edit' %}" class="add-btn">＋</a>
 
-</body>  
+{% endblock %}

@@ -1,16 +1,19 @@
 <head>
-<!-- 画面設計図　スライド39 -->
-<title>ログアウト画面</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ログアウト画面</title>
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'account/logout.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'account/logout.css' %}?v=1">
 
 </head>
 
 <body>
-    <div class="login-title">アカウント</div>
-    
     <div class="modal-overlay">
+        <div class="page-title">アカウント</div>
+            
         <div class="form-container modal-box">
 
             <p class="modal-message"> ログアウトしますか？</p>
@@ -23,9 +26,9 @@
                     </button>
                 </form>    
 
-
             <a href="{% url 'account:account' %}" class="btn-cancel">戻る</a>
-        </div>
-    </div>
 
+        </div>
+        
+    </div>
 </body>

@@ -8,18 +8,18 @@
 
 <body>
 
-    <div class="page-title">note</div>
+    <form method="post" class="memo-paper">
+        {% csrf_token %}
 
-    <form class="memo-paper">
+        {% if memo %}
+            <input type="hidden" name="memo_id" value="{{ memo.id }}">
+        {% endif %}
 
-        <textarea rows="6" class="memo-text">
-            初日の集合時間　〇〇駅に8時
-        </textarea>
+        <textarea name="content" class="memo-textarea" placeholder="メモを入力">{{ memo.content|default:'' }}</textarea>
 
+        <button type="submit" class="btn">完了</button>
     </form>
 
-    <a href="{% url 'memos:memo_list' %}" class="btn">完了</a>
-    <a href="{% url 'memos:memo_delete' %}" class="delete-btn">削除</a>
-
+        <a href="{% url 'memos:memo_delete' %}" class="delete-btn">削除</a>
 
 </body>  

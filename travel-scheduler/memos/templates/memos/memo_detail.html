@@ -1,27 +1,30 @@
-<head>
-<!-- 画面設計図　スライド5 -->
-    <title>メモ機能画面</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
+{% block title %}
+    メモ機能画面（詳細）
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
     <link rel="stylesheet" href="{% static 'memos/memo_detail.css' %}">
-</head>
+{% endblock %}
 
-<body>
+{% block header %}
+    {% include "header.html" with header_title="メモ" header_icons='<a href="/destinations/search/" class="icon-btn">📍</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
 
-    <div class="page-title">note</div>
+{% block content %}
 
     <main class="memo-list">
 
         <div class="memo-item">
-            <p  class="memo-title">天気予報</p>
-            <p>天気予報 高知市の今日明日の天気 - 日本気象協会 </p>
+            <p class="memo-title">{{ memo.title }}</p>
+            <p>{{ memo.content|linebreaksbr }}</p>
         </div>
 
     </main> 
 
-    <a href="{% url 'memos:memo_edit' %}" class="edit-btn">メモ編集</a>
+    <a href="{% url 'memos:memo_edit' %}?memo_id={{ memo.id }}" class="edit-btn">メモ編集</a>
 
-</body>  
-
-
-memo_detail.html
+{% endblock %}

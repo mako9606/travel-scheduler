@@ -1,43 +1,37 @@
-/* タイトルの緑背景 */
-.page-title {
-    background: #b7d2b1ff;
-    padding: 10px;
-    color: #447d37;
-    font-size: 20px;
-    font-weight: bold;
-    width: 90%;
-    max-width: 380px;
-    margin: 20px auto 10px auto;
+.memo-search-form{
+    width: 100%;
+    margin-top: 72px;
+    padding: 0 16px 12px;
     box-sizing: border-box;
 }
 
-.form-container{
-    width: 90%;
-    max-width: 380px;
-    margin: 0 auto;
+.search-row{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
 }
 
-body{
-    text-align: left;
-    font-size: 17px;
-    color: #592d13;
-    background-color: #f7f7f7ff;
-    display: block;
-    padding-top: 30px;
-    padding-bottom: 30px;
-}
-
-label{
-    display: block;
+.memo-search-input{
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    padding: 10px 14px;
     font-size: 16px;
-    margin-top: 15px;
-    margin-bottom: 5px;
+    border: 1px solid #595959;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background: #ffffff;
+    color: #592d13;
 }
 
 .memo-list{
-    max-width: 360px;
-    margin: 0 auto;
-    padding:  16px;
+    --fab-size: 64px;
+    --fab-bottom: 200px;
+    --fab-gap: 16px;
+
+    padding: 0 16px calc(var(--fab-bottom) + var(--fab-size) + var(--fab-gap));
+    box-sizing: border-box;
 }
 
 .memo-item{
@@ -50,42 +44,39 @@ label{
     color: inherit;
 }
 
-input[type="text"]{
-    width: 100%;
-    padding: 12px;
+.memo-title{
+    margin: 0 0 8px;
     font-size: 16px;
-    border: 1px solid #595959;
-    box-sizing: border-box;
+    font-weight: bold;
+    line-height: 1.4;
 }
 
-.add-btn{
-   padding: 10px 20px;
-   text-decoration: none;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   background-color: #ffa158ff; 
-   border: 2px solid #592d13;
-   color: #592d13;
-   border-radius: 5px;
-   font-size: 16px;
-   font-weight: bold;
-   margin-top: 12px;
-
-  /* ボタンの丸　*/
-   width: 56px;
-   height: 56px;
-   border-radius: 50%;
-
-  /*　画面内固定　*/
-   position: fixed;
-   bottom: 24px;
-   right: 24px;
+.memo-summary{
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
 }
 
-/* クリック・タップした瞬間 に適用される状態 */
-.button:active{
-    background-color: #ff8c3a;
-    transform: scale(0.97);
+.memo-empty{
+    margin: 0;
+    padding: 0 0 0 16px;
+    background: none;
+    box-shadow: none;
+    font-size: 18px;
+    line-height: 1.45;
+}
+
+.search-btn{
+   flex: 0 0 auto;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+    background-color: #ffa158ff;
     border: 2px solid #592d13;
+    color: #592d13;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 0;
+    width: fit-content;
 }
