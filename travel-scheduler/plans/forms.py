@@ -29,7 +29,6 @@ class ScheduleForm(forms.ModelForm):
     class Meta:
         model = Schedule
         fields = [
-            "destination",
             "arrival_time",
             "departure_time",
         ]
@@ -47,7 +46,6 @@ class ScheduleForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["destination"].required = True
         self.fields["arrival_time"].required = True
         self.fields["departure_time"].required = True   
         

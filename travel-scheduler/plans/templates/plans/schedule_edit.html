@@ -1,45 +1,126 @@
-<head>
-<!-- 画面設計図　スライド27 -->
-    <title>予定設定画面</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'plans/schedule_edit.css' %}">
-</head>
+{% block title %}
+    予定設定画面
+{% endblock %}
 
-<body>
-    <div class="page-title">{{ plan.plan_name }}</div>
-    <form method="POST" action="" class="form-container">
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'plans/schedule_edit.css' %}?v=1">
+{% endblock %}
+
+{% block header %}
+    {% include "header.html" with header_title=plan.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
+
+{% block content %}    
+    <form method="POST" action="" class="schedule-form">
         {% csrf_token %}
 
-        <input type="hidden" name="day_schedule_id" value="{{ day_schedule.id|default_if_none:'' }}">
+        <div class="detail-tab">{{ day_schedule.date|date:"n/j" }}</div> 
 
-        {% if destination %}
-            <input type="hidden" name="destination_id" value="{{ destination.id }}">
-        {% endif %}
+        <div class="tab-content active">
+            <input type="hidden" name="day_schedule_id" value="{{ day_schedule.id|default_if_none:'' }}">
 
-        <label>目的地名</label>
-        <p>{{ form.destination }}</p>
+            {% if destination %}
+                <input type="hidden" name="destination_id" value="{{ destination.id }}">
+            {% endif %}
 
-        <label>到着時間</label>
-        <div class="time-range">
-            {{ form.arrival_time }}
-                <span>〜</span>
-            {{ form.departure_time }}
-        </div>
+            <label>目的地名</label>
+            <p class="destination-name">{{ destination.name }}</p>
 
-        <p>所要時間　〇〇時間</p>
+            <div class="time-block">
+                <div class="time-row">
+                    <label class="time-label">到着時間</label>
+                    {{ form.arrival_time }}
+                </div>
 
-        <label>費用　カテゴリ選択</label>
+                <div class="duration-row">
+                    <span class="duration-mark">↕</span>
+                    <p class="duration-text">所要時間　〇〇分</p>
+                </div>
 
-        <label>項目名入力</label>
-        <input type="text" name="expense_item" placeholder="項目名　入力">
+                <div class="time-row">
+                    <label class="time-label">出発時間</label>
+                    {{ form.departure_time }}
+                </div>
+            </div>
 
-        <label>金額入力</label>
-        <input type="text" name="expense" placeholder="金額 入力"><p>円</p>
-        <a href="#" class="add-btn">＋</a>
+            <label>費用　カテゴリ選択</label>
+            <p class="category-select-wrap">
+                <select name="category_id" class="category-select">
+                    <option value="">---------</option>
+                    {% for category in plan.cost_categories.all %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </p>
 
-        <button type="submit" class="btn">完了</button>
+            <label>項目名入力</label>
+            <input type="text" name="expense_item" class="cost-name-input" placeholder="項目名　入力">
+
+            <label>金額入力</label>
+            <div class="expense-row">
+                <input type="text" name="expense" class="cost-amount-input" placeholder="金額 入力" inputmode="numeric">
+                <span class="yen-unit">円</span>
+                <a href="#" class="add-btn schedule-add-btn">＋</a>
+            </div>
+
+            <button type="submit" class="btn">完了</button>
+        
+        </div> 
 
     </form>
 
-</body>     
+{% endblock %} 
+
+{% block js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const arrival = document.getElementById("id_arrival_time");
+    const departure = document.getElementById("id_departure_time");
+    const durationText = document.querySelector(".duration-text");
+
+    if (!arrival || !departure || !durationText) return;
+
+    function updateDuration() {
+        const arrivalValue = arrival.value;
+        const departureValue = departure.value;
+
+        if (!arrivalValue || !departureValue) {
+            durationText.textContent = "所要時間　〇〇分";
+            return;
+        }
+
+        const [ah, am] = arrivalValue.split(":").map(Number);
+        const [dh, dm] = departureValue.split(":").map(Number);
+
+        let diff = (dh * 60 + dm) - (ah * 60 + am);
+
+        if (diff < 0) {
+            durationText.textContent = "所要時間　〇〇分";
+            return;
+        }
+
+        const hours = Math.floor(diff / 60);
+        const minutes = diff % 60;
+
+        if (hours > 0 && minutes > 0) {
+            durationText.textContent = `所要時間　${hours}時間${minutes}分`;
+        } else if (hours > 0) {
+            durationText.textContent = `所要時間　${hours}時間`;
+        } else {
+            durationText.textContent = `所要時間　${minutes}分`;
+        }
+    }
+
+    arrival.addEventListener("input", updateDuration);
+    departure.addEventListener("input", updateDuration);
+    arrival.addEventListener("change", updateDuration);
+    departure.addEventListener("change", updateDuration);
+
+    updateDuration();
+});
+</script>
+{% endblock %}

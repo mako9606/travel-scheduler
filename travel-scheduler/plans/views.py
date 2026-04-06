@@ -574,18 +574,20 @@ def schedule_edit(request, pk):
             "form": form,
             "schedule": schedule,
             "day_schedule": day_schedule,
+            "destination": schedule.destination,
+            "plan": day_schedule.plan,
+            
         })
     
     else:
         form = ScheduleForm(instance=schedule)
 
-    return render(
-        request,
-        "plans/schedule_edit.html",
-        {
+    return render(request,"plans/schedule_edit.html",{
             "form": form,
             "schedule": schedule,
             "day_schedule": day_schedule,
+            "destination": schedule.destination,
+            "plan": day_schedule.plan,
         }
     )
 
