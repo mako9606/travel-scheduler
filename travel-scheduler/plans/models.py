@@ -96,6 +96,12 @@ class Cost(models.Model):
         on_delete=models.CASCADE,
         related_name="costs"
     )
+    schedule = models.ForeignKey(
+        Schedule,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     category = models.ForeignKey(
         CostCategory,
         on_delete=models.CASCADE,

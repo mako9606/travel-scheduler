@@ -29,7 +29,11 @@
 .tab-content.active{
     display: block;
     margin: 0;
-    padding: 20px 16px 24px;
+    padding: 24px 16px calc(
+        var(--cost-fab-bottom, 200px) +
+        var(--cost-fab-size, 64px) +
+        var(--cost-fab-gap, 16px)
+    );
     background-color: #ffffff;
     border: 1px solid #ccc;
     box-sizing: border-box;
@@ -88,9 +92,10 @@ input[type="text"]{
 }
 
 .time-row input[type="time"]{
-    width: 82px;
+    width: 96px;
+    min-width: 96px;
     height: 40px;
-    padding: 0 8px;
+    padding: 0 10px 0 8px;
     box-sizing: border-box;
     font-size: 16px;
     color: #592d13;
@@ -205,4 +210,10 @@ input[type="text"]{
 .tab-content.active .btn{
     margin-top: 24px;
     width: fit-content;
+}
+
+.expense-block + .expense-block{
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #d9d9d9;
 }

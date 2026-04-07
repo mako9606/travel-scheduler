@@ -18,9 +18,6 @@ from destinations.models import Destination
 
 from .forms import PlanCreateForm, ScheduleForm, CostForm, CostCategoryForm
 
-from django.views.decorators.http import require_POST
-from django.http import JsonResponse
-
 import json
 
 # plan_list.html
@@ -498,6 +495,7 @@ def cost_delete(request, pk, cost_id):
     
 # schedule_edit.html
 # 新規追加時
+@login_required
 def schedule_create(request):
     print("---- schedule_create start ----")
     print("method:", request.method)
@@ -537,6 +535,28 @@ def schedule_create(request):
             )
             schedule.order = (last_order or 0) + 1
             schedule.save()
+            
+            category_ids = request.POST.getlist("category_id")
+            expense_items = request.POST.getlist("expense_item")
+            expenses = request.POST.getlist("expense")
+
+            for category_id, expense_item, expense in zip(category_ids, expense_items, expenses):
+                if not category_id or not expense_item.strip() or not expense.strip():
+                    continue
+
+                category = get_object_or_404(CostCategory, pk=category_id, plan=day_schedule.plan)
+
+                amount_text = expense.replace(",", "").strip()
+                if not amount_text.isdigit():
+                    continue
+
+                Cost.objects.create(
+                    plan=day_schedule.plan,
+                    schedule=schedule,
+                    category=category,
+                    name=expense_item.strip(),
+                    amount=int(amount_text),
+                )
 
             return redirect(
                 reverse("plans:plan_detail", kwargs={"pk": day_schedule.plan.id})
@@ -556,17 +576,48 @@ def schedule_create(request):
             "plan": day_schedule.plan, 
         }
     )
-    
+
+@login_required    
 def schedule_edit(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk)
     day_schedule = schedule.day
+    schedule_costs = Cost.objects.filter(schedule=schedule)
 
     if request.method == "POST":
         form = ScheduleForm(request.POST, instance=schedule)
         if form.is_valid():
-            form.save()    
+            form.save()
+            
+            category_ids = request.POST.getlist("category_id")
+            expense_items = request.POST.getlist("expense_item")
+            expenses = request.POST.getlist("expense")
+            
+            schedule_costs.delete()
+
+            for category_id, expense_item, expense in zip(category_ids, expense_items, expenses):
+                if not category_id or not expense_item.strip() or not expense.strip():
+                    continue
+
+                category = get_object_or_404(
+                    CostCategory,
+                    pk=category_id,
+                    plan=day_schedule.plan
+                )
+
+                amount_text = expense.replace(",", "").strip()
+                if not amount_text.isdigit():
+                    continue
+
+                Cost.objects.create(
+                    plan=day_schedule.plan,
+                    schedule=schedule,
+                    category=category,
+                    name=expense_item.strip(),
+                    amount=int(amount_text),
+                )
+
             return redirect(
-                reverse("plans:plan_detail", kwargs={'pk': day_schedule.plan.id})
+                reverse("plans:plan_detail", kwargs={"pk": day_schedule.plan.id})
                 + f"?day_schedule_id={day_schedule.id}"
             )
         
@@ -576,6 +627,7 @@ def schedule_edit(request, pk):
             "day_schedule": day_schedule,
             "destination": schedule.destination,
             "plan": day_schedule.plan,
+            "schedule_costs": schedule_costs,
             
         })
     
@@ -588,6 +640,7 @@ def schedule_edit(request, pk):
             "day_schedule": day_schedule,
             "destination": schedule.destination,
             "plan": day_schedule.plan,
+            "schedule_costs": schedule_costs,
         }
     )
 

@@ -325,6 +325,16 @@ form.container{
     padding-top: 10px;
 }
 
+a.schedule-time-link{
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+a.schedule-time-link .schedule-time{
+    color: inherit;
+}
+
 .schedule-row,
 .schedule-row-empty{
     flex: 1;

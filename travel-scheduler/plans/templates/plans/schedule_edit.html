@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
-    <link rel="stylesheet" href="{% static 'plans/schedule_edit.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'plans/schedule_edit.css' %}?v=2">
 {% endblock %}
 
 {% block header %}
@@ -47,32 +47,78 @@
                 </div>
             </div>
 
-            <label>費用　カテゴリ選択</label>
-            <p class="category-select-wrap">
-                <select name="category_id" class="category-select">
-                    <option value="">---------</option>
-                    {% for category in plan.cost_categories.all %}
-                        <option value="{{ category.id }}">{{ category.name }}</option>
+            <div id="expense-blocks">
+                {% if schedule_costs %}
+                    {% for cost in schedule_costs %}
+                        <div class="expense-block">
+                            <input type="hidden" name="cost_id" value="{{ cost.id }}">
+                            <label>費用　カテゴリ選択</label>
+                            <p class="category-select-wrap">
+                                <select name="category_id" class="category-select">
+                                    <option value="">---------</option>
+                                    {% for category in plan.cost_categories.all %}
+                                        <option value="{{ category.id }}" {% if cost.category_id == category.id %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </p>
+
+                            <label>項目名入力</label>
+                            <input
+                                type="text"
+                                name="expense_item"
+                                class="cost-name-input"
+                                placeholder="項目名　入力"
+                                value="{{ cost.name }}"
+                            >
+
+                            <label>金額入力</label>
+                            <div class="expense-row">
+                                <input
+                                    type="text"
+                                    name="expense"
+                                    class="cost-amount-input"
+                                    placeholder="金額　入力"
+                                    inputmode="numeric"
+                                    value="{{ cost.amount }}"
+                                >
+                                <span class="yen-unit">円</span>
+                                <a href="#" class="add-btn schedule-add-btn">＋</a>
+                            </div>
+                        </div>
                     {% endfor %}
-                </select>
-            </p>
+                {% else %}
+                    <div class="expense-block">
+                        <input type="hidden" name="cost_id" value="">
 
-            <label>項目名入力</label>
-            <input type="text" name="expense_item" class="cost-name-input" placeholder="項目名　入力">
+                        <label>費用　カテゴリ選択</label>
+                        <p class="category-select-wrap">
+                            <select name="category_id" class="category-select">
+                                <option value="">---------</option>
+                                {% for category in plan.cost_categories.all %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </p>
 
-            <label>金額入力</label>
-            <div class="expense-row">
-                <input type="text" name="expense" class="cost-amount-input" placeholder="金額 入力" inputmode="numeric">
-                <span class="yen-unit">円</span>
-                <a href="#" class="add-btn schedule-add-btn">＋</a>
+                        <label>項目名入力</label>
+                        <input type="text" name="expense_item" class="cost-name-input" placeholder="項目名　入力">
+
+                        <label>金額入力</label>
+                        <div class="expense-row">
+                            <input type="text" name="expense" class="cost-amount-input" placeholder="金額　入力" inputmode="numeric">
+                            <span class="yen-unit">円</span>
+                            <a href="#" class="add-btn schedule-add-btn">＋</a>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
 
             <button type="submit" class="btn">完了</button>
         
         </div> 
-
     </form>
-
 {% endblock %} 
 
 {% block js %}
@@ -81,10 +127,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const arrival = document.getElementById("id_arrival_time");
     const departure = document.getElementById("id_departure_time");
     const durationText = document.querySelector(".duration-text");
-
-    if (!arrival || !departure || !durationText) return;
+    const expenseBlocks = document.getElementById("expense-blocks");
 
     function updateDuration() {
+        if (!arrival || !departure || !durationText) return;
+
         const arrivalValue = arrival.value;
         const departureValue = departure.value;
 
@@ -96,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const [ah, am] = arrivalValue.split(":").map(Number);
         const [dh, dm] = departureValue.split(":").map(Number);
 
-        let diff = (dh * 60 + dm) - (ah * 60 + am);
+        const diff = (dh * 60 + dm) - (ah * 60 + am);
 
         if (diff < 0) {
             durationText.textContent = "所要時間　〇〇分";
@@ -115,12 +162,45 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    arrival.addEventListener("input", updateDuration);
-    departure.addEventListener("input", updateDuration);
-    arrival.addEventListener("change", updateDuration);
-    departure.addEventListener("change", updateDuration);
+    function updateAddButtons() {
+        if (!expenseBlocks) return;
 
-    updateDuration();
+        const buttons = expenseBlocks.querySelectorAll(".schedule-add-btn");
+        buttons.forEach((btn, index) => {
+            btn.style.display = index === buttons.length - 1 ? "flex" : "none";
+        });
+    }
+
+    if (arrival && departure) {
+        arrival.addEventListener("input", updateDuration);
+        departure.addEventListener("input", updateDuration);
+        arrival.addEventListener("change", updateDuration);
+        departure.addEventListener("change", updateDuration);
+        updateDuration();
+    }
+
+    if (expenseBlocks) {
+        expenseBlocks.addEventListener("click", function (e) {
+            const addBtn = e.target.closest(".schedule-add-btn");
+            if (!addBtn) return;
+
+            e.preventDefault();
+
+            const currentBlock = addBtn.closest(".expense-block");
+            const clone = currentBlock.cloneNode(true);
+
+            const costIdInput = clone.querySelector('input[name="cost_id"]');
+            if (costIdInput) costIdInput.value = "";
+            clone.querySelector(".category-select").value = "";
+            clone.querySelector('input[name="expense_item"]').value = "";
+            clone.querySelector('input[name="expense"]').value = "";
+
+            expenseBlocks.appendChild(clone);
+            updateAddButtons();
+        });
+
+        updateAddButtons();
+    }
 });
 </script>
 {% endblock %}
