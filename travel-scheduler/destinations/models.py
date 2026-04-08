@@ -17,23 +17,29 @@ class Destination(models.Model):
     admission_fee = models.CharField(max_length=50, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    selected_pin = models.ForeignKey(
+        "MapPin",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
     memo = models.TextField(blank=True)
     
     
 class MapPin(models.Model):
-    destination = models.ForeignKey(
-        Destination,
+    user = models.ForeignKey(
+        User,
         on_delete=models.CASCADE,
-        related_name="pins"
+        related_name="map_pins",
     )
     name = models.CharField(max_length=50)
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
+    color = models.CharField(max_length=20, blank=True, default="")
     order = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.destination.name} - {self.name}"    
+        return self.name
     

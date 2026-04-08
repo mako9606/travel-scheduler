@@ -1,25 +1,44 @@
-<head>
-<!-- 画面設計図　スライド22 -->
-    <title>地点登録画面</title>
+{% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'destinations/map_destination.css' %}">
-</head>
+{% block title %}
+地点登録画面
+{% endblock %}
 
-<body>
+{% block css %}
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'destinations/map_destination.css' %}?v=1">
+{% endblock %}
 
-    <div class="page-title"></div>
+{% block header %}
+    {% include "header.html" with header_title="" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+{% endblock %}
 
-    <form method="POST" class="form-container">
+{% block content %} 
+    <form method="POST">
         {% csrf_token %}
 
+        <input type="hidden" name="pin_id" value="{% if selected_pin %}{{ selected_pin.id }}{% endif %}">
+
+        {% if day_schedule_id %}
+            <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
+        {% endif %}
+
+        {% if from_page %}
+            <input type="hidden" name="from" value="{{ from_page }}">
+        {% endif %}
+
+        {% if schedule_id %}
+            <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+        {% endif %}
+
         <input type="text" name="q" placeholder="住所 入力" value="{{ q }}">
-        <button type="submit" class="search-btn">検索</button>
+        <button type="submit" name="action" value="search" class="search-btn">検索</button>
 
 
         <p>ピン選択</P>
         {% for pin in pins %}
-            <a href="{% url 'destinations:map_destination' destination.id %}?pin_id={{ pin.id }}">
+            <a href="{% url 'destinations:map_destination' destination.id %}?pin_id={{ pin.id }}{% if day_schedule_id %}&day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}&from={{ from_page }}{% endif %}{% if schedule_id %}&schedule_id={{ schedule_id }}{% endif %}">
                 {{ pin.name }}
             </a>
         {% endfor %}
@@ -34,11 +53,11 @@
              <p>まだピンが選択されていません</p>
         {% endif %}
 
-        <a href="{% url 'destinations:map_pin_edit' destination.id %}"
+        <a href="{% url 'destinations:map_pin_edit' destination.id %}?{% if selected_pin %}pin_id={{ selected_pin.id }}&{% endif %}{% if day_schedule_id %}day_schedule_id={{ day_schedule_id }}&{% endif %}{% if from_page %}from={{ from_page }}&{% endif %}{% if schedule_id %}schedule_id={{ schedule_id }}{% endif %}"
             class="edit-btn">
                 ピン編集
         </a>
-        <button type="submit" class="btn">登録</button>
+        <button type="submit" name="action" value="save" class="btn">登録</button>
         <input type="hidden" name="lat" value="{{ lat }}">
         <input type="hidden" name="lng" value="{{ lng }}">
 
@@ -97,4 +116,4 @@
 
         window.onload = initMap;
     </script>
-</body> 
+{% endblock %}

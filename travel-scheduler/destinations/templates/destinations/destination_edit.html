@@ -45,11 +45,14 @@
 
         <label>MAP</label>
         {% if destination %}
-            <a href="{% url 'destinations:map_destination' destination.id %}"class="btn map-link">
-                GoogleMap
+            <a href="{% url 'destinations:map_destination' destination.id %}{% if day %}?day_schedule_id={{ day.id }}{% endif %}{% if from_page %}{% if day %}&{% else %}?{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if day or from_page %}&{% else %}?{% endif %}schedule_id={{ schedule_id }}{% endif %}"
+                class="btn map-link">
+                    GoogleMap
             </a>
         {% else %}
-            <a href="#" class="btn map-link">GoogleMap</a>   
+            <button type="submit" name="action" value="save_and_map" class="btn map-link">
+                GoogleMap
+            </button> 
         {% endif %}    
         {{ form.latitude }}
         {{ form.longitude }}

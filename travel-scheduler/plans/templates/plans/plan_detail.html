@@ -7,8 +7,8 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=12">
-<link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=15">
+<link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=4">
 {% endblock %}
 
 {% block header %}
@@ -149,27 +149,56 @@
                         <div class="schedule-item">
                             {% if is_owner %}
                                 <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-time-link">
-                                    <div class="schedule-time">{{ schedule.arrival_time }}</div>
-                                </a>
-                            
-                                <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row"
-                                    data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
-                                    <div class="schedule-card-body">
-                                        <div class="destination">
-                                            {% if schedule.destination %}
-                                                {{ schedule.destination.name }}
-                                            {% else %}
-                                                目的地未設定
-                                            {% endif %}
-                                        </div>
-                                        <div class="schedule-subtext">
-                                            {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
-                                        </div>
+                                    <div class="schedule-times">
+                                        <div class="schedule-time">{{ schedule.arrival_display }}</div>
+                                        <div class="schedule-time">{{ schedule.departure_display }}</div>
                                     </div>
                                 </a>
 
+                                {% if schedule.destination %}
+                                    <div class="schedule-pin-column">
+                                        {% if schedule.destination.selected_pin %}
+                                            <div
+                                                class="schedule-pin-badge"
+                                                {% if schedule.pin_color %}
+                                                    style="background: {{ schedule.pin_color }}; border-color: {{ schedule.pin_color }};"
+                                                {% endif %}
+                                            ></div>
+                                        {% endif %}
+                                    </div>
+
+                                    <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}&schedule_id={{ schedule.id }}"
+                                        class="schedule-row">
+                                        <div class="schedule-card-body">
+                                            <div class="destination">
+                                                {{ schedule.destination.name }}
+                                            </div>
+                                            <div class="schedule-subtext">
+                                                {% if schedule.duration_display %}
+                                                    所要時間：{{ schedule.duration_display }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-row"
+                                        data-schedule-id="{{ schedule.id }}" data-day-id="{{ row.day.id }}" data-order="{{ schedule.order }}">
+                                        <div class="schedule-card-body">
+                                            <div class="destination">予定が登録されてません</div>
+                                            <div class="schedule-subtext">
+                                                {% if schedule.duration_display %}
+                                                    所要時間：{{ schedule.duration_display }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endif %}
+
                             {% else %}
-                                <div class="schedule-time">{{ schedule.arrival_time }}</div>
+                                <div class="schedule-times">
+                                    <div class="schedule-time">{{ schedule.arrival_display }}</div>
+                                    <div class="schedule-time">{{ schedule.departure_display }}</div>
+                                </div>
 
                                 {% if schedule.destination %}
                                     <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}&schedule_id={{ schedule.id }}"
@@ -177,23 +206,26 @@
                                         <div class="schedule-card-body">
                                             <div class="destination">{{ schedule.destination.name }}</div>
                                             <div class="schedule-subtext">
-                                                {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                                                {% if schedule.duration_display %}
+                                                    所要時間：{{ schedule.duration_display }}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </a>
                                 {% else %}
                                     <div class="schedule-row schedule-row-empty">
                                         <div class="schedule-card-body">
-                                            <div class="destination">目的地未設定</div>
+                                            <div class="destination">予定が登録されてません</div>
                                             <div class="schedule-subtext">
-                                                {{ schedule.arrival_time }}〜{{ schedule.departure_time }}
+                                                {% if schedule.duration_display %}
+                                                    所要時間：{{ schedule.duration_display }}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                 {% endif %}
-                            {% endif %}   
+                            {% endif %}                                
                         </div>
-
                     {% empty %}
                         <p class="no-schedule">予定が登録されてません</p>
                     {% endfor %}
@@ -233,9 +265,7 @@
         <div class="tab-content tab-map">
 
             <div class="map-area">
-                <div class="map-placeholder">
-                    地図（ここにピン表示）
-                </div>
+                <div id="plan-map"></div>
             </div>   
 
         </div>    
@@ -311,6 +341,93 @@
 
     </form>
 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzTxW_yYKsF1KuCOYGslVvoIpwaVifXIY"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+    <script>
+        let planMap = null;
+        const planMapPoints = {{ map_points_json|safe }};
+
+        function renderPlanMap() {
+            const mapEl = document.getElementById("plan-map");
+            if (!mapEl || typeof google === "undefined") return;
+
+            const defaultCenter = { lat: 35.681236, lng: 139.767125 };
+
+            const firstPoint = planMapPoints.length > 0
+                ? {
+                    lat: parseFloat(planMapPoints[0].lat),
+                    lng: parseFloat(planMapPoints[0].lng)
+                }
+                : defaultCenter;
+
+            if (!planMap) {
+                planMap = new google.maps.Map(mapEl, {
+                    zoom: 11,
+                    center: firstPoint,
+                });
+
+                const bounds = new google.maps.LatLngBounds();
+
+                planMapPoints.forEach((point) => {
+                    const position = {
+                        lat: parseFloat(point.lat),
+                        lng: parseFloat(point.lng),
+                    };
+
+                    const marker = new google.maps.Marker({
+                        position: position,
+                        map: planMap,
+                        label: point.label,
+                        title: point.name,
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 8,
+                            fillColor: point.pin_color || "#f4c48c",
+                            fillOpacity: 1,
+                            strokeColor: point.pin_color || "#f4c48c",
+                            strokeWeight: 1,
+                        },
+                    });
+
+                    marker.addListener("click", () => {
+                        window.location.href = point.detail_url;
+                    });
+
+                    bounds.extend(position);
+                });
+
+                if (planMapPoints.length > 1) {
+                    planMap.fitBounds(bounds);
+                } else if (planMapPoints.length === 1) {
+                    planMap.setCenter(firstPoint);
+                    planMap.setZoom(13);
+                }
+            }
+
+            google.maps.event.trigger(planMap, "resize");
+
+            if (planMapPoints.length === 1) {
+                planMap.setCenter(firstPoint);
+                planMap.setZoom(13);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const mapBtn = document.querySelector('.tab-btn[data-target=".tab-map"]');
+
+            if (mapBtn) {
+                mapBtn.addEventListener("click", () => {
+                    setTimeout(renderPlanMap, 0);
+                });
+            }
+
+            if (document.querySelector(".tab-map.active")) {
+                setTimeout(renderPlanMap, 0);
+            }
+        });
+    </script>
     
     {% if is_owner %}
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -380,6 +497,7 @@
             const dayId = params.get("day_schedule_id");
             const memoTab = params.get("memo_tab");
             const costTab = params.get("cost_tab");
+            const mapTab = params.get("map_tab");
 
             if (memoTab) {
                 const memoContent = document.querySelector(".tab-memo");
@@ -409,11 +527,21 @@
                 }
             }
 
-            // いったん全部リセット
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-            // ?day があればそれを表示
+            if (mapTab) {
+                const mapContent = document.querySelector(".tab-map");
+                const mapBtn = document.querySelector('.tab-btn[data-target=".tab-map"]');
+
+                if (mapContent && mapBtn) {
+                    mapContent.classList.add("active");
+                    mapBtn.classList.add("active");
+                    setTimeout(renderPlanMap, 0);
+                    return;
+                }
+            }
+
             if (dayId) {
                 const targetContent = document.querySelector(
                     `.tab-content[data-day-id="${dayId}"]`
@@ -429,7 +557,6 @@
                 }
             }
 
-            // なければ「最初のスケジュール」を表示
             const firstContent = document.querySelector('.tab-content.tab-schedule-1');
             const firstBtn = document.querySelector('.tab-btn[data-target=".tab-schedule-1"]');
 

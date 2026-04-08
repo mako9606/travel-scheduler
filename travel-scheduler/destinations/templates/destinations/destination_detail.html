@@ -1,11 +1,24 @@
 <!-- 画面設計図　スライド21 27 既存プラン詳細画面 -->
 <div class="modal-overlay">
-    
     <div class="modal-box">
-
         <div class="container">
 
-            <button type="button" class="modal-close" onclick="history.back()">×</button>
+            {% if source == "plan_detail" and day %}
+                <a href="{% url 'plans:plan_detail' day.plan.id %}?day_schedule_id={{ day.id }}{% if map_tab %}&map_tab={{ map_tab }}{% endif %}"
+                    class="modal-close">
+                    ×
+                </a>
+            {% elif source == "search" and day %}
+                <a href="{% url 'destinations:destination_search' %}?day_schedule_id={{ day.id }}"
+                    class="modal-close">
+                    ×
+                </a>
+            {% else %}
+                <a href="{% url 'destinations:destination_search' %}"
+                    class="modal-close">
+                    ×
+                </a>
+            {% endif %}
 
             <p class="destination-name">{{ destination.name }}</p>
 
@@ -28,7 +41,7 @@
                     {% else %}
                         ー
                     {% endif %}
-</p>
+                </p>
             </div>
 
             <div class="detail-row">
@@ -120,6 +133,5 @@
             {% endif %}
 
         </div>
-
     </div>    
 </div>

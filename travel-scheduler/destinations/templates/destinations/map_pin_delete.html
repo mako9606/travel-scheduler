@@ -17,6 +17,17 @@
             <div class="delete-actions">
                 <form method="POST">
                     {% csrf_token %}
+
+                    {% if day_schedule_id %}
+                        <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
+                    {% endif %}
+                    {% if from_page %}
+                        <input type="hidden" name="from" value="{{ from_page }}">
+                    {% endif %}
+                    {% if schedule_id %}
+                        <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+                    {% endif %}
+
                     <button type="submit" class="btn-delete">削除</button>
                 </form>
                 <a href="{% url 'destinations:map_pin_edit' destination.id %}" class="btn-cancel">戻る</a>

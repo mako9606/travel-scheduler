@@ -93,3 +93,43 @@
 .modal-box .btn{
     margin-top: 28px;
 }
+
+.detail-actions{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 28px;
+    gap: 12px;
+}
+
+.detail-actions .remove-btn{
+    margin-top: 0;
+}
+
+.detail-actions .small-edit-btn{
+    display: inline-block;
+    margin-top: 0;
+    margin-left: auto;
+}
+
+.remove-btn{
+   padding: 5px 12px;
+   text-decoration: none;
+   display: inline-block;
+   background-color: white; 
+   border: 2px solid #592d13;
+   color: #990000;
+   border-radius: 4px;
+   font-size: 12px;
+   font-weight: 700;
+   margin-top: 12px;
+   width: auto;
+   box-sizing: border-box;
+}
+
+/* クリック・タップした瞬間 に適用される状態 */
+.remove-btn:active{
+    background-color: white;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}

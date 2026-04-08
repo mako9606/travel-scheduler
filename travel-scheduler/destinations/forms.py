@@ -32,4 +32,4 @@ class DestinationForm(forms.ModelForm):
 class MapPinForm(forms.ModelForm):
     class Meta:
         model = MapPin
-        fields = ["name", "latitude", "longitude"]
+        fields = ["name"]

@@ -281,13 +281,90 @@ class PlanDetailView(DetailView):
             else:
                 schedules = []
             
+            for schedule in schedules:
+                if schedule.arrival_time:
+                    schedule.arrival_display = f"{schedule.arrival_time.hour}:{schedule.arrival_time.minute:02d}"
+                else:
+                    schedule.arrival_display = ""
+
+                if schedule.departure_time:
+                    schedule.departure_display = f"{schedule.departure_time.hour}:{schedule.departure_time.minute:02d}"
+                else:
+                    schedule.departure_display = ""
+
+                schedule.duration_display = ""
+                
+                schedule.pin_color = ""
+
+                if schedule.destination and schedule.destination.selected_pin:
+                    selected_pin = schedule.destination.selected_pin
+                    schedule.pin_color = (
+                        selected_pin.color
+                        or f"hsl({(selected_pin.id * 137) % 360}, 70%, 65%)"
+                    )
+
+                if schedule.arrival_time and schedule.departure_time:
+                    start_minutes = schedule.arrival_time.hour * 60 + schedule.arrival_time.minute
+                    end_minutes = schedule.departure_time.hour * 60 + schedule.departure_time.minute
+                    diff = end_minutes - start_minutes
+
+                    if diff >= 0:
+                        hours = diff // 60
+                        minutes = diff % 60
+
+                        if hours > 0 and minutes > 0:
+                            schedule.duration_display = f"{hours}時間{minutes}分"
+                        elif hours > 0:
+                            schedule.duration_display = f"{hours}時間"
+                        else:
+                            schedule.duration_display = f"{minutes}分"    
+            
             schedule_rows.append({
                 "date": d,
                 "day": day,
                 "schedules": schedules,
             })
+            
         context["schedule_rows"] = schedule_rows
-        
+
+        map_points = []
+
+        for day_index, row in enumerate(schedule_rows, start=1):
+            day = row["day"]
+            if not day:
+                continue
+
+            for schedule_index, schedule in enumerate(row["schedules"], start=1):
+                destination = schedule.destination
+                if not destination:
+                    continue
+
+                if destination.latitude is None or destination.longitude is None:
+                    continue
+
+                detail_url = (
+                    reverse("destinations:destination_detail", kwargs={"pk": destination.id})
+                    + f"?day_schedule_id={day.id}&schedule_id={schedule.id}&map_tab=1"
+                )
+
+                pin_color = ""
+
+                if destination.selected_pin:
+                    pin_color = (
+                        destination.selected_pin.color
+                        or f"hsl({(destination.selected_pin.id * 137) % 360}, 70%, 65%)"
+                    )
+
+                map_points.append({
+                    "label": f"{day_index}-{schedule_index}",
+                    "name": destination.name,
+                    "lat": destination.latitude,
+                    "lng": destination.longitude,
+                    "detail_url": detail_url,
+                    "pin_color": pin_color,
+                })
+
+        context["map_points_json"] = json.dumps(map_points, ensure_ascii=False)
 
         total_cost = plan.costs.aggregate(total=Sum("amount"))["total"] or 0
         categories = (
@@ -573,7 +650,8 @@ def schedule_create(request):
             "schedule": None,
             "day_schedule": day_schedule,
             "destination": destination,
-            "plan": day_schedule.plan, 
+            "plan": day_schedule.plan,
+            "schedule_costs": [],
         }
     )
 

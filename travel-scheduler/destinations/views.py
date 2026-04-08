@@ -43,6 +43,10 @@ def destination_create(request):
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
     
+    from_page = request.GET.get("from") or request.POST.get("from")
+    schedule_id = request.GET.get("schedule_id") or request.POST.get("schedule_id")
+
+    
     lat = request.GET.get("lat")
     lng = request.GET.get("lng")
     
@@ -58,6 +62,22 @@ def destination_create(request):
             destination.save()
             
             action = request.POST.get("action")
+            
+            if action == "save_and_map":
+                url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
+
+                params = []
+                if day:
+                    params.append(f"day_schedule_id={day.id}")
+                if from_page:
+                    params.append(f"from={from_page}")
+                if schedule_id:
+                    params.append(f"schedule_id={schedule_id}")
+
+                if params:
+                    url += "?" + "&".join(params)
+
+                return redirect(url)
 
             if day:
                 return redirect(
@@ -80,6 +100,8 @@ def destination_create(request):
             "form": form,
             "destination": None,
             "day": day,
+            "from_page": from_page,
+            "schedule_id": schedule_id,
         }
     ) 
     
@@ -108,6 +130,15 @@ def destination_edit(request, pk):
             destination.closed_day = ",".join(closed_days)
 
             destination.save()
+            
+            action = request.POST.get("action")
+
+            if day and action == "save_and_set":
+                return redirect(
+                    reverse("plans:schedule_create")
+                    + f"?day_schedule_id={day.id}&destination_id={destination.id}"
+                )
+
         
             if day:  # プラン内
                 url = reverse("destinations:destination_detail", kwargs={"pk": destination.id}) + f"?day_schedule_id={day.id}"
@@ -189,6 +220,7 @@ def destination_detail(request, pk):
     day = None
     day_schedule_id = request.GET.get("day_schedule_id")
     schedule_id = request.GET.get("schedule_id")
+    map_tab = request.GET.get("map_tab")
     
     if day_schedule_id:
         day = get_object_or_404(DaySchedule, pk=day_schedule_id)
@@ -214,6 +246,8 @@ def destination_detail(request, pk):
         )
         if schedule_id:
             url += f"&schedule_id={schedule_id}"
+        if map_tab:
+            url += f"&map_tab={map_tab}"    
         return redirect(url)
 
     return redirect(
@@ -223,33 +257,73 @@ def destination_detail(request, pk):
 
 #  map_destination.html
 def map_destination(request, pk):
-    destination = get_object_or_404(Destination, pk=pk)
-    pins = destination.pins.all().order_by("order")
-    
-    selected_pin_id = request.GET.get("pin_id")
+    destination = get_object_or_404(Destination, pk=pk, user=request.user)
+    pins = MapPin.objects.filter(user=request.user).order_by("order", "id")
+
+    selected_pin_id = request.GET.get("pin_id") or request.POST.get("pin_id")
     selected_pin = None
 
     if selected_pin_id:
         selected_pin = get_object_or_404(
             MapPin,
             pk=selected_pin_id,
-            destination=destination
+            user=request.user
         )
-        
+    elif destination.selected_pin and destination.selected_pin.user == request.user:
+        selected_pin = destination.selected_pin
+
+    day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
+    from_page = request.GET.get("from") or request.POST.get("from")
+    schedule_id = request.GET.get("schedule_id") or request.POST.get("schedule_id")
+
     if request.method == "POST":
+        action = request.POST.get("action")
         lat = request.POST.get("lat")
         lng = request.POST.get("lng")
+        q = request.POST.get("q", "")
 
-        if lat and lng and selected_pin:
-            destination.latitude = lat
-            destination.longitude = lng
+        if action == "search":
+            context = {
+                "destination": destination,
+                "pins": pins,
+                "selected_pin": selected_pin,
+                "day_schedule_id": day_schedule_id,
+                "from_page": from_page,
+                "schedule_id": schedule_id,
+                "q": q,
+            }
+            return render(request, "destinations/map_destination.html", context)
+
+        if action == "save":
+            if lat and lng:
+                destination.latitude = lat
+                destination.longitude = lng
+
+            destination.selected_pin = selected_pin
             destination.save()
-        return redirect("destinations:destination_edit", pk=destination.pk)  
+
+            url = reverse("destinations:destination_edit", kwargs={"pk": destination.pk})
+
+            params = []
+            if day_schedule_id:
+                params.append(f"day_schedule_id={day_schedule_id}")
+            if from_page:
+                params.append(f"from={from_page}")
+            if schedule_id:
+                params.append(f"schedule_id={schedule_id}")
+
+            if params:
+                url += "?" + "&".join(params)
+
+            return redirect(url)
 
     context = {
         "destination": destination,
         "pins": pins,
         "selected_pin": selected_pin,
+        "day_schedule_id": day_schedule_id,
+        "from_page": from_page,
+        "schedule_id": schedule_id,
     }
 
     return render(request, "destinations/map_destination.html", context)
@@ -272,15 +346,23 @@ def map_destination(request, pk):
         #"form": form,
         #"destination": destination,
     #})
+    
+def get_auto_pin_color(pin_id):
+    hue = (pin_id * 137) % 360
+    return f"hsl({hue}, 70%, 65%)"    
 
 def map_pin_edit(request, destination_id):
     
-    destination = get_object_or_404(Destination, pk=destination_id)
-    pins = destination.pins.all().order_by("order")
+    destination = get_object_or_404(Destination, pk=destination_id, user=request.user)
+    pins = MapPin.objects.filter(user=request.user).order_by("order", "id")
+    
+    day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
+    from_page = request.GET.get("from") or request.POST.get("from")
+    schedule_id = request.GET.get("schedule_id") or request.POST.get("schedule_id")
     
      # GETパラメータから選択ピン取得
     selected_pin = None
-    pin_id = request.GET.get("pin_id")
+    pin_id = request.GET.get("pin_id") or request.POST.get("pin_id")
     
     print("destination_id:", destination_id)
     print("pin_id:", pin_id)
@@ -290,7 +372,7 @@ def map_pin_edit(request, destination_id):
         selected_pin = get_object_or_404(
             MapPin,
             pk=pin_id,
-            destination=destination
+            user=request.user
         )
 
     # 追加処理（pin_idなし）
@@ -298,17 +380,50 @@ def map_pin_edit(request, destination_id):
         form = MapPinForm(request.POST)
         if form.is_valid():
             new_pin = form.save(commit=False)
-            new_pin.destination = destination
+            new_pin.user = request.user
             new_pin.save()
-            return redirect("destinations:map_destination", pk=destination.id)
+
+            if not new_pin.color:
+                new_pin.color = get_auto_pin_color(new_pin.id)
+                new_pin.save(update_fields=["color"])
+        
+            url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
+            params = [f"pin_id={new_pin.id}"]
+
+            if day_schedule_id:
+                params.append(f"day_schedule_id={day_schedule_id}")
+            if from_page:
+                params.append(f"from={from_page}")
+            if schedule_id:
+                params.append(f"schedule_id={schedule_id}")
+
+            if params:
+                url += "?" + "&".join(params)
+
+            return redirect(url)
 
     # 編集処理（pin_idあり）
-    if request.method == "POST" and selected_pin:
-        selected_pin.name = request.POST.get("name")
-        selected_pin.save()
-        return redirect(
-            f"/destinations/map/{destination.id}/pin/edit/?pin_id={selected_pin.id}"
-        )
+    if request.method == "POST" and request.POST.get("action") != "add" and selected_pin:
+        edit_form = MapPinForm(request.POST, instance=selected_pin)
+        if edit_form.is_valid():
+            updated_pin = edit_form.save(commit=False)
+            updated_pin.user = request.user
+            updated_pin.save()
+
+            url = reverse("destinations:map_pin_edit", kwargs={"destination_id": destination.id})
+            params = [f"pin_id={updated_pin.id}"]
+
+            if day_schedule_id:
+                params.append(f"day_schedule_id={day_schedule_id}")
+            if from_page:
+                params.append(f"from={from_page}")
+            if schedule_id:
+                params.append(f"schedule_id={schedule_id}")
+
+            if params:
+                url += "?" + "&".join(params)
+
+            return redirect(url)    
 
     form = MapPinForm()
 
@@ -320,17 +435,38 @@ def map_pin_edit(request, destination_id):
             "pins": pins,
             "form": form,
             "selected_pin": selected_pin,
+            "day_schedule_id": day_schedule_id,
+            "from_page": from_page,
+            "schedule_id": schedule_id,
         }
     )
 
 
 def map_pin_delete(request, destination_id, pin_id):
-    destination = get_object_or_404(Destination, pk=destination_id)
-    pin = get_object_or_404(MapPin, pk=pin_id, destination=destination)
+    destination = get_object_or_404(Destination, pk=destination_id, user=request.user)
+    pin = get_object_or_404(MapPin, pk=pin_id, user=request.user)
+
+    day_schedule_id = request.POST.get("day_schedule_id") or request.GET.get("day_schedule_id")
+    from_page = request.POST.get("from") or request.GET.get("from")
+    schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule_id")
 
     if request.method == "POST":
         pin.delete()
-        return redirect("destinations:map_destination", pk=destination.id)
+
+        url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
+        params = []
+
+        if day_schedule_id:
+            params.append(f"day_schedule_id={day_schedule_id}")
+        if from_page:
+            params.append(f"from={from_page}")
+        if schedule_id:
+            params.append(f"schedule_id={schedule_id}")
+
+        if params:
+            url += "?" + "&".join(params)
+
+        return redirect(url)
 
     return render(
         request,
@@ -338,5 +474,8 @@ def map_pin_delete(request, destination_id, pin_id):
         {
             "destination": destination,
             "pin": pin,
+            "day_schedule_id": day_schedule_id,
+            "from_page": from_page,
+            "schedule_id": schedule_id,
         }
     )

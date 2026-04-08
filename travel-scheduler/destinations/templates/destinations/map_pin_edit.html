@@ -1,18 +1,30 @@
 <head>
-<!-- 画面設計図　スライド23 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>ピン追加・編集画面</title>
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'destinations/map_pin_edit.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'destinations/map_pin_edit.css' %}?v=1">
 </head>
 
 <body>
 
-    <div class="page-title">{{ destination.name }}</div>
+    <div class="page-title"></div>
 
-    <form method="POST" action="{% url 'destinations:map_pin_edit' destination.id %}"
-        class="form-container">
+    <form method="POST" action="{% url 'destinations:map_pin_edit' destination.id %}">
         {% csrf_token %}
+
+        {% if day_schedule_id %}
+            <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
+        {% endif %}
+        {% if from_page %}
+            <input type="hidden" name="from" value="{{ from_page }}">
+        {% endif %}
+        {% if schedule_id %}
+            <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+        {% endif %}
 
         <!-- ピンの追加　-->
         <label>ピン追加</label>
@@ -22,8 +34,19 @@
     
     <!-- ピンの選択　-->
     <form method="GET"
-      action="{% url 'destinations:map_pin_edit' destination.id %}"
-      class="form-container">
+        action="{% url 'destinations:map_pin_edit' destination.id %}"
+        class="form-container">
+
+        {% if day_schedule_id %}
+            <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
+        {% endif %}
+        {% if from_page %}
+            <input type="hidden" name="from" value="{{ from_page }}">
+        {% endif %}
+        {% if schedule_id %}
+            <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+        {% endif %}
+
 
         <label>ピン選択</label>
         <select name="pin_id" onchange="this.form.submit()">
@@ -41,9 +64,19 @@
     <!-- ピンのラベル編集　-->
     {% if selected_pin %}
         <form method="POST"
-          action="{% url 'destinations:map_pin_edit' destination.id %}?pin_id={{ selected_pin.id }}"
-          class="form-container">
+            action="{% url 'destinations:map_pin_edit' destination.id %}?pin_id={{ selected_pin.id }}"
+            class="form-container">
             {% csrf_token %}
+
+            {% if day_schedule_id %}
+                <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
+            {% endif %}
+            {% if from_page %}
+                <input type="hidden" name="from" value="{{ from_page }}">
+            {% endif %}
+            {% if schedule_id %}
+                <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+            {% endif %}
 
             <label>ラベル名　編集</label>
             <input type="text" name="name" value="{{ selected_pin.name }}">
@@ -52,7 +85,8 @@
         </form>
 
         <!-- ピンの削除　-->
-        <a href="{% url 'destinations:map_pin_delete' destination.id selected_pin.id %}" class="delete-btn">
+        <a href="{% url 'destinations:map_pin_delete' destination.id selected_pin.id %}{% if day_schedule_id %}?day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}{% if day_schedule_id %}&{% else %}?{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if day_schedule_id or from_page %}&{% else %}?{% endif %}schedule_id={{ schedule_id }}{% endif %}"
+            class="delete-btn">
             削除
         </a>
 
