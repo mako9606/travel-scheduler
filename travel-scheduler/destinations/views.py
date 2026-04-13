@@ -216,14 +216,17 @@ def destination_delete(request, pk):
 # destination_detail.html
 def destination_detail(request, pk):
     destination = get_object_or_404(Destination, pk=pk)
-
+    q = request.GET.get("q", "")
     day = None
     day_schedule_id = request.GET.get("day_schedule_id")
     schedule_id = request.GET.get("schedule_id")
     map_tab = request.GET.get("map_tab")
+    shared = request.GET.get("shared")
+    
     
     if day_schedule_id:
         day = get_object_or_404(DaySchedule, pk=day_schedule_id)
+        
         
     from_page = request.GET.get("from")    
 
@@ -237,6 +240,8 @@ def destination_detail(request, pk):
         url = reverse("destinations:destination_search") + f"?destination_modal_id={destination.id}"
         if day:
             url += f"&day_schedule_id={day.id}"
+        if q:
+            url += f"&q={q}"
         return redirect(url)
     
     if day:
@@ -247,7 +252,9 @@ def destination_detail(request, pk):
         if schedule_id:
             url += f"&schedule_id={schedule_id}"
         if map_tab:
-            url += f"&map_tab={map_tab}"    
+            url += f"&map_tab={map_tab}"
+        if shared:
+            url += f"&shared={shared}"
         return redirect(url)
 
     return redirect(

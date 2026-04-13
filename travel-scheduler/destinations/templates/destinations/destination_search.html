@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=2">
+    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=3">
 {% endblock %}
 
 {% block header %}
@@ -32,7 +32,7 @@
                     <div class="search-result-list">
                         {% for d in destinations %}
                             <a class="search-result-item"
-                                href="{% url 'destinations:destination_detail' d.id %}{% if day %}?day_schedule_id={{ day.id }}&from=search{% else %}?from=search{% endif %}">
+                                href="{% url 'destinations:destination_detail' d.id %}{% if day %}?day_schedule_id={{ day.id }}&from=search&q={{ q|urlencode }}{% else %}?from=search&q={{ q|urlencode }}{% endif %}">
                                 <p class="search-result-name">{{ d.name }}</p>
                                 <p class="search-result-address">{{ d.address }}</p>
                             </a>

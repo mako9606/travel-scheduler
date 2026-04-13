@@ -130,6 +130,7 @@ input[type="text"]{
     line-height: 1;
     cursor: pointer;
     padding: 0;
+    text-decoration: none;
 }
 
 .modal-box .container{

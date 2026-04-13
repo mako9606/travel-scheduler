@@ -8,7 +8,7 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
 <link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=24">
-<link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=4">
+<link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=5">
 {% endblock %}
 
 {% block header %}
@@ -179,7 +179,7 @@
                                         {% endif %}
                                     </div>
 
-                                    <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}&schedule_id={{ schedule.id }}"
+                                    <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}&schedule_id={{ schedule.id }}{% if shared %}&shared={{ shared }}{% endif %}"
                                         class="schedule-row">
                                         <div class="schedule-card-body">
                                             <div class="destination">
@@ -236,7 +236,7 @@
                                 {% endif %}
 
                                 {% if schedule.destination %}
-                                    <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}&schedule_id={{ schedule.id }}"
+                                    <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}&schedule_id={{ schedule.id }}{% if shared %}&shared={{ shared }}{% endif %}"
                                         class="schedule-row">
                                         <div class="schedule-card-body">
                                             <div class="destination">{{ schedule.destination.name }}</div>
@@ -292,7 +292,7 @@
         {% endfor %}
 
         {% if destination_modal %}
-            {% include "destinations/destination_detail.html" with destination=destination_modal day=destination_modal_day is_registered=destination_modal_is_registered is_owner=show_owner_controls source="plan_detail" schedule_id=destination_modal_schedule_id %}
+            {% include "destinations/destination_detail.html" with destination=destination_modal day=destination_modal_day is_registered=destination_modal_is_registered is_owner=show_owner_controls source="plan_detail" schedule_id=destination_modal_schedule_id map_tab=map_tab shared=shared %}
         {% endif %}
 
 

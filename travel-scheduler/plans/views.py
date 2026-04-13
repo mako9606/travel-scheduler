@@ -386,6 +386,8 @@ class PlanDetailView(DetailView):
             
         context["schedule_rows"] = schedule_rows
 
+        shared = self.request.GET.get("shared")
+
         map_points = []
 
         for day_index, row in enumerate(schedule_rows, start=1):
@@ -405,6 +407,9 @@ class PlanDetailView(DetailView):
                     reverse("destinations:destination_detail", kwargs={"pk": destination.id})
                     + f"?day_schedule_id={day.id}&schedule_id={schedule.id}&map_tab=1"
                 )
+
+                if shared:
+                    detail_url += f"&shared={shared}"
 
                 pin_color = ""
 
@@ -485,6 +490,8 @@ class PlanDetailView(DetailView):
         destination_modal_id = self.request.GET.get("destination_modal_id")
         day_schedule_id = self.request.GET.get("day_schedule_id")
         destination_modal_schedule_id = self.request.GET.get("schedule_id")
+        map_tab = self.request.GET.get("map_tab")
+        shared = self.request.GET.get("shared")
 
         if destination_modal_id:
             destination_modal = Destination.objects.filter(pk=destination_modal_id).first()
@@ -505,6 +512,8 @@ class PlanDetailView(DetailView):
         context["destination_modal_day"] = destination_modal_day
         context["destination_modal_is_registered"] = destination_modal_is_registered
         context["destination_modal_schedule_id"] = destination_modal_schedule_id
+        context["map_tab"] = map_tab
+        context["shared"] = shared
         
         return context
     
