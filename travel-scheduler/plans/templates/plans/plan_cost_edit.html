@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'plans/plan_cost_edit.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'plans/plan_cost_edit.css' %}?v=2">
 {% endblock %}
 
 {% block header %}
@@ -30,7 +30,7 @@
                 {% csrf_token %}
 
                 <div class="form-group">
-                    <label>カテゴリー作成</label>
+                    <label>カテゴリー編集</label>
                     <input type="text"
                         name="name"
                         placeholder="カテゴリー名　入力"
@@ -72,7 +72,7 @@
                 {% csrf_token %}
 
                 <div class="form-group">
-                    <label>金額カテゴリー</label>
+                    <label>カテゴリー選択</label>
                     {{ form.category }}
                 </div>
 

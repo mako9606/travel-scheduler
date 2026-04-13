@@ -41,6 +41,7 @@
 /* 入力ブロック */
 .form-group{
     margin-bottom: 24px;
+    font-weight: bold;
 }
 
 /* ラベル */
