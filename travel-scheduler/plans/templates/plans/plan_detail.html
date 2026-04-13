@@ -7,7 +7,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=23">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=24">
 <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=4">
 {% endblock %}
 
@@ -217,6 +217,23 @@
                                         <span class="schedule-time-kind">発</span>
                                     </div>
                                 </div>
+
+                                {% if schedule.destination and schedule.destination.selected_pin %}
+                                    <div class="schedule-pin-column">
+                                        <div class="schedule-pin-badge-wrap">
+                                            <div
+                                                class="schedule-pin-badge"
+                                                {% if schedule.pin_color %}
+                                                    style="background: {{ schedule.pin_color }}; border-color: {{ schedule.pin_color }};"
+                                                {% endif %}
+                                            >
+                                                {% if schedule.pin_label %}
+                                                    <span class="schedule-pin-label">{{ schedule.pin_label }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
 
                                 {% if schedule.destination %}
                                     <a href="{% url 'destinations:destination_detail' schedule.destination.id %}?day_schedule_id={{ row.day.id }}&schedule_id={{ schedule.id }}"

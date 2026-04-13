@@ -6,6 +6,10 @@
     box-sizing: border-box;
 }
 
+.share-container.is-valid{
+    padding-top: 24px;
+}
+
 .form-container{
     width: 100%;
     min-height: 620px;
