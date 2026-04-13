@@ -19,6 +19,7 @@ from destinations.models import Destination
 from .forms import PlanCreateForm, ScheduleForm, CostForm, CostCategoryForm
 
 import json
+import secrets
 
 # plan_list.html
 @login_required
@@ -122,30 +123,42 @@ def plan_share(request, token):
                 })
 
             login(request, user)
+            
+            if member.member_name == "":
+                member.member_name = user.username
+                member.save(update_fields=["member_name"])
 
             request.session["shared_plan_id"] = plan.id
             request.session["shared_member_id"] = member.id
             request.session["shared_viewer_name"] = user.username
 
-            return redirect("plans:plan_detail", pk=plan.id)
+            return redirect(
+                f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?shared=1"
+            )
 
 
         if action == "view":
-           username = request.POST.get("username", "").strip()
+            username = request.POST.get("username", "").strip()
 
-        if not username:
-            return render(request, "plans/plan_share.html", {
-                "member": member,
-                "plan": plan,
-                "is_valid": is_valid,
-                "error_message": "アカウント名を入力してください。",
-            })
+            if not username:
+                return render(request, "plans/plan_share.html", {
+                    "member": member,
+                    "plan": plan,
+                    "is_valid": is_valid,
+                    "error_message": "アカウント名を入力してください。",
+                })
 
-        request.session["shared_plan_id"] = plan.id
-        request.session["shared_member_id"] = member.id
-        request.session["shared_viewer_name"] = username
+            if member.member_name == "":
+                member.member_name = username
+                member.save(update_fields=["member_name"])
 
-        return redirect("plans:plan_detail", pk=plan.id) 
+            request.session["shared_plan_id"] = plan.id
+            request.session["shared_member_id"] = member.id
+            request.session["shared_viewer_name"] = username
+
+            return redirect(
+                f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?shared=1"
+            )
         
     return render(request, 'plans/plan_share.html', {
         'member': member,
@@ -175,8 +188,32 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
     form_class = PlanCreateForm
     template_name = "plans/plan_create.html"
     
+    def _to_int_or_none(self, value):
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return None
+    
     def get_success_url(self):
         return reverse("plans:plan_detail", kwargs={"pk": self.object.pk})
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        current_year = date.today().year
+        context["years"] = range(current_year - 10, current_year + 60)
+        context["months"] = range(1, 13)
+        context["days"] = range(1, 32)
+
+        context["selected_start_year"] = self._to_int_or_none(self.request.POST.get("start_year"))
+        context["selected_start_month"] = self._to_int_or_none(self.request.POST.get("start_month"))
+        context["selected_start_day"] = self._to_int_or_none(self.request.POST.get("start_day"))
+
+        context["selected_end_year"] = self._to_int_or_none(self.request.POST.get("end_year"))
+        context["selected_end_month"] = self._to_int_or_none(self.request.POST.get("end_month"))
+        context["selected_end_day"] = self._to_int_or_none(self.request.POST.get("end_day"))
+
+        return context
     
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -187,17 +224,35 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
             or 0
         )
         form.instance.order = max_order + 1
-        
-        # まず保存
+
+        start_year = self.request.POST.get("start_year")
+        start_month = self.request.POST.get("start_month")
+        start_day = self.request.POST.get("start_day")
+
+        end_year = self.request.POST.get("end_year")
+        end_month = self.request.POST.get("end_month")
+        end_day = self.request.POST.get("end_day")
+
+        if start_year and start_month and start_day:
+            form.instance.start_date = date(
+                int(start_year),
+                int(start_month),
+                int(start_day),
+            )
+
+        if end_year and end_month and end_day:
+            form.instance.end_date = date(
+                int(end_year),
+                int(end_month),
+                int(end_day),
+            )
+
         response = super().form_valid(form)
 
-        # デフォルトカテゴリー作成
         CostCategory.objects.create(plan=self.object, name="入場料")
         CostCategory.objects.create(plan=self.object, name="駐車場")
 
         return response
-    
-
 
     
 class PlanDetailView(DetailView):
@@ -295,6 +350,7 @@ class PlanDetailView(DetailView):
                 schedule.duration_display = ""
                 
                 schedule.pin_color = ""
+                schedule.pin_label = ""
 
                 if schedule.destination and schedule.destination.selected_pin:
                     selected_pin = schedule.destination.selected_pin
@@ -355,8 +411,11 @@ class PlanDetailView(DetailView):
                         or f"hsl({(destination.selected_pin.id * 137) % 360}, 70%, 65%)"
                     )
 
+                label = f"{day_index}-{schedule_index}"
+                schedule.pin_label = label
+
                 map_points.append({
-                    "label": f"{day_index}-{schedule_index}",
+                    "label": label,
                     "name": destination.name,
                     "lat": destination.latitude,
                     "lng": destination.longitude,
@@ -375,17 +434,42 @@ class PlanDetailView(DetailView):
         context["total_cost"] = total_cost
         context["date_list"] = date_list
         
-        #共有について
-        share_members = plan.share_members.filter(is_active=True)
+        #共有について↓
+        share_members = plan.share_members.filter(
+            is_active=True
+        ).exclude(member_name="")
 
         context["share_members"] = share_members
         context["share_status"] = "有" if share_members.exists() else "無"
-        
+
+        shared_member = plan.share_members.filter(
+            is_active=True,
+            member_name=""
+        ).first()
+
+        if not shared_member:
+            token = secrets.token_urlsafe(32)
+            while PlanShareMember.objects.filter(token=token).exists():
+                token = secrets.token_urlsafe(32)
+
+            shared_member = PlanShareMember.objects.create(
+                plan=plan,
+                member_name="",
+                token=token,
+            )
+
+        context["shared_url"] = self.request.build_absolute_uri(
+            reverse("plans:plan_share", kwargs={"token": shared_member.token})
+        )
+        #共有について↑
+    
         is_owner = self.request.user.is_authenticated and plan.user == self.request.user
         is_shared_viewer = self.request.session.get("shared_plan_id") == plan.id
+        is_shared_mode = self.request.GET.get("shared") == "1" and is_shared_viewer
 
         context["is_owner"] = is_owner
         context["is_shared_viewer"] = is_shared_viewer
+        context["show_owner_controls"] = is_owner and not is_shared_mode
         context["shared_viewer_name"] = self.request.session.get("shared_viewer_name", "")
         
         tab_order = self.request.session.get(f"tab_order_{plan.pk}")
@@ -569,38 +653,95 @@ def cost_delete(request, pk, cost_id):
         "cost": cost,
     })
  
+def build_expense_rows_from_costs(schedule_costs):
+    rows = []
+
+    for cost in schedule_costs:
+        rows.append({
+            "cost_id": cost.id,
+            "category_id": str(cost.category_id),
+            "expense_item": cost.name,
+            "expense": str(cost.amount),
+            "error": "",
+        })
+
+    if not rows:
+        rows.append({
+            "cost_id": "",
+            "category_id": "",
+            "expense_item": "",
+            "expense": "",
+            "error": "",
+        })
+
+    return rows
+
+
+def build_expense_rows_from_post(request):
+    cost_ids = request.POST.getlist("cost_id")
+    category_ids = request.POST.getlist("category_id")
+    expense_items = request.POST.getlist("expense_item")
+    expenses = request.POST.getlist("expense")
+
+    max_len = max(
+        len(cost_ids),
+        len(category_ids),
+        len(expense_items),
+        len(expenses),
+        1,
+    )
+
+    rows = []
+    has_error = False
+
+    for i in range(max_len):
+        cost_id = cost_ids[i] if i < len(cost_ids) else ""
+        category_id = category_ids[i] if i < len(category_ids) else ""
+        expense_item = expense_items[i].strip() if i < len(expense_items) else ""
+        expense = expenses[i].strip() if i < len(expenses) else ""
+
+        error = ""
+
+        # 項目名 or 金額が入っているのにカテゴリ未選択
+        if (expense_item or expense) and not category_id:
+            error = "カテゴリを選んでください。"
+            has_error = True
+
+        rows.append({
+            "cost_id": cost_id,
+            "category_id": category_id,
+            "expense_item": expense_item,
+            "expense": expense,
+            "error": error,
+        })
+
+    return rows, has_error
+
     
 # schedule_edit.html
 # 新規追加時
 @login_required
-def schedule_create(request):
-    print("---- schedule_create start ----")
-    print("method:", request.method)
-
-    print("POST day_schedule_id:", request.POST.get("day_schedule_id"))
-    print("GET  day_schedule_id:", request.GET.get("day_schedule_id"))
-
-    print("POST destination_id:", request.POST.get("destination_id"))
-    print("GET  destination_id:", request.GET.get("destination_id"))
-    
+def schedule_create(request):    
     day_schedule_id = request.POST.get("day_schedule_id") or request.GET.get("day_schedule_id")
     destination_id = request.POST.get("destination_id") or request.GET.get("destination_id")
 
-    print("決定 day_schedule_id:", day_schedule_id)
-    print("決定 destination_id:", destination_id)
-    print("---- schedule_create end ----")
-    
-    day_schedule = get_object_or_404(DaySchedule, pk=day_schedule_id)
-    destination = get_object_or_404(Destination, pk=destination_id)
+    day_schedule = get_object_or_404(
+        DaySchedule,
+        pk=day_schedule_id,
+        plan__user=request.user,
+    )
+    destination = get_object_or_404(
+        Destination,
+        pk=destination_id,
+        user=request.user,
+    )
     
     if request.method == "POST":
         form = ScheduleForm(request.POST)
-        print("FORM VALID:", form.is_valid())
-        print("FORM ERRORS:", form.errors)
-        print("POST DATA:", request.POST)
+        
+        expense_rows, expense_has_error = build_expense_rows_from_post(request)
 
-        if form.is_valid():
-            print("FORM VALID")
+        if form.is_valid() and not expense_has_error:
             schedule = form.save(commit=False)
             schedule.day = day_schedule
             schedule.destination = destination
@@ -612,68 +753,13 @@ def schedule_create(request):
             )
             schedule.order = (last_order or 0) + 1
             schedule.save()
-            
-            category_ids = request.POST.getlist("category_id")
-            expense_items = request.POST.getlist("expense_item")
-            expenses = request.POST.getlist("expense")
 
-            for category_id, expense_item, expense in zip(category_ids, expense_items, expenses):
-                if not category_id or not expense_item.strip() or not expense.strip():
-                    continue
+            for row in expense_rows:
+                category_id = row["category_id"]
+                expense_item = row["expense_item"]
+                expense = row["expense"]
 
-                category = get_object_or_404(CostCategory, pk=category_id, plan=day_schedule.plan)
-
-                amount_text = expense.replace(",", "").strip()
-                if not amount_text.isdigit():
-                    continue
-
-                Cost.objects.create(
-                    plan=day_schedule.plan,
-                    schedule=schedule,
-                    category=category,
-                    name=expense_item.strip(),
-                    amount=int(amount_text),
-                )
-
-            return redirect(
-                reverse("plans:plan_detail", kwargs={"pk": day_schedule.plan.id})
-                + f"?day_schedule_id={day_schedule.id}"
-            )     
-    else:
-        form = ScheduleForm()
-
-    return render(
-        request,
-        "plans/schedule_edit.html",
-        {
-            "form": form,
-            "schedule": None,
-            "day_schedule": day_schedule,
-            "destination": destination,
-            "plan": day_schedule.plan,
-            "schedule_costs": [],
-        }
-    )
-
-@login_required    
-def schedule_edit(request, pk):
-    schedule = get_object_or_404(Schedule, pk=pk)
-    day_schedule = schedule.day
-    schedule_costs = Cost.objects.filter(schedule=schedule)
-
-    if request.method == "POST":
-        form = ScheduleForm(request.POST, instance=schedule)
-        if form.is_valid():
-            form.save()
-            
-            category_ids = request.POST.getlist("category_id")
-            expense_items = request.POST.getlist("expense_item")
-            expenses = request.POST.getlist("expense")
-            
-            schedule_costs.delete()
-
-            for category_id, expense_item, expense in zip(category_ids, expense_items, expenses):
-                if not category_id or not expense_item.strip() or not expense.strip():
+                if not category_id or not expense_item or not expense:
                     continue
 
                 category = get_object_or_404(
@@ -690,7 +776,7 @@ def schedule_edit(request, pk):
                     plan=day_schedule.plan,
                     schedule=schedule,
                     category=category,
-                    name=expense_item.strip(),
+                    name=expense_item,
                     amount=int(amount_text),
                 )
 
@@ -698,19 +784,85 @@ def schedule_edit(request, pk):
                 reverse("plans:plan_detail", kwargs={"pk": day_schedule.plan.id})
                 + f"?day_schedule_id={day_schedule.id}"
             )
+    else:
+        form = ScheduleForm()
+        expense_rows = build_expense_rows_from_costs([])
         
+    return render(
+        request,
+        "plans/schedule_edit.html",
+        {
+            "form": form,
+            "schedule": None,
+            "day_schedule": day_schedule,
+            "destination": destination,
+            "plan": day_schedule.plan,
+            "expense_rows": expense_rows,
+        }
+    )
+
+@login_required    
+def schedule_edit(request, pk):
+    schedule = get_object_or_404(
+        Schedule,
+        pk=pk,
+        day__plan__user=request.user,
+    )
+    day_schedule = schedule.day
+    schedule_costs = Cost.objects.filter(schedule=schedule)
+
+    if request.method == "POST":
+        form = ScheduleForm(request.POST, instance=schedule)
+        expense_rows, expense_has_error = build_expense_rows_from_post(request)
+
+        if form.is_valid() and not expense_has_error:
+            form.save()
+
+            schedule_costs.delete()
+
+            for row in expense_rows:
+                category_id = row["category_id"]
+                expense_item = row["expense_item"]
+                expense = row["expense"]
+
+                if not category_id or not expense_item or not expense:
+                    continue
+
+                category = get_object_or_404(
+                    CostCategory,
+                    pk=category_id,
+                    plan=day_schedule.plan
+                )
+
+                amount_text = expense.replace(",", "").strip()
+                if not amount_text.isdigit():
+                    continue
+
+                Cost.objects.create(
+                    plan=day_schedule.plan,
+                    schedule=schedule,
+                    category=category,
+                    name=expense_item,
+                    amount=int(amount_text),
+                )
+
+            return redirect(
+                reverse("plans:plan_detail", kwargs={"pk": day_schedule.plan.id})
+                + f"?day_schedule_id={day_schedule.id}"
+            )
+
         return render(request, "plans/schedule_edit.html", {
             "form": form,
             "schedule": schedule,
             "day_schedule": day_schedule,
             "destination": schedule.destination,
             "plan": day_schedule.plan,
-            "schedule_costs": schedule_costs,
-            
+            "expense_rows": expense_rows,
         })
-    
+
     else:
         form = ScheduleForm(instance=schedule)
+        expense_rows = build_expense_rows_from_costs(schedule_costs)
 
     return render(request,"plans/schedule_edit.html",{
             "form": form,
@@ -718,7 +870,7 @@ def schedule_edit(request, pk):
             "day_schedule": day_schedule,
             "destination": schedule.destination,
             "plan": day_schedule.plan,
-            "schedule_costs": schedule_costs,
+            "expense_rows": expense_rows,
         }
     )
 

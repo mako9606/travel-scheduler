@@ -1,23 +1,67 @@
-input[type="text"]{
+.map-form{
     width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #595959;
+    max-width: 480px;
+    height: calc(100dvh - 48px);
+    overflow: hidden;
     box-sizing: border-box;
 }
 
+.map-screen{
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    height: 100%;
+    background: #d9d9d9;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.map-search-section{
+    position: absolute;
+    top: 60px;
+    left: 12px;
+    right: 12px;
+    z-index: 20;
+}
+
+.search-row{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.map-search-input{
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 12px;
+    font-size: 16px;
+    color: #592d13;
+    border: 1px solid #595959;
+    border-radius: 8px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+
+.map-search-input::placeholder{
+    color: #999999;
+}
+
 .search-btn{
-   padding: 10px 20px;
-   text-decoration: none;
-   display: block;
-   background-color: #ffa158ff; 
-   border: 2px solid #592d13;
-   color: #592d13;
-   border-radius: 5px;
-   font-size: 16px;
-   font-weight: bold;
-   margin-top: 12px;
-   width: fit-content;
+    flex: 0 0 auto;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+    background-color: #ffa158ff;
+    border: 2px solid #592d13;
+    color: #592d13;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 0;
+    width: fit-content;
+    box-sizing: border-box;
 }
 
 /* クリック・タップした瞬間 に適用される状態 */
@@ -25,4 +69,74 @@ input[type="text"]{
     background-color: #ff8c3a;
     transform: scale(0.97);
     border: 2px solid #592d13;
+}
+
+#map{
+    width: 100%;
+    height: 100%;
+}
+
+.map-bottom-bar{
+    position: absolute;
+    width: 100%;
+    margin-top: 50px;
+    bottom: clamp(72px, 11dvh, 105px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 20;
+    padding: 8px 10px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.map-pin-select{
+    flex: 0 0 auto;
+}
+
+.map-pin-select-input{
+    width: 110px;
+    height: 42px;
+    padding: 0 8px;
+    font-size: 16px;
+    color: #592d13;
+    background: #ffffff;
+    border: 1px solid #999999;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.current-pin-display{
+    min-width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.current-pin-dot{
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #3b82f6;
+    background: #3b82f6;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+}
+
+.current-pin-name{
+    min-width: 0;
+    color: #592d13;
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.map-edit-btn,
+.map-save-btn{
+    margin-top: 0;
+    white-space: nowrap;
+    flex: 0 0 auto;
 }

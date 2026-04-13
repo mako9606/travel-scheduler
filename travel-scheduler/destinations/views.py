@@ -280,7 +280,7 @@ def map_destination(request, pk):
         action = request.POST.get("action")
         lat = request.POST.get("lat")
         lng = request.POST.get("lng")
-        q = request.POST.get("q", "")
+        q = request.POST.get("q", "").strip()
 
         if action == "search":
             context = {
@@ -295,6 +295,9 @@ def map_destination(request, pk):
             return render(request, "destinations/map_destination.html", context)
 
         if action == "save":
+            if q:
+                destination.address = q
+            
             if lat and lng:
                 destination.latitude = lat
                 destination.longitude = lng
@@ -346,7 +349,8 @@ def map_destination(request, pk):
         #"form": form,
         #"destination": destination,
     #})
-    
+
+# ピンの色相    
 def get_auto_pin_color(pin_id):
     hue = (pin_id * 137) % 360
     return f"hsl({hue}, 70%, 65%)"    
@@ -363,10 +367,8 @@ def map_pin_edit(request, destination_id):
      # GETパラメータから選択ピン取得
     selected_pin = None
     pin_id = request.GET.get("pin_id") or request.POST.get("pin_id")
-    
-    print("destination_id:", destination_id)
-    print("pin_id:", pin_id)
-    print("method:", request.method)
+    form = MapPinForm()
+    rename_error = ""
 
     if pin_id:
         selected_pin = get_object_or_404(
@@ -379,65 +381,95 @@ def map_pin_edit(request, destination_id):
     if request.method == "POST" and request.POST.get("action") == "add":
         form = MapPinForm(request.POST)
         if form.is_valid():
-            new_pin = form.save(commit=False)
-            new_pin.user = request.user
-            new_pin.save()
+            pin_name = form.cleaned_data["name"].strip()
 
-            if not new_pin.color:
-                new_pin.color = get_auto_pin_color(new_pin.id)
-                new_pin.save(update_fields=["color"])
-        
-            url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
-            params = [f"pin_id={new_pin.id}"]
+            existing_pin = MapPin.objects.filter(
+                user=request.user,
+                name=pin_name
+            ).first()
 
-            if day_schedule_id:
-                params.append(f"day_schedule_id={day_schedule_id}")
-            if from_page:
-                params.append(f"from={from_page}")
-            if schedule_id:
-                params.append(f"schedule_id={schedule_id}")
+            if existing_pin:
+                form.add_error("name", "同じピン名は既に登録されています")
+            else:
+                target_pin = MapPin.objects.create(
+                    user=request.user,
+                    name=pin_name,
+                    order=MapPin.objects.filter(user=request.user).count()
+                )
 
-            if params:
-                url += "?" + "&".join(params)
+                if not target_pin.color:
+                    target_pin.color = get_auto_pin_color(target_pin.id)
+                    target_pin.save(update_fields=["color"])
 
-            return redirect(url)
+                url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
+                params = [f"pin_id={target_pin.id}"]
+
+                if day_schedule_id:
+                    params.append(f"day_schedule_id={day_schedule_id}")
+                if from_page:
+                    params.append(f"from={from_page}")
+                if schedule_id:
+                    params.append(f"schedule_id={schedule_id}")
+
+                if params:
+                    url += "?" + "&".join(params)
+
+                return redirect(url)
 
     # 編集処理（pin_idあり）
     if request.method == "POST" and request.POST.get("action") != "add" and selected_pin:
         edit_form = MapPinForm(request.POST, instance=selected_pin)
         if edit_form.is_valid():
-            updated_pin = edit_form.save(commit=False)
-            updated_pin.user = request.user
-            updated_pin.save()
+            pin_name = edit_form.cleaned_data["name"].strip() 
+        
+            existing_pin = MapPin.objects.filter(
+                user=request.user,
+                name=pin_name
+            ).exclude(pk=selected_pin.pk).first()
 
-            url = reverse("destinations:map_pin_edit", kwargs={"destination_id": destination.id})
-            params = [f"pin_id={updated_pin.id}"]
+            if existing_pin:
+                rename_error = "同じピン名は既に登録されています"
+            else:
+                updated_pin = edit_form.save(commit=False)
+                updated_pin.user = request.user
+                updated_pin.name = pin_name
+                updated_pin.save()
 
-            if day_schedule_id:
-                params.append(f"day_schedule_id={day_schedule_id}")
-            if from_page:
-                params.append(f"from={from_page}")
-            if schedule_id:
-                params.append(f"schedule_id={schedule_id}")
+                url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
+                params = [f"pin_id={updated_pin.id}"]
 
-            if params:
-                url += "?" + "&".join(params)
+                if day_schedule_id:
+                    params.append(f"day_schedule_id={day_schedule_id}")
+                if from_page:
+                    params.append(f"from={from_page}")
+                if schedule_id:
+                    params.append(f"schedule_id={schedule_id}")
 
-            return redirect(url)    
+                if params:
+                    url += "?" + "&".join(params)
 
-    form = MapPinForm()
+                return redirect(url)
+        else:
+            if "name" in edit_form.errors:
+                rename_error = edit_form.errors["name"][0]
+
+    if request.method != "POST":
+        form = MapPinForm()
 
     return render(
         request,
-        "destinations/map_pin_edit.html",
+        "destinations/map_destination.html",
         {
             "destination": destination,
             "pins": pins,
-            "form": form,
             "selected_pin": selected_pin,
             "day_schedule_id": day_schedule_id,
             "from_page": from_page,
             "schedule_id": schedule_id,
+            "form": form,
+            "rename_error": rename_error,
+            "show_pin_edit_modal": True,
+            "q": request.GET.get("q", "") or request.POST.get("q", ""),
         }
     )
 
@@ -445,12 +477,32 @@ def map_pin_edit(request, destination_id):
 def map_pin_delete(request, destination_id, pin_id):
     destination = get_object_or_404(Destination, pk=destination_id, user=request.user)
     pin = get_object_or_404(MapPin, pk=pin_id, user=request.user)
+    
+    used_count = Destination.objects.filter(
+        user=request.user,
+        selected_pin=pin
+    ).count()
 
     day_schedule_id = request.POST.get("day_schedule_id") or request.GET.get("day_schedule_id")
     from_page = request.POST.get("from") or request.GET.get("from")
     schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule_id")
 
     if request.method == "POST":
+        if used_count > 0:
+            return render(
+                request,
+                "destinations/map_pin_delete.html",
+                {
+                    "destination": destination,
+                    "pin": pin,
+                    "day_schedule_id": day_schedule_id,
+                    "from_page": from_page,
+                    "schedule_id": schedule_id,
+                    "used_count": used_count,
+                    "delete_error": "このピンは使用中のため削除できません",
+                }
+            )
+
         pin.delete()
 
         url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
@@ -477,5 +529,7 @@ def map_pin_delete(request, destination_id, pin_id):
             "day_schedule_id": day_schedule_id,
             "from_page": from_page,
             "schedule_id": schedule_id,
+            "used_count": used_count,
+            "delete_error": "",
         }
     )

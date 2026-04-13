@@ -1,95 +1,114 @@
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="modal-overlay pin-edit-overlay">
+    <div class="modal-box pin-edit-box"> 
+            
+        <!-- ピンの追加 -->
+        <section class="pin-block">
+            <h2 class="pin-block-title">ピン追加</h2>
 
-    <title>ピン追加・編集画面</title>
+            <form method="POST" action="{% url 'destinations:map_pin_edit' destination.id %}" class="pin-form">
+                {% csrf_token %}
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'destinations/map_pin_edit.css' %}?v=1">
-</head>
+                {% if day_schedule_id %}
+                    <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
+                {% endif %}
+                {% if from_page %}
+                    <input type="hidden" name="from" value="{{ from_page }}">
+                {% endif %}
+                {% if schedule_id %}
+                    <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+                {% endif %}
 
-<body>
+                <input type="text"
+                    name="{{ form.name.html_name }}"
+                    id="{{ form.name.id_for_label }}"
+                    value="{{ form.name.value|default_if_none:'' }}"
+                    placeholder="ラベル名　入力">
 
-    <div class="page-title"></div>
+                {% if form.name.errors %}
+                    <div class="field-error">
+                        {% for error in form.name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-    <form method="POST" action="{% url 'destinations:map_pin_edit' destination.id %}">
-        {% csrf_token %}
+                <button type="submit" name="action" value="add" class="btn">追加選択</button>
+            </form>
+        </section>
 
-        {% if day_schedule_id %}
-            <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
+        <div class="pin-divider"></div>
+
+        <!-- ピンの選択 -->
+        <section class="pin-block">
+            <h2 class="pin-block-title">ピン選択</h2>
+
+            <form method="GET"
+                action="{% url 'destinations:map_pin_edit' destination.id %}"
+                class="pin-form">
+                {% if day_schedule_id %}
+                    <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
+                {% endif %}
+                {% if from_page %}
+                    <input type="hidden" name="from" value="{{ from_page }}">
+                {% endif %}
+                {% if schedule_id %}
+                    <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+                {% endif %}
+
+                <select name="pin_id" class="pin-select" onchange="this.form.submit()">
+                    <option value="">選択してください</option>
+                    {% for pin in pins %}
+                        <option value="{{ pin.id }}"
+                            {% if selected_pin and selected_pin.id == pin.id %}selected{% endif %}>
+                            {{ pin.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </section>
+
+        <!-- ピンのラベル編集 -->
+        {% if selected_pin %}
+            <section class="pin-block pin-edit-section">
+                <h2 class="pin-block-title">ラベル名　編集</h2>
+
+                <form method="POST"
+                    action="{% url 'destinations:map_pin_edit' destination.id %}?pin_id={{ selected_pin.id }}"
+                    class="pin-form">
+                    {% csrf_token %}
+
+                    {% if day_schedule_id %}
+                        <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
+                    {% endif %}
+                    {% if from_page %}
+                        <input type="hidden" name="from" value="{{ from_page }}">
+                    {% endif %}
+                    {% if schedule_id %}
+                        <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
+                    {% endif %}
+
+                    <input type="text"
+                        name="name"
+                        value="{{ selected_pin.name }}"
+                        placeholder="変更名　入力">
+
+                    {% if rename_error %}
+                        <div class="field-error">
+                            <p>{{ rename_error }}</p>
+                        </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn">変更</button>
+                </form>
+
+                <div class="pin-delete-wrap">
+                    <a href="{% url 'destinations:map_pin_delete' destination.id selected_pin.id %}{% if day_schedule_id %}?day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}{% if day_schedule_id %}&{% else %}?{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if day_schedule_id or from_page %}&{% else %}?{% endif %}schedule_id={{ schedule_id }}{% endif %}"
+                        class="delete-btn pin-delete-link">
+                        選択したピンを削除
+                    </a>
+                </div>
+            </section>
         {% endif %}
-        {% if from_page %}
-            <input type="hidden" name="from" value="{{ from_page }}">
-        {% endif %}
-        {% if schedule_id %}
-            <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
-        {% endif %}
 
-        <!-- ピンの追加　-->
-        <label>ピン追加</label>
-        {{ form.name }}
-        <button type="submit" name="action" value="add">追加選択</button>
-    </form>
-    
-    <!-- ピンの選択　-->
-    <form method="GET"
-        action="{% url 'destinations:map_pin_edit' destination.id %}"
-        class="form-container">
-
-        {% if day_schedule_id %}
-            <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
-        {% endif %}
-        {% if from_page %}
-            <input type="hidden" name="from" value="{{ from_page }}">
-        {% endif %}
-        {% if schedule_id %}
-            <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
-        {% endif %}
-
-
-        <label>ピン選択</label>
-        <select name="pin_id" onchange="this.form.submit()">
-            <option value="">選択してください</option>
-
-            {% for pin in pins %}
-                <option value="{{ pin.id }}"
-                    {% if selected_pin and selected_pin.id == pin.id %}selected{% endif %}>
-                    {{ pin.name }}
-                </option>
-            {% endfor %}
-        </select>
-    </form>  
-
-    <!-- ピンのラベル編集　-->
-    {% if selected_pin %}
-        <form method="POST"
-            action="{% url 'destinations:map_pin_edit' destination.id %}?pin_id={{ selected_pin.id }}"
-            class="form-container">
-            {% csrf_token %}
-
-            {% if day_schedule_id %}
-                <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
-            {% endif %}
-            {% if from_page %}
-                <input type="hidden" name="from" value="{{ from_page }}">
-            {% endif %}
-            {% if schedule_id %}
-                <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
-            {% endif %}
-
-            <label>ラベル名　編集</label>
-            <input type="text" name="name" value="{{ selected_pin.name }}">
-
-            <button type="submit" class="btn">変更</button>
-        </form>
-
-        <!-- ピンの削除　-->
-        <a href="{% url 'destinations:map_pin_delete' destination.id selected_pin.id %}{% if day_schedule_id %}?day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}{% if day_schedule_id %}&{% else %}?{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if day_schedule_id or from_page %}&{% else %}?{% endif %}schedule_id={{ schedule_id }}{% endif %}"
-            class="delete-btn">
-            削除
-        </a>
-
-    {% endif %}
-
-</body> 
+    </div>
+</div>

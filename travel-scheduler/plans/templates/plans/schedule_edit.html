@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
-    <link rel="stylesheet" href="{% static 'plans/schedule_edit.css' %}?v=2">
+    <link rel="stylesheet" href="{% static 'plans/schedule_edit.css' %}?v=3">
 {% endblock %}
 
 {% block header %}
@@ -27,12 +27,11 @@
                 <input type="hidden" name="destination_id" value="{{ destination.id }}">
             {% endif %}
 
-            <label>目的地名</label>
             <p class="destination-name">{{ destination.name }}</p>
 
             <div class="time-block">
                 <div class="time-row">
-                    <label class="time-label">到着時間</label>
+                    <label class="time-label">到着時間 <span class="required-mark">＊必須</span></label>
                     {{ form.arrival_time }}
                 </div>
 
@@ -42,77 +41,56 @@
                 </div>
 
                 <div class="time-row">
-                    <label class="time-label">出発時間</label>
+                    <label class="time-label">出発時間 <span class="required-mark">＊必須</span></label>
                     {{ form.departure_time }}
                 </div>
             </div>
 
             <div id="expense-blocks">
-                {% if schedule_costs %}
-                    {% for cost in schedule_costs %}
-                        <div class="expense-block">
-                            <input type="hidden" name="cost_id" value="{{ cost.id }}">
-                            <label>費用　カテゴリ選択</label>
-                            <p class="category-select-wrap">
-                                <select name="category_id" class="category-select">
-                                    <option value="">---------</option>
-                                    {% for category in plan.cost_categories.all %}
-                                        <option value="{{ category.id }}" {% if cost.category_id == category.id %}selected{% endif %}>
-                                            {{ category.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </p>
-
-                            <label>項目名入力</label>
-                            <input
-                                type="text"
-                                name="expense_item"
-                                class="cost-name-input"
-                                placeholder="項目名　入力"
-                                value="{{ cost.name }}"
-                            >
-
-                            <label>金額入力</label>
-                            <div class="expense-row">
-                                <input
-                                    type="text"
-                                    name="expense"
-                                    class="cost-amount-input"
-                                    placeholder="金額　入力"
-                                    inputmode="numeric"
-                                    value="{{ cost.amount }}"
-                                >
-                                <span class="yen-unit">円</span>
-                                <a href="#" class="add-btn schedule-add-btn">＋</a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
+                {% for row in expense_rows %}
                     <div class="expense-block">
-                        <input type="hidden" name="cost_id" value="">
+                        <input type="hidden" name="cost_id" value="{{ row.cost_id }}">
 
                         <label>費用　カテゴリ選択</label>
                         <p class="category-select-wrap">
                             <select name="category_id" class="category-select">
                                 <option value="">---------</option>
                                 {% for category in plan.cost_categories.all %}
-                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    <option value="{{ category.id }}" {% if row.category_id == category.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
                                 {% endfor %}
                             </select>
                         </p>
 
+                        {% if row.error %}
+                            <p class="expense-error">{{ row.error }}</p>
+                        {% endif %}
+
                         <label>項目名入力</label>
-                        <input type="text" name="expense_item" class="cost-name-input" placeholder="項目名　入力">
+                        <input
+                            type="text"
+                            name="expense_item"
+                            class="cost-name-input"
+                            placeholder="項目名　入力"
+                            value="{{ row.expense_item }}"
+                        >
 
                         <label>金額入力</label>
                         <div class="expense-row">
-                            <input type="text" name="expense" class="cost-amount-input" placeholder="金額　入力" inputmode="numeric">
+                            <input
+                                type="text"
+                                name="expense"
+                                class="cost-amount-input"
+                                placeholder="金額　入力"
+                                inputmode="numeric"
+                                value="{{ row.expense }}"
+                            >
                             <span class="yen-unit">円</span>
                             <a href="#" class="add-btn schedule-add-btn">＋</a>
                         </div>
                     </div>
-                {% endif %}
+                {% endfor %}
             </div>
 
             <button type="submit" class="btn">完了</button>

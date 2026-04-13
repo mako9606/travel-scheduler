@@ -1,14 +1,17 @@
 <head>
-<!-- 画面設計図　スライド23 -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>ピン削除画面</title>
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'destinations/map_pin_delete.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'destinations/map_pin_delete.css' %}?v=2">
 </head>
 
 <body>
-    <div class="page-title"></div>
-    
+    <div class="page-title">ピン編集</div>
     <div class="modal-overlay">
         <div class="form-container modal-box">
 
@@ -28,9 +31,25 @@
                         <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
                     {% endif %}
 
-                    <button type="submit" class="btn-delete">削除</button>
+                    {% if delete_error %}
+                        <p class="field-error">{{ delete_error }}</p>
+                    {% endif %}
+
+                    {% if used_count > 0 %}
+                        <p class="field-error">使用中の目的地が {{ used_count }} 件あります</p>
+                    {% endif %}
+
+                    {% if used_count == 0 %}
+                        <button type="submit" class="btn-delete">削除</button>
+                    {% endif %}
+
                 </form>
-                <a href="{% url 'destinations:map_pin_edit' destination.id %}" class="btn-cancel">戻る</a>
+                
+                <a href="{% url 'destinations:map_pin_edit' destination.id %}?pin_id={{ pin.id }}{% if day_schedule_id %}&day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}&from={{ from_page }}{% endif %}{% if schedule_id %}&schedule_id={{ schedule_id }}{% endif %}"
+                    class="btn-cancel">
+                    戻る
+                </a>
+
             </div>
                 
         </div>

@@ -1,5 +1,5 @@
 form.container{
-    padding: 16px 22px 0 22px;
+    padding: 95px 22px 0 22px;
     box-sizing: border-box;
 }
 
@@ -40,6 +40,40 @@ form.container input[type="date"]{
     border: 1px solid #595959;
     box-sizing: border-box;
     margin-bottom: 8px;
+}
+
+.date-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-row select{
+    height: 32px;
+    padding: 0 6px;
+    font-size: 16px;
+    text-align: center;
+    text-align-last: center;
+    color: #592d13;
+    border: 1px solid #999;
+    background: white;
+    box-sizing: border-box;
+    border-radius: 6px;
+}
+
+.date-row select[name$="year"]{
+    width: 74px;
+}
+
+.date-row select[name$="month"],
+.date-row select[name$="day"]{
+    width: 52px;
+}
+
+.date-unit{
+    font-size: 16px;
+    font-weight: 700;
+    color: #592d13;
 }
 
 form.container .btn{

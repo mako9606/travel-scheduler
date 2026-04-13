@@ -1,8 +1,104 @@
-input[type="text"]{
+/* モーダル */
+.modal-overlay.pin-edit-overlay{
+    position: fixed;
+    top: 48px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #595959;
+    max-width: 480px;
+    height: calc(100dvh - 48px);
+    padding: 50px 16px 32px;
+    background: rgba(0, 0, 0, 0.08);
     box-sizing: border-box;
+    overflow-y: auto;
+    z-index: 120;
+}
 
+.modal-box.pin-edit-box{
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    padding: 24px 24px 28px;
+    background: #efefef;
+    border: 1px solid #8b613d;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.pin-block{
+    width: 100%;
+}
+
+.pin-block-title{
+    margin: 0 0 14px;
+    color: #592d13;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1.4;
+}
+
+.pin-divider{
+    margin: 28px 0 24px;
+    border-top: 1px solid #b7b7b7;
+}
+
+.pin-edit-section{
+    margin-top: 28px;
+}
+
+.pin-form{
+    margin: 0;
+}
+
+.pin-edit-box input[type="text"]{
+    width: 100%;
+    height: 42px;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: #592d13;
+    background: #ffffff;
+    border: 1px solid #7a7a7a;
+    box-sizing: border-box;
+}
+
+.pin-edit-box input[type="text"]::placeholder{
+    color: #b7b7b7;
+}
+
+/* ピン　セレクト */
+.pin-edit-box .pin-select{
+    width: 140px;
+    height: 38px;
+    padding: 0 8px;
+    font-size: 16px;
+    color: #592d13;
+    background: #ffffff;
+    border: 2px solid #592d13;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.field-error{
+    margin-top: 8px;
+    color: #990000;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.field-error p{
+    margin: 0;
+}
+
+.pin-form .btn{
+    margin-top: 18px;
+}
+
+.pin-delete-wrap{
+    margin-top: 24px;
+}
+
+.pin-delete-link{
+    display: inline-block;
+    margin-top: 0;
+    text-decoration: none;
 }

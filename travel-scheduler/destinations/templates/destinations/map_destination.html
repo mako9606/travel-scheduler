@@ -7,15 +7,16 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'destinations/map_destination.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'destinations/map_destination.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'destinations/map_pin_edit.css' %}?v=8">
 {% endblock %}
 
 {% block header %}
-    {% include "header.html" with header_title="" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+    {% include "header.html" with header_title="地点登録" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
 {% endblock %}
 
 {% block content %} 
-    <form method="POST">
+    <form method="POST" class="map-form">
         {% csrf_token %}
 
         <input type="hidden" name="pin_id" value="{% if selected_pin %}{{ selected_pin.id }}{% endif %}">
@@ -32,38 +33,64 @@
             <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
         {% endif %}
 
-        <input type="text" name="q" placeholder="住所 入力" value="{{ q }}">
-        <button type="submit" name="action" value="search" class="search-btn">検索</button>
+        <div class="map-screen">
 
-
-        <p>ピン選択</P>
-        {% for pin in pins %}
-            <a href="{% url 'destinations:map_destination' destination.id %}?pin_id={{ pin.id }}{% if day_schedule_id %}&day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}&from={{ from_page }}{% endif %}{% if schedule_id %}&schedule_id={{ schedule_id }}{% endif %}">
-                {{ pin.name }}
-            </a>
-        {% endfor %}
-
-
-        <p>選択中のピン</p>
-        {% if selected_pin %}
-            <div>
-                {{ selected_pin.name }}
+            <div class="map-search-section">
+                <div class="search-row">
+                    <input type="text"
+                        name="q"
+                        class="map-search-input"
+                        placeholder="住所　入力"
+                        value="{{ q|default:destination.address }}">
+                    <button type="submit" name="action" value="search" class="search-btn">検索</button>
+                </div>
             </div>
-        {% else %}
-             <p>まだピンが選択されていません</p>
-        {% endif %}
 
-        <a href="{% url 'destinations:map_pin_edit' destination.id %}?{% if selected_pin %}pin_id={{ selected_pin.id }}&{% endif %}{% if day_schedule_id %}day_schedule_id={{ day_schedule_id }}&{% endif %}{% if from_page %}from={{ from_page }}&{% endif %}{% if schedule_id %}schedule_id={{ schedule_id }}{% endif %}"
-            class="edit-btn">
-                ピン編集
-        </a>
-        <button type="submit" name="action" value="save" class="btn">登録</button>
+            <div id="map"></div>
+
+            <div class="map-bottom-bar">
+                <div class="map-pin-select">
+                    <select name="pin_id" class="map-pin-select-input" onchange="this.form.submit()">
+                        <option value="">ピン選択</option>
+                        {% for pin in pins %}
+                            <option value="{{ pin.id }}"
+                                {% if selected_pin and selected_pin.id == pin.id %}selected{% endif %}>
+                                {{ pin.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="current-pin-display">
+                    {% if selected_pin %}
+                        <span class="current-pin-dot"
+                            {% if selected_pin.color %}
+                            style="background: {{ selected_pin.color }}; border-color: {{ selected_pin.color }};"
+                            {% endif %}></span>
+                        <span class="current-pin-name">{{ selected_pin.name }}</span>
+                    {% else %}
+                        <span class="current-pin-name">未選択</span>
+                    {% endif %}
+                </div>
+
+                <a href="{% url 'destinations:map_pin_edit' destination.id %}{% if selected_pin or day_schedule_id or from_page or schedule_id %}?{% endif %}{% if selected_pin %}pin_id={{ selected_pin.id }}{% endif %}{% if day_schedule_id %}{% if selected_pin %}&{% endif %}day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}{% if selected_pin or day_schedule_id %}&{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if selected_pin or day_schedule_id or from_page %}&{% endif %}schedule_id={{ schedule_id }}{% endif %}"
+                    class="edit-btn map-edit-btn">
+                    ピン編集
+                </a>
+
+                <button type="submit" name="action" value="save" class="btn map-save-btn">登録</button>
+            </div>
+        </div>
+
         <input type="hidden" name="lat" value="{{ lat }}">
         <input type="hidden" name="lng" value="{{ lng }}">
-
+        
     </form>
 
-    <div id="map" style="height:400px;"></div>
+    {% if show_pin_edit_modal %}
+        {% include "destinations/map_pin_edit.html" %}
+    {% endif %}
+
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzTxW_yYKsF1KuCOYGslVvoIpwaVifXIY"></script>
 
@@ -77,6 +104,16 @@
             });
 
             let marker = null;
+            const geocoder = new google.maps.Geocoder();
+            const addressInput = document.querySelector('input[name="q"]');
+
+            function updateAddressInput(latLng) {
+                geocoder.geocode({ location: latLng }, function(results, status) {
+                    if (status === "OK" && results && results[0]) {
+                        addressInput.value = results[0].formatted_address.replace(/^日本、?/, "");
+                    }
+                });
+            }
 
             const savedLat = {{ destination.latitude|default:"null" }};
             const savedLng = {{ destination.longitude|default:"null" }};
@@ -111,6 +148,8 @@
 
                 document.querySelector('input[name="lat"]').value = event.latLng.lat();
                 document.querySelector('input[name="lng"]').value = event.latLng.lng();
+
+                updateAddressInput(event.latLng);
             });
         }
 

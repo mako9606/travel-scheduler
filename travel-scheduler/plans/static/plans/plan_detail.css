@@ -88,11 +88,12 @@ form.container{
 
 /* タブ中身　～メモ～ */
 .memo-paper{
-    padding: 12px 0 24px;
-    
+    --memo-safe-bottom: calc(24px + 64px + 16px);
+
+    padding: 12px 0 var(--memo-safe-bottom);
     margin-top: 0;
-    height: calc(100dvh - 260px);
-    overflow-y: auto;
+    min-height: calc(100dvh - 260px);
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
 }
@@ -168,26 +169,30 @@ form.container{
 
 /* タブ中身　～詳細情報～ */
 .tab-detail{
-    padding-top: 40px;
+    padding-top: 80px;
 }
 
 .detail-row{
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
     gap: 16px;
 }
 
 .detail-label{
+    width: 110px;
+    flex-shrink: 0;
     margin: 0;
     font-size: 16px;
     font-weight: 700;
     color: #592d13;
-    line-height: 1.4;
+    line-height: 2;
 }
 
 .detail-value{
+    flex: 1;
+    min-width: 0;
     margin: 0;
     font-size: 16px;
     font-weight: 500;
@@ -305,32 +310,68 @@ form.container{
 
 /* タブ中身　～1日詳細～ */
 .schedule-tab-body{
+    --schedule-fab-size: 64px;
+    --schedule-fab-bottom: 24px;
+    --schedule-fab-gap: 16px;
+
     padding-top: 60px;
+    padding-bottom: calc(
+        var(--schedule-fab-bottom) +
+        var(--schedule-fab-size) +
+        var(--schedule-fab-gap)
+    );
 }
 
 .schedule-item{
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
 }
 
 .schedule-pin-column{
-    width: 24px;
+    width: 36px;
     flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 84px;
+    min-height: 96px;
     box-sizing: border-box;
 }
 
+.schedule-pin-badge-wrap{
+    width: 26px;
+    height: 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+}
+
 .schedule-pin-badge{
-    width: 12px;
-    height: 12px;
-    border: 1px solid #b97a45;
-    border-radius: 50%;
-    background: #f4c48c;
+    width: 26px;
+    height: 32px;
+    position: relative;
     box-sizing: border-box;
+    clip-path: path("M13 32C13 32 24 21 24 12.5C24 7 19.08 2 13 2S2 7 2 12.5C2 21 13 32 13 32Z");
+    background: #f4c48c;
+    border: 1px solid transparent;
+}
+
+.schedule-pin-badge::after{
+    content: none;
+}
+
+.schedule-pin-label{
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    font-weight: 900;
+    line-height: 1;
+    color: #592d13;
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 .schedule-time-link{
@@ -342,9 +383,9 @@ form.container{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 84px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    min-height: 96px;
+    padding-top: 4px;
+    padding-bottom: 4px;
     box-sizing: border-box;
 }
 
@@ -355,7 +396,26 @@ form.container{
     font-weight: bold;
     color: #592d13;
     line-height: 1.4;
-    padding-top: 0;
+    padding: 0 0 6px;
+    border-bottom: 1px solid #592d13;
+    white-space: nowrap;
+}
+
+.schedule-time + .schedule-time{
+    margin-top: 10px;
+}
+
+.schedule-item + .schedule-item{
+    margin-top: 14px;
+}
+
+.schedule-time-value{
+    display: inline-block;
+}
+
+.schedule-time-kind{
+    display: inline-block;
+    margin-left: 2px;
 }
 
 a.schedule-time-link{
