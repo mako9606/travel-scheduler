@@ -892,15 +892,21 @@ def schedule_reorder(request):
 
     return JsonResponse({"status": "ok"})  
    
-    
+@login_required
 def schedule_memo(request, day_id):
-    day = get_object_or_404(DaySchedule, pk=day_id)
+    day = get_object_or_404(
+        DaySchedule,
+        pk=day_id,
+        plan__user=request.user,
+    )
     plan = day.plan
 
     if request.method == "POST":
         day.memo = request.POST.get("memo", "")
         day.save(update_fields=["memo"])
-        return redirect("plans:plan_detail", pk=day.plan.pk)
+        return redirect(
+            f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.pk})}?day_schedule_id={day.id}"
+        )
 
     return render(
         request,
