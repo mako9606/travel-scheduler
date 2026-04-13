@@ -11,10 +11,6 @@ form.container label{
     margin-bottom: 6px;
 }
 
-form.container input{
-    box-sizing: border-box;
-}
-
 form.container input[name="plan_name"]{
     display: block;
     width: 100% !important;
@@ -32,50 +28,79 @@ form.container input[name="plan_name"]::placeholder{
     opacity: 1;
 }
 
-form.container input[type="date"]{
-    display: block;
-    width: 170px;
-    padding: 6px 8px;
-    font-size: 14px;
-    border: 1px solid #595959;
-    box-sizing: border-box;
-    margin-bottom: 8px;
-}
-
-.date-row{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.date-row select{
-    height: 32px;
-    padding: 0 6px;
-    font-size: 16px;
-    text-align: center;
-    text-align-last: center;
-    color: #592d13;
-    border: 1px solid #999;
-    background: white;
-    box-sizing: border-box;
-    border-radius: 6px;
-}
-
-.date-row select[name$="year"]{
-    width: 74px;
-}
-
-.date-row select[name$="month"],
-.date-row select[name$="day"]{
-    width: 52px;
-}
-
-.date-unit{
-    font-size: 16px;
-    font-weight: 700;
-    color: #592d13;
-}
 
 form.container .btn{
     margin-top: 18px;
+}
+
+.date-picker-row{
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.date-spinner-group{
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.date-spinner-group.is-disabled{
+    opacity: 0.45;
+}
+
+.date-spinner-control{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #959595;
+    border-radius: 6px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.spinner-year .date-spinner-control{
+    width: 74px;
+}
+
+.spinner-month .date-spinner-control,
+.spinner-day .date-spinner-control{
+    width: 52px;
+}
+
+.spinner-btn{
+    height: 24px;
+    border: none;
+    background: #f3f3f3;
+    color: #592d13;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.spinner-btn:active{
+    background: #e5e5e5;
+}
+
+.spinner-value{
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    color: #592d13;
+    font-size: 18px;
+    font-weight: 700;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.date-unit{
+    margin-top: 34px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #592d13;
 }

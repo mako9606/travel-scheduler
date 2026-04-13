@@ -1,3 +1,5 @@
+<!-- plan_create・editの年月日スピナー -->
+
 document.addEventListener("DOMContentLoaded", function () {
     const YEAR_MIN = new Date().getFullYear() - 10;
     const YEAR_MAX = new Date().getFullYear() + 60;
