@@ -169,8 +169,12 @@ def plan_share(request, token):
 # share_revoke.html
 @login_required
 def share_revoke(request, member_id):
-    member = get_object_or_404(PlanShareMember, pk=member_id) 
-    
+    member = get_object_or_404(
+        PlanShareMember,
+        pk=member_id,
+        plan__user=request.user,
+    )
+
     if request.method == "POST":
         member.is_active = False
         member.save(update_fields=["is_active"])
@@ -180,7 +184,6 @@ def share_revoke(request, member_id):
         "member": member,
         "plan": member.plan,
     })
-
 
 # plan_create.html
 class PlanCreateView(LoginRequiredMixin, CreateView):

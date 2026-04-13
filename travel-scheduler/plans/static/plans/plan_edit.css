@@ -59,6 +59,17 @@ form.container{
     line-height: 1.4;
 }
 
+.form-group input[name="plan_name"]{
+    display: block;
+    width: 100%;
+    max-width: none;
+    padding: 8px 10px;
+    font-size: 15px;
+    font-weight: 600;
+    border: 1px solid #595959;
+    box-sizing: border-box;
+}
+
 /* ボタン同士の間隔をあける　*/
 .edit-action-buttons{
     display: flex;
