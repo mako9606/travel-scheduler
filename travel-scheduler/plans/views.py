@@ -28,7 +28,10 @@ def plan_list(request):
     return render(
         request,
         "plans/plan_list.html",
-        {"plans": plans}
+        {
+            "plans": plans,
+            "is_shortcut": request.GET.get("shortcut") == "1",
+        }
     )
 
 @login_required
@@ -367,16 +370,18 @@ class PlanDetailView(DetailView):
                     end_minutes = schedule.departure_time.hour * 60 + schedule.departure_time.minute
                     diff = end_minutes - start_minutes
 
-                    if diff >= 0:
-                        hours = diff // 60
-                        minutes = diff % 60
+                    if diff < 0:
+                        diff += 24 * 60
 
-                        if hours > 0 and minutes > 0:
-                            schedule.duration_display = f"{hours}時間{minutes}分"
-                        elif hours > 0:
-                            schedule.duration_display = f"{hours}時間"
-                        else:
-                            schedule.duration_display = f"{minutes}分"    
+                    hours = diff // 60
+                    minutes = diff % 60
+
+                    if hours > 0 and minutes > 0:
+                        schedule.duration_display = f"{hours}時間{minutes}分"
+                    elif hours > 0:
+                        schedule.duration_display = f"{hours}時間"
+                    else:
+                        schedule.duration_display = f"{minutes}分"   
             
             schedule_rows.append({
                 "date": d,

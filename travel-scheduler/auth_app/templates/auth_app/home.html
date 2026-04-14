@@ -11,17 +11,21 @@
 {% endblock %}
 
 {% block header %}
-{% include "header.html" with header_title="h /" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/destinations/search/" class="icon-btn">📍</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/account/" class="icon-btn">👤</a>' %}
+{% with initial_name=left_shortcut.name|default:"メモ" %}
+    {% with home_title="h / "|add:initial_name %}
+        {% include "header.html" with header_title=home_title header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/destinations/search/" class="icon-btn">📍</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/account/" class="icon-btn">👤</a>' %}
+    {% endwith %}
+{% endwith %}
 {% endblock %}
 
 {% block content %}
 <div class="home-screen">
-
     <div class="shortcut-area">
         <div class="swipe-wrap">
+
             <div class="swipe-track">
                 <!-- 左ページ -->
-                <section class="page">
+                <section class="page" data-shortcut-name="{% if left_shortcut %}{{ left_shortcut.name }}{% endif %}">
                     {% if left_shortcut %}
                         <iframe
                             src="{{ left_shortcut.url }}?shortcut=1"
@@ -33,7 +37,7 @@
                 </section>
 
                 <!-- 右ページ -->
-                <section class="page">
+                <section class="page" data-shortcut-name="{% if right_shortcut %}{{ right_shortcut.name }}{% endif %}">
                     {% if right_shortcut %}
                         <iframe
                             src="{{ right_shortcut.url }}?shortcut=1"
@@ -44,8 +48,35 @@
                     {% endif %}
                 </section>
             </div>
+
         </div>
     </div>
 </div>
 
+{% endblock %}
+
+{% block js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const swipeWrap = document.querySelector(".swipe-wrap");
+    const pages = Array.from(document.querySelectorAll(".page[data-shortcut-name]"));
+    const titleEl = document.querySelector(".header-title");
+
+    if (!swipeWrap || !pages.length || !titleEl) return;
+
+    function updateHomeHeaderTitle() {
+        const pageWidth = swipeWrap.clientWidth || 1;
+        const index = Math.round(swipeWrap.scrollLeft / pageWidth);
+        const page = pages[Math.min(index, pages.length - 1)];
+        if (!page) return;
+
+        const name = page.dataset.shortcutName || "";
+        titleEl.textContent = name ? `h / ${name}` : "h /";
+    }
+
+    updateHomeHeaderTitle();
+    swipeWrap.addEventListener("scroll", updateHomeHeaderTitle, { passive: true });
+    window.addEventListener("resize", updateHomeHeaderTitle);
+});
+</script>
 {% endblock %}

@@ -11,11 +11,11 @@
 {% endblock %}
 
 {% block header %}
+{% if not is_shortcut %}
     {% include "header.html" with header_title="メモ" header_icons='<a href="/destinations/search/" class="icon-btn">📍</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
-{% endblock %}
-
+{% endif %}
 {% block content %}
-    <form method="get" class="memo-search-form">
+    <form method="get" class="memo-search-form{% if is_shortcut %} memo-search-form-shortcut{% endif %}">
         <div class="search-row">
             <input
                 type="search"

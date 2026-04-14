@@ -27,15 +27,17 @@
 }
 
 .tab-content.active{
-    --schedule-edit-safe-bottom: calc(24px + 64px + 16px);
+    --schedule-edit-bottom-space: 48px;
 
     display: block;
     margin: 0;
-    padding: 24px 16px var(--schedule-edit-safe-bottom);
+    padding: 24px 16px var(--schedule-edit-bottom-space);
     background-color: #ffffff;
     border: 1px solid #ccc;
     box-sizing: border-box;
-    min-height: calc(100dvh - 170px);
+    height: calc(100dvh - 170px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .tab-content.active label{

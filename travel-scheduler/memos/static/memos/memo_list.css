@@ -5,6 +5,10 @@
     box-sizing: border-box;
 }
 
+.memo-search-form-shortcut{
+    margin-top: 0;
+}
+
 .search-row{
     display: flex;
     align-items: center;

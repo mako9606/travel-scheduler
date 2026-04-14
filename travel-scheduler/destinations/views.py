@@ -79,10 +79,15 @@ def destination_create(request):
 
                 return redirect(url)
 
-            if day:
+            if action == "save_and_set" and day:
                 return redirect(
                     reverse("plans:schedule_create")
                     + f"?day_schedule_id={day.id}&destination_id={destination.id}"
+                )
+
+            if day:
+                return redirect(
+                    f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
                 )
 
             return redirect("destinations:destination_search")
@@ -133,25 +138,15 @@ def destination_edit(request, pk):
             
             action = request.POST.get("action")
 
-            if day and action == "save_and_set":
+            if action == "save_and_set" and day:
                 return redirect(
-                    reverse("plans:schedule_create")
-                    + f"?day_schedule_id={day.id}&destination_id={destination.id}"
+                    f"{reverse('plans:schedule_create')}?day_schedule_id={day.id}&destination_id={destination.id}"
                 )
 
-        
-            if day:  # プラン内
-                url = reverse("destinations:destination_detail", kwargs={"pk": destination.id}) + f"?day_schedule_id={day.id}"
-                if from_page == "search":
-                    url += "&from=search"
-                if schedule_id:
-                    url += f"&schedule_id={schedule_id}"
-                return redirect(url)
+            if day:
+                return redirect(f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}")
 
-            # プラン外　→　検索画面に遷移
-            return redirect(
-                reverse("destinations:destination_detail", kwargs={"pk": destination.id})
-            )
+            return redirect(reverse('destinations:destination_search'))
     
     else:
         if lat and lng:
@@ -283,6 +278,11 @@ def map_destination(request, pk):
     from_page = request.GET.get("from") or request.POST.get("from")
     schedule_id = request.GET.get("schedule_id") or request.POST.get("schedule_id")
 
+    current_lat = request.POST.get("lat") or request.GET.get("lat") or destination.latitude
+    current_lng = request.POST.get("lng") or request.GET.get("lng") or destination.longitude
+    q = request.POST.get("q", "").strip() if request.method == "POST" else request.GET.get("q", "")
+    search_mode = False
+
     if request.method == "POST":
         action = request.POST.get("action")
         lat = request.POST.get("lat")
@@ -290,6 +290,7 @@ def map_destination(request, pk):
         q = request.POST.get("q", "").strip()
 
         if action == "search":
+            search_mode = True
             context = {
                 "destination": destination,
                 "pins": pins,
@@ -297,7 +298,11 @@ def map_destination(request, pk):
                 "day_schedule_id": day_schedule_id,
                 "from_page": from_page,
                 "schedule_id": schedule_id,
+                "current_lat": current_lat,
+                "current_lng": current_lng,
                 "q": q,
+                "search_mode": search_mode,
+            
             }
             return render(request, "destinations/map_destination.html", context)
 
@@ -305,9 +310,9 @@ def map_destination(request, pk):
             if q:
                 destination.address = q
             
-            if lat and lng:
-                destination.latitude = lat
-                destination.longitude = lng
+            if current_lat and current_lng:
+                destination.latitude = current_lat
+                destination.longitude = current_lng
 
             destination.selected_pin = selected_pin
             destination.save()
@@ -334,6 +339,10 @@ def map_destination(request, pk):
         "day_schedule_id": day_schedule_id,
         "from_page": from_page,
         "schedule_id": schedule_id,
+        "current_lat": current_lat,
+        "current_lng": current_lng,
+        "q": q,
+        "search_mode": search_mode,
     }
 
     return render(request, "destinations/map_destination.html", context)

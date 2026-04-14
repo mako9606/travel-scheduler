@@ -28,6 +28,7 @@ def memo_list(request):
     return render(request, "memos/memo_list.html", {
         "q": q,
         "memo_rows": memo_rows,
+        "is_shortcut": request.GET.get("shortcut") == "1",
     })
 
 

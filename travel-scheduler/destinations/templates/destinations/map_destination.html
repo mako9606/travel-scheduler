@@ -82,8 +82,8 @@
             </div>
         </div>
 
-        <input type="hidden" name="lat" value="{{ lat }}">
-        <input type="hidden" name="lng" value="{{ lng }}">
+        <input type="hidden" name="lat" value="{{ current_lat|default_if_none:'' }}">
+        <input type="hidden" name="lng" value="{{ current_lng|default_if_none:'' }}">
         
     </form>
 
@@ -106,6 +106,35 @@
             let marker = null;
             const geocoder = new google.maps.Geocoder();
             const addressInput = document.querySelector('input[name="q"]');
+            const latInput = document.querySelector('input[name="lat"]');
+            const lngInput = document.querySelector('input[name="lng"]');
+
+            const currentLat = {{ current_lat|default:"null" }};
+            const currentLng = {{ current_lng|default:"null" }};
+            const savedLat = {{ destination.latitude|default:"null" }};
+            const savedLng = {{ destination.longitude|default:"null" }};
+            const currentQuery = "{{ q|default:''|escapejs }}";
+            const searchMode = {% if search_mode %}true{% else %}false{% endif %};
+
+            function placeMarker(lat, lng) {
+                const position = {
+                    lat: parseFloat(lat),
+                    lng: parseFloat(lng)
+                };
+
+                if (marker) {
+                    marker.setMap(null);
+                }
+
+                marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                });
+
+                map.setCenter(position);
+                latInput.value = position.lat;
+                lngInput.value = position.lng;
+            }
 
             function updateAddressInput(latLng) {
                 geocoder.geocode({ location: latLng }, function(results, status) {
@@ -115,40 +144,33 @@
                 });
             }
 
-            const savedLat = {{ destination.latitude|default:"null" }};
-            const savedLng = {{ destination.longitude|default:"null" }};
-
-            if (savedLat !== null && savedLng !== null && !isNaN(savedLat) && !isNaN(savedLng)) {
-                const savedLocation = {
-                    lat: parseFloat(savedLat),
-                    lng: parseFloat(savedLng)
-                };
-
-                marker = new google.maps.Marker({
-                    position: savedLocation,
-                    map: map,
+            function searchAddress(address) {
+                geocoder.geocode({ address: address }, function(results, status) {
+                    if (status === "OK" && results && results[0]) {
+                        const loc = results[0].geometry.location;
+                        placeMarker(loc.lat(), loc.lng());
+                    }
                 });
+            }
 
-                map.setCenter(savedLocation);
-
-                document.querySelector('input[name="lat"]').value = savedLocation.lat;
-                document.querySelector('input[name="lng"]').value = savedLocation.lng;
+            // 優先順位
+            // 1. 検索直後なら q を優先
+            // 2. 一時保持中の lat/lng
+            // 3. 保存済み destination の lat/lng
+            // 4. どれもなければ東京駅
+            if (searchMode && currentQuery) {
+                searchAddress(currentQuery);
+            } else if (currentLat !== null && currentLng !== null && !isNaN(currentLat) && !isNaN(currentLng)) {
+                placeMarker(currentLat, currentLng);
+            } else if (savedLat !== null && savedLng !== null && !isNaN(savedLat) && !isNaN(savedLng)) {
+                placeMarker(savedLat, savedLng);
             }
 
             map.addListener("click", function(event) {
+                const clickedLat = event.latLng.lat();
+                const clickedLng = event.latLng.lng();
 
-                if (marker) {
-                    marker.setMap(null);
-                }
-
-                marker = new google.maps.Marker({
-                    position: event.latLng,
-                    map: map,
-                });
-
-                document.querySelector('input[name="lat"]').value = event.latLng.lat();
-                document.querySelector('input[name="lng"]').value = event.latLng.lng();
-
+                placeMarker(clickedLat, clickedLng);
                 updateAddressInput(event.latLng);
             });
         }

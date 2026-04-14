@@ -11,11 +11,13 @@
     {% endblock %}
 
     {% block header %}
-    {% include "header.html" with header_title="プランリスト" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+    {% if not is_shortcut %}
+        {% include "header.html" with header_title="プランリスト" header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+    {% endif %}
     {% endblock %}
 
     {% block content %}
-    <div class="plan-list" id="plan-list">
+    <div class="plan-list{% if is_shortcut %} plan-list-shortcut{% endif %}" id="plan-list">
 
         {% for plan in plans %}
             <div class="plan-item"

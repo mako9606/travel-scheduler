@@ -141,7 +141,7 @@
         <div class="main-buttons">
             <button type="submit" name="action" value="save" class="btn" form="destination-form">完了</button>
         
-            {% if day %}
+            {% if day and not schedule_id %}
                 <button type="submit" name="action" value="save_and_set" class="btn" form="destination-form">予定に設定</button>
             {% endif %}
         </div>
