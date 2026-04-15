@@ -73,7 +73,7 @@ def home_view(request):
     for shortcut in shortcuts:
         data = {
             "name": shortcut.shortcut_type.display_name,
-            "url": get_shortcut_url(shortcut.shortcut_type.action_key),
+            "url": get_shortcut_url(shortcut),
         }
 
         if shortcut.position == 1:

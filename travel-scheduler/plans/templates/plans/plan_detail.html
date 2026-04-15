@@ -7,20 +7,22 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=24">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=31">
 <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=5">
 {% endblock %}
 
 {% block header %}
-    {% if show_owner_controls %}
-        {% include "header.html" with header_title=object.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
-    {% else %}
-        {% include "header.html" with header_title=object.plan_name header_icons='' %}
+    {% if not is_shortcut %}
+        {% if show_owner_controls %}
+            {% include "header.html" with header_title=object.plan_name header_icons='<a href="/memos/list/" class="icon-btn">📝</a><a href="/plans/plan_list/" class="icon-btn">🛫</a><a href="/auth/home/" class="icon-btn">🏠</a>' %}
+        {% else %}
+            {% include "header.html" with header_title=object.plan_name header_icons='' %}
+        {% endif %}
     {% endif %}
 {% endblock %}
 
 {% block content %}
-    <form method="POST" class="container">
+    <form method="POST" class="container{% if is_shortcut %} plan-detail-shortcut{% endif %}">
         {% csrf_token %}
 
         <div class="tab-menu">
@@ -375,6 +377,12 @@
         </div>
 
     </form>
+{% endblock %}
+
+{% block js %}
+    {% if is_shortcut %}
+        <script src="{% static 'shortcut_top_nav.js' %}"></script>
+    {% endif %}
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzTxW_yYKsF1KuCOYGslVvoIpwaVifXIY"></script>
 
@@ -441,7 +449,11 @@
                     });
 
                     marker.addListener("click", () => {
-                        window.location.href = point.detail_url;
+                        if ({{ is_shortcut|yesno:"true,false" }}) {
+                            window.top.location.href = point.detail_url;
+                        } else {
+                            window.location.href = point.detail_url;
+                        }
                     });
 
                     bounds.extend(position);
@@ -527,21 +539,64 @@
     {% endif %} 
     
     <script>
-        document.querySelectorAll('.tab-btn').forEach((btn) =>{
-            btn.addEventListener('click', () => {
-
-                // タブの切り替え
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                // タブの中身　切り替え
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); 
-                const target = btn.dataset.target;
-                document.querySelector(target).classList.add('active');
-            });
-        });
-
         document.addEventListener("DOMContentLoaded", () => {
+            const isShortcut = {{ is_shortcut|yesno:"true,false" }};
+
+            document.querySelectorAll('.tab-btn').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const target = btn.dataset.target;
+                    const dayId = btn.dataset.dayId || "";
+                    const currentUrl = new URL(window.location.href);
+
+                    if (isShortcut) {
+                        currentUrl.searchParams.delete("shortcut");
+                        currentUrl.searchParams.delete("memo_tab");
+                        currentUrl.searchParams.delete("map_tab");
+                        currentUrl.searchParams.delete("cost_tab");
+                        currentUrl.searchParams.delete("day_schedule_id");
+
+                        if (target === ".tab-memo") {
+                            const currentDayId = new URLSearchParams(window.location.search).get("day_schedule_id");
+                            if (currentDayId) {
+                                currentUrl.searchParams.set("day_schedule_id", currentDayId);
+                            }
+                            currentUrl.searchParams.set("memo_tab", "1");
+                        } else if (target === ".tab-map") {
+                            const currentDayId = new URLSearchParams(window.location.search).get("day_schedule_id");
+                            if (currentDayId) {
+                                currentUrl.searchParams.set("day_schedule_id", currentDayId);
+                            }
+                            currentUrl.searchParams.set("map_tab", "1");
+                        } else if (target === ".tab-cost") {
+                            const currentDayId = new URLSearchParams(window.location.search).get("day_schedule_id");
+                            if (currentDayId) {
+                                currentUrl.searchParams.set("day_schedule_id", currentDayId);
+                            }
+                            currentUrl.searchParams.set("cost_tab", "1");
+                        } else if (dayId) {
+                            currentUrl.searchParams.set("day_schedule_id", dayId);
+                        }
+
+                        const nextUrl = currentUrl.pathname +
+                            (currentUrl.searchParams.toString()
+                                ? "?" + currentUrl.searchParams.toString()
+                                : "");
+
+                        window.top.location.href = nextUrl;
+                        return;
+                    }
+
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    const targetContent = document.querySelector(target);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+                });
+            });
+
             const params = new URLSearchParams(window.location.search);
             const dayId = params.get("day_schedule_id");
             const memoTab = params.get("memo_tab");
@@ -615,7 +670,6 @@
             }
         });
 
-
         // スライド13　共有URL表示（モーダル）
         const shareModal = document.querySelector('.share-modal');
         const openShareBtn = document.querySelector('.member-add');
@@ -630,7 +684,6 @@
                 shareModal.classList.remove('active');
             });
         }
-
     </script>
     
     {% if show_owner_controls %}

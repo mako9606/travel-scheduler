@@ -18,6 +18,8 @@ from destinations.models import Destination
 
 from .forms import PlanCreateForm, ScheduleForm, CostForm, CostCategoryForm
 
+from account.utils import remember_last_plan_state
+
 import json
 import secrets
 
@@ -389,6 +391,22 @@ class PlanDetailView(DetailView):
                 "schedules": schedules,
             })
             
+        selected_day_schedule_id = self.request.GET.get("day_schedule_id")
+        current_day = None
+
+        if selected_day_schedule_id:
+            current_day = days_qs.filter(pk=selected_day_schedule_id).first()
+
+        if current_day is None:
+            current_day = next((row["day"] for row in schedule_rows if row["day"]), None)
+
+        if self.request.user.is_authenticated and plan.user == self.request.user:
+            remember_last_plan_state(
+                self.request.user,
+                plan_id=plan.id,
+                day_schedule_id=current_day.id if current_day else None,
+            )  
+            
         context["schedule_rows"] = schedule_rows
 
         shared = self.request.GET.get("shared")
@@ -519,6 +537,7 @@ class PlanDetailView(DetailView):
         context["destination_modal_schedule_id"] = destination_modal_schedule_id
         context["map_tab"] = map_tab
         context["shared"] = shared
+        context["is_shortcut"] = self.request.GET.get("shortcut") == "1"
         
         return context
     

@@ -7,7 +7,7 @@
 
     {% block css %}
         <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
-        <link rel="stylesheet" href="{% static 'plans/plan_list.css' %}?v=5">
+        <link rel="stylesheet" href="{% static 'plans/plan_list.css' %}?v=8">
     {% endblock %}
 
     {% block header %}
@@ -39,6 +39,11 @@
     {% endblock %}
 
 {% block js %}
+
+{% if is_shortcut %}
+    <script src="{% static 'shortcut_top_nav.js' %}"></script>
+{% endif %}
+
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
@@ -66,10 +71,15 @@ Sortable.create(el, {
 }
 
 document.querySelectorAll(".plan-item").forEach(item => {
-  item.addEventListener("click", function () {
-    const detailUrl = this.dataset.detailUrl;
-    window.location.href = detailUrl;
-  });
+    item.addEventListener("click", function () {
+        const detailUrl = this.dataset.detailUrl;
+
+        if ({% if is_shortcut %}true{% else %}false{% endif %}) {
+            window.top.location.href = detailUrl;
+        } else {
+            window.location.href = detailUrl;
+        }
+    });
 });
 </script>
 

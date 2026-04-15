@@ -1,4 +1,49 @@
-/* タブ中身を下までのばす */
+.plan-detail-shortcut{
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-left: -12px;
+    margin-right: -12px;
+    width: calc(100% + 24px);
+    box-sizing: border-box;
+}
+
+.plan-detail-shortcut .tab-menu{
+    position: relative;
+    top: 29.5px;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    z-index: auto;
+    box-sizing: border-box;
+    scrollbar-width: none;
+}
+
+.plan-detail-shortcut .tab-menu::-webkit-scrollbar{
+    display: none;
+}
+
+.plan-detail-shortcut .tab-menu .tab-btn{
+    flex: 0 0 auto;
+}
+
+.plan-detail-shortcut .tab-detail,
+.plan-detail-shortcut .tab-memo,
+.plan-detail-shortcut .tab-map,
+.plan-detail-shortcut .tab-cost,
+.plan-detail-shortcut [class^="tab-schedule-"]{
+    margin-top: -100px;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
 form.container{
     padding: 0;
     box-sizing: border-box;

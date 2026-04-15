@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'auth_app/home.css' %}">
+    <link rel="stylesheet" href="{% static 'auth_app/home.css' %}?v=3">
 {% endblock %}
 
 {% block header %}
@@ -26,25 +26,25 @@
             <div class="swipe-track">
                 <!-- 左ページ -->
                 <section class="page" data-shortcut-name="{% if left_shortcut %}{{ left_shortcut.name }}{% endif %}">
-                    {% if left_shortcut %}
+                    {% if left_shortcut and left_shortcut.url %}
                         <iframe
-                            src="{{ left_shortcut.url }}?shortcut=1"
+                            src="{{ left_shortcut.url }}{% if '?' in left_shortcut.url %}&{% else %}?{% endif %}shortcut=1"
                             class="shortcut-frame">
                         </iframe>
                     {% else %}
-                        <div class="empty-page">未選択です</div>
+                        <div class="empty-page">未選択です。<br>アカウント画面で設定してください。</div>
                     {% endif %}
                 </section>
 
                 <!-- 右ページ -->
                 <section class="page" data-shortcut-name="{% if right_shortcut %}{{ right_shortcut.name }}{% endif %}">
-                    {% if right_shortcut %}
+                    {% if right_shortcut and right_shortcut.url %}
                         <iframe
-                            src="{{ right_shortcut.url }}?shortcut=1"
+                            src="{{ right_shortcut.url }}{% if '?' in right_shortcut.url %}&{% else %}?{% endif %}shortcut=1"
                             class="shortcut-frame">
                         </iframe>
                     {% else %}
-                        <div class="empty-page">未選択です</div>
+                        <div class="empty-page">未選択です。<br>アカウント画面で設定してください。</div>
                     {% endif %}
                 </section>
             </div>
