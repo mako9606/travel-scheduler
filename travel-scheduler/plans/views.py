@@ -753,6 +753,66 @@ def build_expense_rows_from_post(request):
 
     return rows, has_error
 
+def sync_destination_fee_costs(schedule):
+    destination = schedule.destination
+    plan = schedule.day.plan
+
+    parking_category = CostCategory.objects.filter(
+        plan=plan,
+        name="駐車場"
+    ).first()
+
+    admission_category = CostCategory.objects.filter(
+        plan=plan,
+        name="入場料"
+    ).first()
+
+    # いったん、この予定に紐づく自動反映分を消す
+    # 今回の最小差分では「schedule + category + destination.name」を同一行として扱う
+    if parking_category:
+        Cost.objects.filter(
+            plan=plan,
+            schedule=schedule,
+            category=parking_category,
+            name=destination.name,
+        ).delete()
+
+    if admission_category:
+        Cost.objects.filter(
+            plan=plan,
+            schedule=schedule,
+            category=admission_category,
+            name=destination.name,
+        ).delete()
+
+    # 駐車場
+    if (
+        parking_category
+        and destination.parking_available
+        and destination.parking_fee not in [None, ""]
+    ):
+        Cost.objects.create(
+            plan=plan,
+            schedule=schedule,
+            category=parking_category,
+            name=destination.name,
+            amount=destination.parking_fee,
+        )
+
+    # 入場料
+    if (
+        admission_category
+        and destination.admission_available
+        and destination.admission_fee not in [None, ""]
+    ):
+        Cost.objects.create(
+            plan=plan,
+            schedule=schedule,
+            category=admission_category,
+            name=destination.name,
+            amount=destination.admission_fee,
+        )
+
     
 # schedule_edit.html
 # 新規追加時
@@ -815,6 +875,8 @@ def schedule_create(request):
                     name=expense_item,
                     amount=int(amount_text),
                 )
+                
+            sync_destination_fee_costs(schedule)
 
             return redirect(
                 reverse("plans:plan_detail", kwargs={"pk": day_schedule.plan.id})
@@ -881,6 +943,8 @@ def schedule_edit(request, pk):
                     name=expense_item,
                     amount=int(amount_text),
                 )
+                
+            sync_destination_fee_costs(schedule)
 
             return redirect(
                 reverse("plans:plan_detail", kwargs={"pk": day_schedule.plan.id})

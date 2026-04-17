@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from plans.models import DaySchedule
+from plans.models import DaySchedule, Schedule, Cost, CostCategory
 from .models import Destination, MapPin
 from .forms import DestinationForm, MapPinForm
 from django.urls import reverse
@@ -126,8 +126,10 @@ def destination_edit(request, pk):
     schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule_id")
 
     if request.method == "POST":
+        old_name = destination.name
         form = DestinationForm(request.POST, instance=destination)
         if form.is_valid():
+            
             destination = form.save(commit=False)
             destination.user = request.user
 
@@ -135,6 +137,11 @@ def destination_edit(request, pk):
             destination.closed_day = ",".join(closed_days)
 
             destination.save()
+            
+            related_schedules = Schedule.objects.filter(destination=destination).select_related("day__plan")
+
+            for schedule in related_schedules:
+                sync_destination_fee_costs(schedule, previous_name=old_name)
             
             action = request.POST.get("action")
 
@@ -549,3 +556,63 @@ def map_pin_delete(request, destination_id, pin_id):
             "delete_error": "",
         }
     )
+    
+def sync_destination_fee_costs(schedule, previous_name=None):
+    destination = schedule.destination
+    plan = schedule.day.plan
+
+    parking_category = CostCategory.objects.filter(
+        plan=plan,
+        name="駐車場"
+    ).first()
+
+    admission_category = CostCategory.objects.filter(
+        plan=plan,
+        name="入場料"
+    ).first()
+    
+    names_to_delete = [destination.name]
+    if previous_name and previous_name != destination.name:
+        names_to_delete.append(previous_name)
+
+    if parking_category:
+        Cost.objects.filter(
+            plan=plan,
+            schedule=schedule,
+            category=parking_category,
+            name__in=names_to_delete,
+        ).delete()
+
+    if admission_category:
+        Cost.objects.filter(
+            plan=plan,
+            schedule=schedule,
+            category=admission_category,
+            name__in=names_to_delete,
+        ).delete()
+
+    if (
+        parking_category
+        and destination.parking_available
+        and destination.parking_fee not in [None, ""]
+    ):
+        Cost.objects.create(
+            plan=plan,
+            schedule=schedule,
+            category=parking_category,
+            name=destination.name,
+            amount=destination.parking_fee,
+        )
+
+    if (
+        admission_category
+        and destination.admission_available
+        and destination.admission_fee not in [None, ""]
+    ):
+        Cost.objects.create(
+            plan=plan,
+            schedule=schedule,
+            category=admission_category,
+            name=destination.name,
+            amount=destination.admission_fee,
+        )
