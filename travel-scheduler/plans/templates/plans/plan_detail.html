@@ -148,7 +148,12 @@
                 {% if row.day %}
                     {% for schedule in row.schedules %}
 
-                        <div class="schedule-item">
+                        <div
+                            class="schedule-item"
+                            data-schedule-id="{{ schedule.id }}"
+                            {% if row.day %}data-day-id="{{ row.day.id }}"{% endif %}
+                            data-order="{{ schedule.order }}"
+                        >
                             {% if show_owner_controls %}
                                 <a href="{% url 'plans:schedule_edit' schedule.id %}" class="schedule-time-link">
                                     <div class="schedule-times">
@@ -690,34 +695,34 @@
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
         <script>// 目的地の順番並び替え
-            document.querySelectorAll('.tab-content').forEach((tab) => {
-                new Sortable(tab, {
-                    animation: 150,
-                    draggable: '.schedule-row',
-                    handle: '.schedule-row',
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".schedule-tab-body").forEach((body) => {
+                    new Sortable(body, {
+                        animation: 150,
+                        draggable: ".schedule-item",
+                        handle: ".schedule-row",
 
-                    onEnd: function () {
-                        const rows = tab.querySelectorAll('.schedule-row');
-                        if (!rows.length) return;
+                        onEnd: function () {
+                            const items = body.querySelectorAll(".schedule-item[data-schedule-id]");
+                            if (!items.length) return;
 
-                        const formData = new FormData();
-                        rows.forEach(row => {
-                            const id = row.dataset.scheduleId;
-                            if (!id) return;   // ← schedule-idを持たない行は無視をするって意味
-                            formData.append('order[]', id);
-                        });
+                            const formData = new FormData();
 
-                        // day_id は、行が持っている day_schedule_id を利用
-                        formData.append("day_id", rows[0].dataset.dayId);
+                            items.forEach((item) => {
+                                formData.append("order[]", item.dataset.scheduleId);
+                            });
 
-                        fetch("{% url 'plans:schedule_reorder' %}", {
-                            method: "POST",
-                            headers: {
-                                "X-CSRFToken": "{{ csrf_token }}",
-                            },
-                            body: formData,
-                        });
-                    },
+                            formData.append("day_id", items[0].dataset.dayId);
+
+                            fetch("{% url 'plans:schedule_reorder' %}", {
+                                method: "POST",
+                                headers: {
+                                    "X-CSRFToken": "{{ csrf_token }}",
+                                },
+                                body: formData,
+                            });
+                        },
+                    });
                 });
             });
         </script>
@@ -758,28 +763,57 @@
             "駐車場": "#A7D4F2",
         };
 
+        const fixedHueMap = {
+            "入場料": 38,
+            "駐車場": 204,
+        };
+
         function getAutoColorFromName(name) {
             let hash = 0;
             for (let i = 0; i < name.length; i++) {
                 hash = name.charCodeAt(i) + ((hash << 5) - hash);
             }
+            return Math.abs(hash) % 360;
+        }
 
-            const hue = Math.abs(hash) % 360;
+        function buildAutoColor(hue) {
             return `hsl(${hue}, 70%, 65%)`;
         }
 
-        function getCategoryColor(name) {
-            return fixedColorMap[name] || getAutoColorFromName(name);
+        function isHueTooClose(hue, usedHues, minDiff = 30) {
+            return usedHues.some((usedHue) => {
+                const diff = Math.abs(hue - usedHue);
+                return Math.min(diff, 360 - diff) < minDiff;
+            });
+        }
+
+        function getCategoryColor(name, usedHues) {
+            const fixedColor = fixedColorMap[name];
+            const fixedHue = fixedHueMap[name];
+
+            if (fixedColor) {
+                usedHues.push(fixedHue);
+                return fixedColor;
+            }
+
+            let hue = getAutoColorFromName(name);
+
+            while (isHueTooClose(hue, usedHues)) {
+                hue = (hue + 37) % 360;
+            }
+
+            usedHues.push(hue);
+            return buildAutoColor(hue);
         }
 
         const blocks = Array.from(document.querySelectorAll(".cost-list .cost-category-block"));
+        const usedHues = [];
 
         const categoryData = blocks.map((block) => {
             const name = block.querySelector(".category-name")?.textContent?.trim() || "";
             const totalText = block.querySelector(".category-total")?.textContent || "0";
             const amount = Number(totalText.replace(/[^\d]/g, ""));
-            const color = getCategoryColor(name);
-
+            const color = getCategoryColor(name, usedHues);
             // 一覧側にも同じ色を反映
             block.style.borderLeftColor = color;
 
