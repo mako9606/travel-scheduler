@@ -6,6 +6,10 @@ from account.models import UserShortcut, ShortcutType
 from account.utils import get_shortcut_url
 from django.urls import reverse
 
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
+
 def login_view(request):
     if request.method == "POST":
         email = request.POST["username"]
@@ -43,15 +47,59 @@ def signup_view(request):
                 {"error_message": "パスワードが一致しません。"}
             )
         
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
+        if User.objects.filter(username=username).exists():
+            return render(
+                request,
+                "auth_app/signup.html",
+                {"error_message": "このアカウント名はすでに使用されています。"}
+            )
+
+        if User.objects.filter(email__iexact=email).exists():
+            return render(
+                request,
+                "auth_app/signup.html",
+                {"error_message": "このメールアドレスはすでに使用されています。"}
+            )
+
+        if not password.isascii() or not password.isalnum():
+            return render(
+                request,
+                "auth_app/signup.html",
+                {"error_message": "パスワードは半角英数字で入力してください。"}
+            )
+                
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            return render(
+                request,
+                "auth_app/signup.html",
+                {"error_message": e.messages[0]}
+            )
+
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
+        except IntegrityError:
+            return render(
+                request,
+                "auth_app/signup.html",
+                {"error_message": "登録に失敗しました。入力内容を確認してください。"}
+            )
         
         user = authenticate(request,username=email, password=password)
-        login(request, user)
         
+        if user is None:
+            return render(
+                request,
+                "auth_app/signup.html",
+                {"error_message": "登録は完了しましたが、自動ログインに失敗しました。ログイン画面からログインしてください。"}
+            )
+    
+        login(request, user)
         return redirect("auth_app:home")
     
     return render(request, 'auth_app/signup.html')

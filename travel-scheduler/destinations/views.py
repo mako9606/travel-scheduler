@@ -269,7 +269,7 @@ def map_destination(request, pk):
     destination = get_object_or_404(Destination, pk=pk, user=request.user)
     pins = MapPin.objects.filter(user=request.user).order_by("order", "id")
 
-    selected_pin_id = request.GET.get("pin_id") or request.POST.get("pin_id")
+    selected_pin_id = request.POST.get("pin_id") or request.GET.get("pin_id")
     selected_pin = None
 
     if selected_pin_id:

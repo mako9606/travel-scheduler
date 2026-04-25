@@ -27,7 +27,7 @@
 }
 
 .tab-content.active{
-    --schedule-edit-bottom-space: 48px;
+    --schedule-edit-bottom-space: 120px;
 
     display: block;
     margin: 0;

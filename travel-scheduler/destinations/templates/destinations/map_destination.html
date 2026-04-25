@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'destinations/map_destination.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'destinations/map_destination.css' %}?v=5">
     <link rel="stylesheet" href="{% static 'destinations/map_pin_edit.css' %}?v=8">
 {% endblock %}
 
@@ -19,7 +19,7 @@
     <form method="POST" class="map-form">
         {% csrf_token %}
 
-        <input type="hidden" name="pin_id" value="{% if selected_pin %}{{ selected_pin.id }}{% endif %}">
+        <input type="hidden" id="selectedPinId" name="pin_id" value="{% if selected_pin %}{{ selected_pin.id }}{% endif %}">
 
         {% if day_schedule_id %}
             <input type="hidden" name="day_schedule_id" value="{{ day_schedule_id }}">
@@ -49,24 +49,39 @@
             <div id="map"></div>
 
             <div class="map-bottom-bar">
-                <div class="map-pin-select">
-                    <select name="pin_id" class="map-pin-select-input" onchange="this.form.submit()">
-                        <option value="">ピン選択</option>
+                <div class="map-pin-select" id="mapPinSelect">
+                    <button type="button" class="map-pin-select-toggle" id="mapPinToggle">
+                        {% if selected_pin %}
+                            {{ selected_pin.name }}
+                        {% else %}
+                            ピン選択
+                        {% endif %}
+                    </button>
+
+                    <div class="map-pin-options" id="mapPinOptions">
+                        <button
+                            type="button"
+                            class="map-pin-option{% if not selected_pin %} is-selected{% endif %}"
+                            data-pin-id=""
+                        >
+                            ピン選択
+                        </button>
+
                         {% for pin in pins %}
-                            <option value="{{ pin.id }}"
-                                {% if selected_pin and selected_pin.id == pin.id %}selected{% endif %}>
+                            <button
+                                type="button"
+                                class="map-pin-option{% if selected_pin and selected_pin.id == pin.id %} is-selected{% endif %}"
+                                data-pin-id="{{ pin.id }}"
+                            >
                                 {{ pin.name }}
-                            </option>
+                            </button>
                         {% endfor %}
-                    </select>
+                    </div>
                 </div>
 
                 <div class="current-pin-display">
                     {% if selected_pin %}
-                        <span class="current-pin-dot"
-                            {% if selected_pin.color %}
-                            style="background: {{ selected_pin.color }}; border-color: {{ selected_pin.color }};"
-                            {% endif %}></span>
+                        <span class="current-pin-dot" style="background: {{ selected_pin.color }}; border-color: {{ selected_pin.color }};"></span>
                         <span class="current-pin-name">{{ selected_pin.name }}</span>
                     {% else %}
                         <span class="current-pin-name">未選択</span>
@@ -176,5 +191,45 @@
         }
 
         window.onload = initMap;
+    </script>
+
+    <script>
+        window.onload = function () {
+            initMap();
+
+            const pinSelect = document.getElementById("mapPinSelect");
+            const pinToggle = document.getElementById("mapPinToggle");
+            const pinOptions = document.getElementById("mapPinOptions");
+            const pinHidden = document.getElementById("selectedPinId");
+            const form = document.querySelector(".map-form");
+
+            if (!pinSelect || !pinToggle || !pinOptions || !pinHidden || !form) return;
+
+            pinToggle.addEventListener("click", function (e) {
+                e.stopPropagation();
+                pinSelect.classList.toggle("open");
+            });
+
+            pinOptions.querySelectorAll(".map-pin-option").forEach((btn) => {
+                btn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+
+                    const pinId = this.dataset.pinId || "";
+                    const pinName = this.textContent.trim();
+
+                    pinHidden.value = pinId;
+                    pinToggle.textContent = pinName;
+
+                    pinSelect.classList.remove("open");
+                    form.submit();
+                });
+            });
+
+            document.addEventListener("click", function (e) {
+                if (!pinSelect.contains(e.target)) {
+                    pinSelect.classList.remove("open");
+                }
+            });
+        };
     </script>
 {% endblock %}

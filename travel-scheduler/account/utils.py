@@ -22,7 +22,6 @@ def remember_last_plan_state(user, plan_id, day_schedule_id=None, cost_id=None):
     UserShortcut.objects.filter(
         user=user,
         shortcut_type__action_key__in=[
-            "plan_schedule",
             "plan_day",
             "plan_memo",
             "plan_map",
@@ -44,7 +43,7 @@ def get_shortcut_url(shortcut):
     if action_key == "plan_list":
         return reverse("plans:plan_list")
 
-    if action_key in ["plan_day", "plan_schedule", "plan_memo", "plan_map", "plan_cost"]:
+    if action_key in ["plan_day", "plan_memo", "plan_map", "plan_cost"]:
         if not shortcut.plan_id:
             return None
 
