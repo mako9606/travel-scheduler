@@ -87,12 +87,19 @@ def change_password(request):
         old_password_error = None
         new_password_errors = []
         
-        #現在のパスワードチェック
+        # 現在のパスワードチェック
+        if not request.user.check_password(old_password):
+            old_password_error = "現在のパスワードが違います。"
+
+        # 新しいパスワードチェック
         if not old_password_error:
-            try:
-                validate_password(new_password, request.user)
-            except ValidationError as e:
-                new_password_errors = e.messages
+            if not new_password.isascii() or not new_password.isalnum():
+                new_password_errors = ["パスワードは半角英数字で入力してください。"]
+            else:
+                try:
+                    validate_password(new_password, request.user)
+                except ValidationError as e:
+                    new_password_errors = e.messages
 
         if old_password_error or new_password_errors:
             return render(request, "account/change_password.html", {
