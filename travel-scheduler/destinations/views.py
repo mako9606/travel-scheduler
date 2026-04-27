@@ -52,45 +52,52 @@ def destination_create(request):
     
     if request.method == "POST":
         form = DestinationForm(request.POST)
+        
         if form.is_valid():
-            destination = form.save(commit=False)
-            destination.user = request.user
-
-            closed_days = request.POST.getlist("closed_day")
-            destination.closed_day = ",".join(closed_days)
-
-            destination.save()
-            
             action = request.POST.get("action")
             
-            if action == "save_and_map":
-                url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
+            latitude = form.cleaned_data.get("latitude")
+            longitude = form.cleaned_data.get("longitude")
 
-                params = []
+            if action != "save_and_map" and (latitude is None or longitude is None):
+                form.add_error(None, "GoogleMapから場所を設定してください。")
+            else:
+                destination = form.save(commit=False)
+                destination.user = request.user
+
+                closed_days = request.POST.getlist("closed_day")
+                destination.closed_day = ",".join(closed_days)
+
+                destination.save()
+            
+                if action == "save_and_map":
+                    url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
+
+                    params = []
+                    if day:
+                        params.append(f"day_schedule_id={day.id}")
+                    if from_page:
+                        params.append(f"from={from_page}")
+                    if schedule_id:
+                        params.append(f"schedule_id={schedule_id}")
+
+                    if params:
+                        url += "?" + "&".join(params)
+
+                    return redirect(url)
+
+                if action == "save_and_set" and day:
+                    return redirect(
+                        reverse("plans:schedule_create")
+                        + f"?day_schedule_id={day.id}&destination_id={destination.id}"
+                    )
+
                 if day:
-                    params.append(f"day_schedule_id={day.id}")
-                if from_page:
-                    params.append(f"from={from_page}")
-                if schedule_id:
-                    params.append(f"schedule_id={schedule_id}")
+                    return redirect(
+                        f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
+                    )
 
-                if params:
-                    url += "?" + "&".join(params)
-
-                return redirect(url)
-
-            if action == "save_and_set" and day:
-                return redirect(
-                    reverse("plans:schedule_create")
-                    + f"?day_schedule_id={day.id}&destination_id={destination.id}"
-                )
-
-            if day:
-                return redirect(
-                    f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
-                )
-
-            return redirect("destinations:destination_search")
+                return redirect("destinations:destination_search")
     
     else:
         form = DestinationForm(initial={
@@ -128,32 +135,38 @@ def destination_edit(request, pk):
     if request.method == "POST":
         old_name = destination.name
         form = DestinationForm(request.POST, instance=destination)
+        
         if form.is_valid():
+            latitude = form.cleaned_data.get("latitude")
+            longitude = form.cleaned_data.get("longitude")
+
+            if latitude is None or longitude is None:
+                form.add_error(None, "GoogleMapから場所を設定してください。")
+            else:
+                destination = form.save(commit=False)
+                destination.user = request.user
+
+                closed_days = request.POST.getlist("closed_day")
+                destination.closed_day = ",".join(closed_days)
+
+                destination.save()
             
-            destination = form.save(commit=False)
-            destination.user = request.user
+                related_schedules = Schedule.objects.filter(destination=destination).select_related("day__plan")
 
-            closed_days = request.POST.getlist("closed_day")
-            destination.closed_day = ",".join(closed_days)
-
-            destination.save()
+                for schedule in related_schedules:
+                    sync_destination_fee_costs(schedule, previous_name=old_name)
             
-            related_schedules = Schedule.objects.filter(destination=destination).select_related("day__plan")
+                action = request.POST.get("action")
 
-            for schedule in related_schedules:
-                sync_destination_fee_costs(schedule, previous_name=old_name)
-            
-            action = request.POST.get("action")
+                if action == "save_and_set" and day:
+                    return redirect(
+                        f"{reverse('plans:schedule_create')}?day_schedule_id={day.id}&destination_id={destination.id}"
+                    )
 
-            if action == "save_and_set" and day:
-                return redirect(
-                    f"{reverse('plans:schedule_create')}?day_schedule_id={day.id}&destination_id={destination.id}"
-                )
+                if day:
+                    return redirect(f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}")
 
-            if day:
-                return redirect(f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}")
-
-            return redirect(reverse('destinations:destination_search'))
+                return redirect(reverse('destinations:destination_search'))
     
     else:
         if lat and lng:

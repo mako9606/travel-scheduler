@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=18">
+    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=19">
 {% endblock %}
 
 {% block header %}
@@ -37,13 +37,29 @@
             <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
         {% endif %}
 
-        <label>目的地名</label>
+        <label>目的地名 <span class="required-mark">＊必須</span></label>
         {{ form.name }}
 
-        <label>住所</label>
+        {% if form.name.errors %}
+            <p class="form-error">{{ form.name.errors.0 }}</p>
+        {% endif %}
+
+        <label>住所 <span class="required-mark">＊必須</span></label>
         {{ form.address }}
 
-        <label>MAP</label>
+        {% if form.address.errors %}
+            <p class="form-error">{{ form.address.errors.0 }}</p>
+        {% endif %}
+
+        <label>MAP <span class="required-mark">＊必須</span></label>
+        {% if form.non_field_errors %}
+            <div class="form-error">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
         {% if destination %}
             <a href="{% url 'destinations:map_destination' destination.id %}{% if day %}?day_schedule_id={{ day.id }}{% endif %}{% if from_page %}{% if day %}&{% else %}?{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if day or from_page %}&{% else %}?{% endif %}schedule_id={{ schedule_id }}{% endif %}"
                 class="btn map-link">
