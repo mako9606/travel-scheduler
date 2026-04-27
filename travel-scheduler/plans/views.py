@@ -44,6 +44,8 @@ def plan_edit(request, pk):
     years = range(current_year - 10, current_year + 60)
     months = range(1, 13)
     days = range(1, 32)
+    
+    error_message = ""
 
     if request.method == "POST":
         plan_name = request.POST.get("plan_name", "").strip()
@@ -56,31 +58,35 @@ def plan_edit(request, pk):
         end_month = request.POST.get("end_month")
         end_day = request.POST.get("end_day")
 
-        if plan_name:
-            plan.plan_name = plan_name
+        if not plan_name:
+            error_message = "旅行タイトルを入力してください。"
+        elif not all([start_year, start_month, start_day, end_year, end_month, end_day]):
+            error_message = "出発日と帰宅日を入力してください。"
+        else:
+            try:
+                plan.plan_name = plan_name
+                plan.start_date = date(
+                    int(start_year),
+                    int(start_month),
+                    int(start_day),
+                )
+                plan.end_date = date(
+                    int(end_year),
+                    int(end_month),
+                    int(end_day),
+                )
+                plan.save()
+                return redirect("plans:plan_detail", pk=plan.pk)
 
-        if start_year and start_month and start_day:
-            plan.start_date = date(
-                int(start_year),
-                int(start_month),
-                int(start_day),
-            )
-
-        if end_year and end_month and end_day:
-            plan.end_date = date(
-                int(end_year),
-                int(end_month),
-                int(end_day),
-            )
-
-        plan.save()
-        return redirect("plans:plan_detail", pk=plan.pk)
+            except ValueError:
+                error_message = "正しい日付を入力してください。"
 
     return render(request, "plans/plan_edit.html", {
         "plan": plan,
         "years": years,
         "months": months,
         "days": days,
+        "error_message": error_message,
     })
 
 @login_required
