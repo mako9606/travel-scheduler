@@ -42,8 +42,19 @@ def memo_edit(request):
     memo_id = request.POST.get("memo_id") or request.GET.get("memo_id")
     memo = get_object_or_404(Memo, id=memo_id, user=request.user) if memo_id else None
 
+    error_message = ""
+
     if request.method == "POST":
         content = request.POST.get("content", "").strip()
+        
+        if not content:
+            error_message = "メモ内容を入力してください。"
+            return render(request, "memos/memo_edit.html", {
+                "memo": memo,
+                "error_message": error_message,
+                "content": request.POST.get("content", ""),
+            })
+        
         content_lines = [line.strip() for line in content.splitlines() if line.strip()]
         title = content_lines[0][:50] if content_lines else ""
 
@@ -62,6 +73,7 @@ def memo_edit(request):
 
     return render(request, "memos/memo_edit.html", {
         "memo": memo,
+        "error_message": error_message,
     })
 
 

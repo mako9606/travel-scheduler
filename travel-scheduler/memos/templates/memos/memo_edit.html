@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
-    <link rel="stylesheet" href="{% static 'memos/memo_edit.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'memos/memo_edit.css' %}?v=2">
 {% endblock %}
 
 {% block header %}
@@ -23,6 +23,10 @@
         {% endif %}
 
         <textarea name="content" class="memo-textarea" placeholder="メモを入力">{{ memo.content|default:'' }}</textarea>
+
+        {% if error_message %}
+            <p class="memo-error">{{ error_message }}</p>
+        {% endif %}
 
         <div class="memo-edit-actions">
             <button type="submit" class="btn">完了</button>

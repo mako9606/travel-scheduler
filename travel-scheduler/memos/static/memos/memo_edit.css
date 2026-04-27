@@ -31,3 +31,10 @@
 .memo-edit-actions .delete-btn{
     margin-top: 0;
 }
+
+.memo-error {
+    margin: 0 0 16px;
+    color: #990000;
+    font-size: 14px;
+    line-height: 1.4;
+}
