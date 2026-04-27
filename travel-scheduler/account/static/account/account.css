@@ -1,11 +1,22 @@
-.section-title{
+.shortcut-guide{
     margin: 0 25px 14px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #592d13;
     padding-top: 80px;
 }
 
+.section-title{
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #592d13;
+}
+
+.shortcut-help{
+    margin: 0;
+    color: #592d13;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.6;
+}
 
 .shortcut-form{
     margin: 0 22px;

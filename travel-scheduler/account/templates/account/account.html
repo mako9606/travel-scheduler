@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}">
-    <link rel="stylesheet" href="{% static 'account/account.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'account/account.css' %}?v=4">
 {% endblock %}
 
 {% block header %}
@@ -15,8 +15,14 @@
 {% endblock %}
 
 {% block content %}
+<div class="shortcut-guide">
+    <p class="section-title">ホーム画面表示選択</p>
 
-<p class="section-title">ホーム画面表示</p>
+    <p class="shortcut-help">
+        最新に開いたプランのタブをホーム画面に表示できます。<br>
+        選択後、自動でホーム画面に反映されます。
+    </p>
+</div>
 
 <form method="POST" class="shortcut-form">
     {% csrf_token %}
