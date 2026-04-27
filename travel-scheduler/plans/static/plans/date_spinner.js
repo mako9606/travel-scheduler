@@ -1,11 +1,22 @@
-<!-- plan_create・editの年月日スピナー -->
+// plan_create・editの年月日スピナー 
 
 document.addEventListener("DOMContentLoaded", function () {
-    const YEAR_MIN = new Date().getFullYear() - 10;
+    const DEFAULT_YEAR_MIN = new Date().getFullYear() - 10;
     const YEAR_MAX = new Date().getFullYear() + 60;
 
     function getInput(prefix, field) {
         return document.querySelector(`input[name="${prefix}_${field}"]`);
+    }
+
+    function getYearMin(prefix) {
+        const yearInput = getInput(prefix, "year");
+        const yearMin = yearInput ? parseInt(yearInput.dataset.yearMin, 10) : NaN;
+
+        if (Number.isNaN(yearMin)) {
+            return DEFAULT_YEAR_MIN;
+        }
+
+        return yearMin;
     }
 
     function getDisplay(prefix, field) {
@@ -74,13 +85,16 @@ document.addEventListener("DOMContentLoaded", function () {
         let value = input.value ? parseInt(input.value, 10) : null;
 
         if (field === "year") {
+            const yearMin = getYearMin(prefix);
+
             if (value === null) {
-                value = YEAR_MIN;
+                value = yearMin;
             } else {
                 value += direction;
-                if (value < YEAR_MIN) value = YEAR_MIN;
+                if (value < yearMin) value = yearMin;
                 if (value > YEAR_MAX) value = YEAR_MAX;
             }
+
             input.value = String(value);
             clampDay(prefix);
         }

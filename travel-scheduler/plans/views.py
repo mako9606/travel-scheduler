@@ -209,7 +209,8 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
 
         current_year = date.today().year
-        context["years"] = range(current_year - 10, current_year + 60)
+        context["current_year"] = current_year
+        context["years"] = range(current_year, current_year + 60)
         context["months"] = range(1, 13)
         context["days"] = range(1, 32)
 
@@ -241,19 +242,27 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
         end_month = self.request.POST.get("end_month")
         end_day = self.request.POST.get("end_day")
 
-        if start_year and start_month and start_day:
-            form.instance.start_date = date(
+        if not all([start_year, start_month, start_day, end_year, end_month, end_day]):
+            form.add_error(None, "出発日と帰宅日を入力してください。")
+            return self.form_invalid(form)
+
+        try:
+            start_date = date(
                 int(start_year),
                 int(start_month),
                 int(start_day),
             )
-
-        if end_year and end_month and end_day:
-            form.instance.end_date = date(
+            end_date = date(
                 int(end_year),
                 int(end_month),
                 int(end_day),
             )
+        except ValueError:
+            form.add_error(None, "正しい日付を入力してください。")
+            return self.form_invalid(form)
+
+        form.instance.start_date = start_date
+        form.instance.end_date = end_date
 
         response = super().form_valid(form)
 
