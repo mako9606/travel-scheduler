@@ -2,7 +2,7 @@
     <div class="modal-box pin-edit-box"> 
         <a
             href="{% url 'destinations:map_destination' destination.id %}{% if day_schedule_id %}?day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}{% if day_schedule_id %}&{% else %}?{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if day_schedule_id or from_page %}&{% else %}?{% endif %}schedule_id={{ schedule_id }}{% endif %}{% if selected_pin %}{% if day_schedule_id or from_page or schedule_id %}&{% else %}?{% endif %}pin_id={{ selected_pin.id }}{% endif %}"
-            class="modal-close"
+            class="pin-edit-close"
         >
             ×
         </a>

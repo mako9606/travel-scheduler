@@ -25,7 +25,7 @@
     position: relative;
 }
 
-.modal-close{
+.pin-edit-close{
     position: absolute;
     top: 24px;
     right: 24px;
@@ -37,6 +37,13 @@
     line-height: 1;
     cursor: pointer;
     padding: 0;
+    text-decoration: none;
+}
+
+.pin-edit-close:visited,
+.pin-edit-close:hover,
+.pin-edit-close:active{
+    color: #592d13;
     text-decoration: none;
 }
 
