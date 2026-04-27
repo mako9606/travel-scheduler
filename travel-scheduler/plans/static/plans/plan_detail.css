@@ -352,23 +352,9 @@ form.container{
 
 .share-note{
   margin-top: 12px;
-  font-size: 12px;
+  font-size: 16px;
   color: #592d13;
   text-align: center;
-}
-
-.share-copy-btn{
-    display: block;
-    width: fit-content;
-    margin: 12px auto 0;
-    padding: 8px 16px;
-    background-color: #ffa158ff;
-    border: 2px solid #592d13;
-    border-radius: 5px;
-    color: #592d13;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
 }
 
 .share-copy-btn{
@@ -382,7 +368,7 @@ form.container{
     background-color: #ffa158ff;
     border: 2px solid #592d13;
     border-radius: 999px;
-    color: #592d13;
+    color: #fff;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
