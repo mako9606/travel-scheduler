@@ -25,6 +25,21 @@
     position: relative;
 }
 
+.modal-close{
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    border: none;
+    background: none;
+    color: #592d13;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+}
+
 .pin-block{
     width: 100%;
 }
