@@ -7,7 +7,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=31">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=32">
 <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=5">
 {% endblock %}
 
@@ -104,9 +104,21 @@
 
                     <p class="share-title">共有URL</p>
 
-                    <p class="share-url">
+                    <p class="share-url" id="shareUrlText">
                         {{ shared_url }}
                     </p>
+
+                    <button
+                        type="button"
+                        class="share-copy-btn"
+                        data-copy-url="{{ shared_url }}"
+                        aria-label="共有URLをコピー"
+                    >
+                        <span class="share-copy-icon">⧉</span>
+                        <span class="share-copy-text">コピー</span>
+                    </button>
+
+                    <p class="share-copy-message" aria-live="polite"></p>
 
                     <p class="share-note">共有したい相手に送ってください。</p>
                 </div>  
@@ -679,6 +691,8 @@
         const shareModal = document.querySelector('.share-modal');
         const openShareBtn = document.querySelector('.member-add');
         const closeShareBtn = document.querySelector('.share-modal-close');
+        const shareCopyBtn = document.querySelector('.share-copy-btn');
+        const shareCopyMessage = document.querySelector('.share-copy-message');
 
         if (openShareBtn && shareModal && closeShareBtn){
             openShareBtn.addEventListener('click', () => {
@@ -687,6 +701,37 @@
 
             closeShareBtn.addEventListener('click', () => {
                 shareModal.classList.remove('active');
+            });
+        }
+
+        if (shareCopyBtn) {
+            shareCopyBtn.addEventListener('click', async () => {
+                const url = shareCopyBtn.dataset.copyUrl;
+
+                try {
+                    await navigator.clipboard.writeText(url);
+
+                    if (shareCopyMessage) {
+                        shareCopyMessage.textContent = 'コピーしました';
+                    }
+                } catch (error) {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = url;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+
+                    if (shareCopyMessage) {
+                        shareCopyMessage.textContent = 'コピーしました';
+                    }
+                }
+
+                setTimeout(() => {
+                    if (shareCopyMessage) {
+                        shareCopyMessage.textContent = '';
+                    }
+                }, 2000);
             });
         }
     </script>

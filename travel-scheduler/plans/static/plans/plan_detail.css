@@ -357,6 +357,62 @@ form.container{
   text-align: center;
 }
 
+.share-copy-btn{
+    display: block;
+    width: fit-content;
+    margin: 12px auto 0;
+    padding: 8px 16px;
+    background-color: #ffa158ff;
+    border: 2px solid #592d13;
+    border-radius: 5px;
+    color: #592d13;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.share-copy-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: fit-content;
+    margin: 12px auto 0;
+    padding: 8px 14px;
+    background-color: #ffa158ff;
+    border: 2px solid #592d13;
+    border-radius: 999px;
+    color: #592d13;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.share-copy-icon{
+    font-size: 17px;
+    line-height: 1;
+}
+
+.share-copy-text{
+    font-size: 14px;
+    line-height: 1;
+}
+
+.share-copy-btn:active{
+    background-color: #ff8c3a;
+    transform: scale(0.97);
+    border: 2px solid #592d13;
+}
+
+.share-copy-message{
+    min-height: 18px;
+    margin: 8px 0 0;
+    color: #447d37;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+
 /* タブ中身　～1日詳細～ */
 .schedule-tab-body{
     --schedule-fab-size: 64px;

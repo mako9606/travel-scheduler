@@ -280,9 +280,31 @@ class PlanDetailView(DetailView):
         self.object = self.get_object()
 
         is_owner = request.user.is_authenticated and self.object.user == request.user
-        is_shared_viewer = request.session.get("shared_plan_id") == self.object.id
+        
+        shared_member_id = request.session.get("shared_member_id")
+        self.shared_member = None
+
+        if shared_member_id:
+            self.shared_member = PlanShareMember.objects.filter(
+                pk=shared_member_id,
+                plan=self.object,
+            ).first()
+
+        is_shared_viewer = (
+            request.session.get("shared_plan_id") == self.object.id
+            and self.shared_member is not None
+            and self.shared_member.is_active
+            and self.shared_member.expires_at >= timezone.now()
+        )
 
         if not is_owner and not is_shared_viewer:
+            request.session.pop("shared_plan_id", None)
+            request.session.pop("shared_member_id", None)
+            request.session.pop("shared_viewer_name", None)
+
+            if self.shared_member:
+                return redirect("plans:plan_share", token=self.shared_member.token)
+
             return redirect("plans:plan_list")
 
         return super().dispatch(request, *args, **kwargs)
