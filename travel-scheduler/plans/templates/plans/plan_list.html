@@ -7,7 +7,7 @@
 
     {% block css %}
         <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
-        <link rel="stylesheet" href="{% static 'plans/plan_list.css' %}?v=8">
+        <link rel="stylesheet" href="{% static 'plans/plan_list.css' %}?v=9">
     {% endblock %}
 
     {% block header %}
@@ -28,7 +28,7 @@
                     {{ plan.start_date }} 〜 {{ plan.end_date }}
                 </div>
             </a>
-        {% empty%}
+        {% empty %}
             <p>まだプランがありません。</p>
         {% endfor %}
 
