@@ -37,7 +37,7 @@
 
             <div class="login-action-row">
                 <button type="submit" name="action" value="login" class="btn">ログインして閲覧</button>
-                <a href="{% url 'account:password_reset' %}" class="forgot">パスワード忘れた方</a>
+                <a href="{% url 'account:password_reset' %}?share_token={{ member.token }}" class="forgot">パスワード忘れた方</a>
             </div>
 
             <label class="section-label">アカウント お持ちじゃない方</label>

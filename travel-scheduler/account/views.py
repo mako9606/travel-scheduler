@@ -3,11 +3,38 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import views as auth_views
 
 from .forms import AccountEditForm
 
 from account.models import UserShortcut, ShortcutType
 
+
+class PasswordResetWithShareView(auth_views.PasswordResetView):
+    def dispatch(self, request, *args, **kwargs):
+        share_token = request.GET.get("share_token") or request.POST.get("share_token")
+
+        if share_token:
+            request.session["password_reset_share_token"] = share_token
+        else:
+            request.session.pop("password_reset_share_token", None)
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["share_token"] = self.request.session.get("password_reset_share_token", "")
+        return context
+
+
+class PasswordResetCompleteWithShareView(auth_views.PasswordResetCompleteView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["reset_return_share_token"] = self.request.session.pop(
+            "password_reset_share_token",
+            ""
+        )
+        return context
 
 @login_required
 def account(request):

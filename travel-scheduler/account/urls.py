@@ -17,12 +17,12 @@ urlpatterns = [
     
    # ↓パスワード再設定メール送信
    path('password_reset/',
-         auth_views.PasswordResetView.as_view(
-            template_name="account/password_reset.html",
-            email_template_name='account/password_reset_email.html',
-            success_url=reverse_lazy('account:password_reset_done'),
-         ),
-         name='password_reset'),
+      views.PasswordResetWithShareView.as_view(
+         template_name='account/password_reset.html',
+         email_template_name='account/password_reset_email.html',
+         success_url=reverse_lazy('account:password_reset_done'),
+      ),
+      name='password_reset'),
     
    #　↓メール送信画面
    path('password_reset_done/',
@@ -42,8 +42,8 @@ urlpatterns = [
     
    # ↓パスワード再設定完了画面
    path('password_reset_complete/',
-          auth_views.PasswordResetCompleteView.as_view(
-           template_name="account/password_complete.html"
-          ),
-          name='password_reset_complete'),
+      views.PasswordResetCompleteWithShareView.as_view(
+         template_name="account/password_complete.html"
+      ),
+      name='password_reset_complete'),
 ]
