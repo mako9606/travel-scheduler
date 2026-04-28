@@ -50,26 +50,32 @@
 const el = document.getElementById("plan-list");
 
 if (el) {
-Sortable.create(el, {
-  animation: 150,
-  onEnd: function () {
-    const order = [];
-    document.querySelectorAll(".plan-item").forEach(item => {
-      order.push(item.dataset.id);
-    });
+    Sortable.create(el, {
+        animation: 150,
 
-    fetch("{% url 'plans:plan_reorder' %}", {
-      method: "POST",
-      headers: {
-        "X-CSRFToken": "{{ csrf_token }}",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: order.map(id => "order[]=" + id).join("&")
+        // スマホでは通常タップをリンク遷移として通しやすくする
+        delay: 200,
+        delayOnTouchOnly: true,
+        touchStartThreshold: 5,
+        fallbackTolerance: 5,
+
+        onEnd: function () {
+            const order = [];
+            document.querySelectorAll(".plan-item").forEach(item => {
+                order.push(item.dataset.id);
+            });
+
+            fetch("{% url 'plans:plan_reorder' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: order.map(id => "order[]=" + encodeURIComponent(id)).join("&")
+            });
+        }
     });
-  }
-});
 }
-
 </script>
 
 {% endblock %}
