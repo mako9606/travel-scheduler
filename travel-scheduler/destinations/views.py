@@ -94,7 +94,7 @@ def destination_create(request):
 
                 if day:
                     return redirect(
-                        f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}"
+                        f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}?day_schedule_id={day.id}"
                     )
 
                 return redirect("destinations:destination_search")
@@ -164,7 +164,9 @@ def destination_edit(request, pk):
                     )
 
                 if day:
-                    return redirect(f"{reverse('destinations:destination_search')}?day_schedule_id={day.id}")
+                    return redirect(
+                        f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}?day_schedule_id={day.id}"
+                    )
 
                 return redirect(reverse('destinations:destination_search'))
     
