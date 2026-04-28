@@ -20,14 +20,14 @@
     <div class="plan-list{% if is_shortcut %} plan-list-shortcut{% endif %}" id="plan-list">
 
         {% for plan in plans %}
-            <div class="plan-item"
-                 data-id="{{ plan.id }}"
-                 data-detail-url="{% url 'plans:plan_detail' plan.id %}">
+            <a href="{% url 'plans:plan_detail' plan.id %}"
+                class="plan-item"
+                data-id="{{ plan.id }}">
                 <div class="plan-name">{{ plan.plan_name }}</div>
                 <div class="plan-date">
                     {{ plan.start_date }} 〜 {{ plan.end_date }}
                 </div>
-            </div>
+            </a>
         {% empty%}
             <p>まだプランがありません。</p>
         {% endfor %}
@@ -70,17 +70,6 @@ Sortable.create(el, {
 });
 }
 
-document.querySelectorAll(".plan-item").forEach(item => {
-    item.addEventListener("click", function () {
-        const detailUrl = this.dataset.detailUrl;
-
-        if ({% if is_shortcut %}true{% else %}false{% endif %}) {
-            window.top.location.href = detailUrl;
-        } else {
-            window.location.href = detailUrl;
-        }
-    });
-});
 </script>
 
 {% endblock %}
