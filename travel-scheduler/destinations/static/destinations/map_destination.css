@@ -78,9 +78,12 @@
 
 .map-bottom-bar{
     position: absolute;
+    left: 0;
+    right: 0;
+    bottom: max(12px, env(safe-area-inset-bottom));
     width: 100%;
-    margin-top: 50px;
-    bottom: clamp(72px, 11dvh, 105px);
+    margin-top: 0;
+
     display: flex;
     align-items: center;
     gap: 8px;
