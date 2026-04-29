@@ -7,7 +7,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=35">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=36">
 <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=5">
 {% endblock %}
 
@@ -535,6 +535,13 @@
                 new Sortable(tabMenu, {
                     animation: 150,
                     draggable: '.tab-btn',
+
+                    // スマホでは通常タップ・横スクロールを優先し、長押し時だけ並び替える
+                    delay: 250,
+                    delayOnTouchOnly: true,
+                    touchStartThreshold: 5,
+                    fallbackTolerance: 8,
+
                     onEnd: function () {
                         const formData = new FormData();
 
@@ -746,6 +753,12 @@
                         animation: 150,
                         draggable: ".schedule-item",
                         handle: ".schedule-row",
+
+                        // スマホでは通常タップを優先し、長押し時だけ並び替える
+                        delay: 250,
+                        delayOnTouchOnly: true,
+                        touchStartThreshold: 5,
+                        fallbackTolerance: 8,
 
                         onEnd: function () {
                             const items = body.querySelectorAll(".schedule-item[data-schedule-id]");
