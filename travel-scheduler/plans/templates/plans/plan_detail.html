@@ -537,10 +537,11 @@
                     draggable: '.tab-btn',
 
                     // スマホでは通常タップ・横スクロールを優先し、長押し時だけ並び替える
-                    delay: 250,
+                    delay: 350,
                     delayOnTouchOnly: true,
-                    touchStartThreshold: 5,
-                    fallbackTolerance: 8,
+                    touchStartThreshold: 3,
+                    fallbackTolerance: 3,
+                    forceFallback: true,
 
                     onEnd: function () {
                         const formData = new FormData();
