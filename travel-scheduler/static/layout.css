@@ -1,6 +1,7 @@
 body {
     text-align: left;
     font-size: 17px;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "YuGothic", "Meiryo", sans-serif;
     color: #592d13;
     background-color: #f7f7f7ff;
     padding-top: 0;
@@ -53,6 +54,7 @@ label {
     top: 0;
     width: 100%;
     max-width: 480px;
+    min-height: 56px;
     z-index: 30;
     box-sizing: border-box;
 }
@@ -63,14 +65,21 @@ label {
 
 .header-icons {
     display: flex;
-    gap: 10px;
+    gap: 6px;
     align-items: center;
 }
 
 /* アイコンボタン */
 .icon-btn {
     text-decoration: none;
-    font-size: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+    line-height: 1;
+    flex-shrink: 0;
 }
 
 
