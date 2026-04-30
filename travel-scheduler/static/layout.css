@@ -104,16 +104,15 @@ label {
    margin-top: 12px;
 
   /* ボタンの丸 */
-   width: 56px;
-   height: 56px;
+   width: 64px;
+   height: 64px;
    border-radius: 50%;
 
   /* 画面内固定 */
    position: fixed;
-   bottom: max(24px, calc((100vh - 600px) / 2 + 24px));
+   bottom: var(--plan-list-fab-bottom);
    right: max(24px, calc((100vw - 480px) / 2 + 24px));
-   width: 64px;
-   height: 64px;
+   
 }
 
 /* クリック・タップした瞬間 に適用される状態 */

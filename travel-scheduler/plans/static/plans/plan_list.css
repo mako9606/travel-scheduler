@@ -1,6 +1,6 @@
 .plan-list{
     --plan-list-fab-size: 64px;
-    --plan-list-fab-bottom: max(24px, calc((100dvh - 600px) / 2 + 24px));
+    --plan-list-fab-bottom: max(24px, env(safe-area-inset-bottom));
     --plan-list-fab-gap: 16px;
 
     padding: 80px 16px calc(
