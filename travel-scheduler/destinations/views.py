@@ -14,12 +14,23 @@ def destination_search(request):
         day = get_object_or_404(DaySchedule, pk=day_schedule_id)
         
     q = request.GET.get("q", "")
-    destinations = Destination.objects.filter(name__icontains=q) if q else []
+    
+    if request.user.is_authenticated and q:
+        destinations = Destination.objects.filter(
+            user=request.user,
+            name__icontains=q
+        )
+    else:
+        destinations = []
 
     destination_modal_id = request.GET.get("destination_modal_id")
     modal_destination = None
-    if destination_modal_id:
-        modal_destination = get_object_or_404(Destination, pk=destination_modal_id)
+    if destination_modal_id and request.user.is_authenticated:
+        modal_destination = get_object_or_404(
+            Destination,
+            pk=destination_modal_id,
+            user=request.user
+        )
 
     if day:
         is_owner = request.user.is_authenticated and day.plan.user == request.user
