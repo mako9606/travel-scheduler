@@ -1,6 +1,6 @@
 .home-screen {
-    height: calc(100dvh - 48px);
-    padding: 0 12px 8px;
+    height: 100dvh;
+    padding: 48px 12px 8px;
     box-sizing: border-box;
 }
 
