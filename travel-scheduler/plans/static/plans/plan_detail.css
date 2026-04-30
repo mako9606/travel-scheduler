@@ -662,7 +662,7 @@ a.schedule-time-link .schedule-time{
 /* タブ中身　～費用～ */
 .tab-content.tab-cost{
     --cost-fab-size: 64px;
-    --cost-fab-bottom: 200px;
+    --cost-fab-bottom: max(24px, env(safe-area-inset-bottom));
     --cost-fab-gap: 16px;
 
     padding-top: 24px;
@@ -750,7 +750,7 @@ a.schedule-time-link .schedule-time{
 
     position: fixed;
     right: max(24px, calc((100vw - 480px) / 2 + 24px));
-    bottom: 200px;
+    bottom: var(--cost-fab-bottom);
     z-index: 15;
 }
 
