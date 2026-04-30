@@ -402,7 +402,7 @@ form.container{
 /* タブ中身　～1日詳細～ */
 .schedule-tab-body{
     --schedule-fab-size: 64px;
-    --schedule-fab-bottom: 24px;
+    --schedule-fab-bottom: max(24px, env(safe-area-inset-bottom));
     --schedule-fab-gap: 16px;
 
     padding-top: 60px;
@@ -579,16 +579,14 @@ a.schedule-time-link .schedule-time{
    margin-top: 12px;
 
   /* ボタンの丸 */
-   width: 56px;
-   height: 56px;
+   width: 64px;
+   height: 64px;
    border-radius: 50%;
 
   /* 画面内固定 */
    position: fixed;
-   bottom: max(24px, calc((100vh - 600px) / 2 + 24px));
+   bottom: var(--schedule-fab-bottom);
    right: max(24px, calc((100vw - 480px) / 2 + 24px));
-   width: 64px;
-   height: 64px;
 }
 
 /* クリック・タップした瞬間 に適用される状態 */
@@ -616,7 +614,7 @@ a.schedule-time-link .schedule-time{
     border-radius: 50%;
 
     position: fixed;
-    bottom: max(24px, calc((100vh - 600px) / 2 + 24px));
+    bottom: var(--schedule-fab-bottom);
     right: max(104px, calc((100vw - 480px) / 2 + 104px));
     z-index: 25;
 }
