@@ -57,7 +57,7 @@
 <div class="account-info-card">
     <div class="account-info-block">
         <p class="account-info-label">アカウント名</p>
-        <p class="account-info-value">{{ user_obj.username }}</p>
+        <p class="account-info-value">{{ user_obj.first_name|default:user_obj.username }}</p>
     </div>
 
     <div class="account-info-block">

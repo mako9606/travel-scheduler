@@ -23,8 +23,8 @@
     {% endfor %}
 
     <label>アカウント名</label>
-    {{ form.username }}
-    {% for error in form.username.errors %}
+    {{ form.first_name }}
+    {% for error in form.first_name.errors %}
         <p class="form-error">{{ error }}</p>
     {% endfor %}
 

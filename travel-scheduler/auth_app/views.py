@@ -35,11 +35,25 @@ def login_view(request):
     
 def signup_view(request):
     if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
+        account_name = request.POST["username"].strip()
+        email = request.POST["email"].strip()
         password = request.POST["password"]
         password_confirm = request.POST["password_confirm"]
         
+        if not account_name:
+            return render(
+                request,
+                "auth_app/signup.html",
+                {"error_message": "アカウント名を入力してください。"}
+            )
+
+        if not email:
+            return render(
+                request,
+                "auth_app/signup.html",
+                {"error_message": "メールアドレスを入力してください。"}
+            )
+
         if password != password_confirm:
             return render(
                 request,
@@ -47,14 +61,10 @@ def signup_view(request):
                 {"error_message": "パスワードが一致しません。"}
             )
         
-        if User.objects.filter(username=username).exists():
-            return render(
-                request,
-                "auth_app/signup.html",
-                {"error_message": "このアカウント名はすでに使用されています。"}
-            )
-
-        if User.objects.filter(email__iexact=email).exists():
+        if (
+            User.objects.filter(email__iexact=email).exists()
+            or User.objects.filter(username__iexact=email).exists()
+        ):
             return render(
                 request,
                 "auth_app/signup.html",
@@ -79,9 +89,10 @@ def signup_view(request):
 
         try:
             user = User.objects.create_user(
-                username=username,
+                username=email,
                 email=email,
-                password=password
+                password=password,
+                first_name=account_name
             )
         except IntegrityError:
             return render(

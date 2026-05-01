@@ -6,17 +6,56 @@ User = get_user_model()
 class AccountEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ["username", "email"]
+        fields = ["first_name", "email"]
         labels = {
-            "username" : "アカウント名",
+            "first_name" : "アカウント名",
             "email" : "メールアドレス",
         }
      
-     
-     
-    # 「username/email をDBに保存する前に、前後の空白を削除してください」    
-    def clean_username(self):
-        return self.cleaned_data["username"].strip()
-    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance and self.instance.pk and not self.instance.first_name:
+            self.fields["first_name"].initial = self.instance.username
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data["first_name"].strip()
+
+        if not first_name:
+            raise forms.ValidationError("アカウント名を入力してください。")
+
+        return first_name
+
     def clean_email(self):
-        return self.cleaned_data["email"].strip()
+        email = self.cleaned_data["email"].strip()
+
+        if not email:
+            raise forms.ValidationError("メールアドレスを入力してください。")
+
+        email_exists = (
+            User.objects
+            .exclude(pk=self.instance.pk)
+            .filter(email__iexact=email)
+            .exists()
+        )
+
+        username_exists = (
+            User.objects
+            .exclude(pk=self.instance.pk)
+            .filter(username__iexact=email)
+            .exists()
+        )
+
+        if email_exists or username_exists:
+            raise forms.ValidationError("このメールアドレスはすでに使用されています。")
+
+        return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.username = user.email
+
+        if commit:
+            user.save()
+
+        return user
