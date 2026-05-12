@@ -41,10 +41,6 @@
     color: #c9c9c9;
 }
 
-.signup-submit {
-    margin-top: 44px;
-}
-
 .signup-error {
     margin: 0 0 16px;
     color: #990000;
@@ -56,6 +52,6 @@
     margin-top: 18px;
 }
 
-.password-reset-actions .btn {
-    margin-top: 28px;
+.password-reset-actions .back-btn {
+    margin-top: 12px;
 }
