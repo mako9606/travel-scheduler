@@ -1,5 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -59,3 +62,34 @@ class AccountEditForm(forms.ModelForm):
             user.save()
 
         return user
+    
+    
+class PasswordResetConfirmForm(SetPasswordForm):
+    new_password1 = forms.CharField(required=False)
+    new_password2 = forms.CharField(required=False)
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+
+        new_password1 = cleaned_data.get("new_password1", "")
+        new_password2 = cleaned_data.get("new_password2", "")
+
+        # 新しいパスワードチェック
+        if not new_password1:
+            self.add_error("new_password1", "新しいパスワードを入力してください。")
+        elif not new_password1.isascii() or not new_password1.isalnum():
+            self.add_error("new_password1", "パスワードは半角英数字で入力してください。")
+        else:
+            try:
+                validate_password(new_password1, self.user)
+            except ValidationError as e:
+                for message in e.messages:
+                    self.add_error("new_password1", message)
+
+        # 確認用パスワードチェック
+        if not new_password2:
+            self.add_error("new_password2", "新しいパスワードを再入力してください。")
+        elif new_password1 and new_password2 and new_password1 != new_password2:
+            self.add_error("new_password2", "確認用パスワードが一致しません。")
+
+        return cleaned_data    
