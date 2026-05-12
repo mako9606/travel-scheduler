@@ -48,10 +48,6 @@ input[type="email"]{
     color: #990000;
 }
 
-.account-back-area{
-    margin-top: 24px;
-}
-
 /* モーダル表示 */
 .modal-overlay{
     position: fixed;

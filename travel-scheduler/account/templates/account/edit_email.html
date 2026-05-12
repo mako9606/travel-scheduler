@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=5">
-    <link rel="stylesheet" href="{% static 'account/edit_email.css' %}?v=9">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'account/edit_email.css' %}?v=10">
 {% endblock %}
 
 {% block header %}
@@ -36,11 +36,9 @@
 
     <button type="submit" class="btn">完了</button>
 
-    <div class="account-back-area">
-        <a href="{% url 'account:account' %}" class="back-btn">
-            アカウント画面に戻る
-        </a>
-    </div>
+    <a href="{% url 'account:account' %}" class="back-btn">
+        アカウント画面に戻る
+    </a>
 
 </form>
 
