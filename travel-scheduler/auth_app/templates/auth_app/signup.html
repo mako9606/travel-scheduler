@@ -73,7 +73,13 @@
             <p class="signup-error">{{ error_message }}</p>
         {% endif %}
 
-        <button type="submit" class="btn signup-submit">完了</button>
+        <div class="password-reset-actions">
+            <button type="submit" class="btn signup-submit">完了</button>
+
+            <a href="{% url 'auth_app:login' %}" class="login-back-btn">
+                ログイン画面に戻る
+            </a>
+        </div>
 
     </form>
 {% endblock %}
