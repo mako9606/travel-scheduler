@@ -35,56 +35,46 @@ def login_view(request):
     
 def signup_view(request):
     if request.method == "POST":
-        account_name = request.POST["username"].strip()
-        email = request.POST["email"].strip()
-        password = request.POST["password"]
-        password_confirm = request.POST["password_confirm"]
-        
+        account_name = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "")
+        password_confirm = request.POST.get("password_confirm", "")
+
+        errors = {}
+
         if not account_name:
-            return render(
-                request,
-                "auth_app/signup.html",
-                {"error_message": "アカウント名を入力してください。"}
-            )
+            errors["username"] = "アカウント名を入力してください。"
 
         if not email:
-            return render(
-                request,
-                "auth_app/signup.html",
-                {"error_message": "メールアドレスを入力してください。"}
-            )
-
-        if password != password_confirm:
-            return render(
-                request,
-                "auth_app/signup.html",
-                {"error_message": "パスワードが一致しません。"}
-            )
-        
-        if (
+            errors["email"] = "メールアドレスを入力してください。"
+        elif (
             User.objects.filter(email__iexact=email).exists()
             or User.objects.filter(username__iexact=email).exists()
         ):
-            return render(
-                request,
-                "auth_app/signup.html",
-                {"error_message": "このメールアドレスはすでに使用されています。"}
-            )
+            errors["email"] = "このメールアドレスはすでに使用されています。"
 
-        if not password.isascii() or not password.isalnum():
+        if not password:
+            errors["password"] = "パスワードを入力してください。"
+        elif not password.isascii() or not password.isalnum():
+            errors["password"] = "パスワードは半角英数字で入力してください。"
+        else:
+            try:
+                validate_password(password)
+            except ValidationError as e:
+                errors["password"] = e.messages[0]
+
+        if not password_confirm:
+            errors["password_confirm"] = "パスワード再入力を入力してください。"
+        elif password != password_confirm:
+            errors["password_confirm"] = "パスワードが一致しません。"
+
+        if errors:
             return render(
                 request,
                 "auth_app/signup.html",
-                {"error_message": "パスワードは半角英数字で入力してください。"}
-            )
-                
-        try:
-            validate_password(password)
-        except ValidationError as e:
-            return render(
-                request,
-                "auth_app/signup.html",
-                {"error_message": e.messages[0]}
+                {
+                    "errors": errors,
+                }
             )
 
         try:
@@ -98,22 +88,30 @@ def signup_view(request):
             return render(
                 request,
                 "auth_app/signup.html",
-                {"error_message": "登録に失敗しました。入力内容を確認してください。"}
+                {
+                    "errors": {
+                        "email": "登録に失敗しました。入力内容を確認してください。"
+                    }
+                }
             )
-        
-        user = authenticate(request,username=email, password=password)
-        
+
+        user = authenticate(request, username=email, password=password)
+
         if user is None:
             return render(
                 request,
                 "auth_app/signup.html",
-                {"error_message": "登録は完了しましたが、自動ログインに失敗しました。ログイン画面からログインしてください。"}
+                {
+                    "errors": {
+                        "email": "登録は完了しましたが、自動ログインに失敗しました。ログイン画面からログインしてください。"
+                    }
+                }
             )
-    
+
         login(request, user)
         return redirect("auth_app:home")
-    
-    return render(request, 'auth_app/signup.html')
+
+    return render(request, "auth_app/signup.html")
 
 @login_required
 def home_view(request):

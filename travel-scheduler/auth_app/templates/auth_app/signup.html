@@ -28,6 +28,9 @@
                 value="{{ request.POST.username|default:'' }}"
                 required
             >
+            {% if errors.username %}
+                <p class="signup-error">{{ errors.username }}</p>
+            {% endif %}
         </div>
 
         <div class="signup-field">
@@ -40,6 +43,10 @@
                 value="{{ request.POST.email|default:'' }}"
                 required
             >
+            {% if errors.email %}
+                <p class="signup-error">{{ errors.email }}</p>
+            {% endif %}
+
         </div>
 
         <div class="signup-field">
@@ -56,6 +63,9 @@
                 placeholder="パスワード　入力"
                 required
             >
+            {% if errors.password %}
+                <p class="signup-error">{{ errors.password }}</p>
+            {% endif %}
         </div>
 
         <div class="signup-field">
@@ -67,11 +77,10 @@
                 placeholder="パスワード　再入力"
                 required
             >
+            {% if errors.password_confirm %}
+                <p class="signup-error">{{ errors.password_confirm }}</p>
+            {% endif %}
         </div>
-
-        {% if error_message %}
-            <p class="signup-error">{{ error_message }}</p>
-        {% endif %}
 
         <div class="password-reset-actions">
             <button type="submit" class="btn signup-submit">完了</button>
