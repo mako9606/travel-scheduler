@@ -271,16 +271,7 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
 
         return context
     
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        max_order = (
-            Plan.objects
-            .filter(user=self.request.user)
-            .aggregate(Max("order"))["order__max"]
-            or 0
-        )
-        form.instance.order = max_order + 1
-
+    def _validate_plan_dates(self, form):
         start_year = self.request.POST.get("start_year")
         start_month = self.request.POST.get("start_month")
         start_day = self.request.POST.get("start_day")
@@ -291,7 +282,7 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
 
         if not all([start_year, start_month, start_day, end_year, end_month, end_day]):
             form.add_error(None, "出発日と帰宅日を入力してください。")
-            return self.form_invalid(form)
+            return None, None, False
 
         try:
             start_date = date(
@@ -306,11 +297,32 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
             )
         except ValueError:
             form.add_error(None, "正しい日付を入力してください。")
-            return self.form_invalid(form)
-        
+            return None, None, False
+
         if end_date < start_date:
             form.add_error(None, "帰宅日は出発日以降の日付を選択してください。")
-            return self.form_invalid(form)
+            return None, None, False
+
+        return start_date, end_date, True
+    
+    def form_invalid(self, form):
+        self._validate_plan_dates(form)
+        return super().form_invalid(form)
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        max_order = (
+            Plan.objects
+            .filter(user=self.request.user)
+            .aggregate(Max("order"))["order__max"]
+            or 0
+        )
+        form.instance.order = max_order + 1
+
+        start_date, end_date, dates_are_valid = self._validate_plan_dates(form)
+
+        if not dates_are_valid:
+            return super().form_invalid(form)
 
         form.instance.start_date = start_date
         form.instance.end_date = end_date
