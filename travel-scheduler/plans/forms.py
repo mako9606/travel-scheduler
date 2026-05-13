@@ -10,6 +10,11 @@ class PlanCreateForm(forms.ModelForm):
     class Meta:
         model = Plan
         fields = ["plan_name", "start_date", "end_date"]
+        error_messages = {
+            "plan_name": {
+                "required": "旅行タイトルを入力してください。",
+            },
+        }
         widgets = {
             "plan_name": forms.TextInput(
                 attrs={
