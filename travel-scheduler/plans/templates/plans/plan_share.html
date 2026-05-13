@@ -1,12 +1,11 @@
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>共有URL閲覧画面</title>
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-    <link rel="stylesheet" href="{% static 'plans/plan_share.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'plans/plan_share.css' %}?v=4">
 </head>
 
 <body>
@@ -33,7 +32,10 @@
             <input type="email" name="email" placeholder="メールアドレス 入力">
             
             <label class="field-label">パスワード</label>
-            <input type="password" name="password" placeholder="パスワード　入力">
+            <div class="password-input-wrap">
+                <input type="password" id="share_password" name="password" placeholder="パスワード　入力">
+                <button type="button" class="toggle-password" data-target="share_password">👁</button>
+            </div>
 
             <div class="login-action-row">
                 <button type="submit" name="action" value="login" class="btn">ログインして閲覧</button>
@@ -64,5 +66,21 @@
             </div>
         </div>
         </div>
-    {% endif %}    
+    {% endif %}
+
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.preventDefault();
+
+                const input = document.getElementById(btn.dataset.target);
+
+                if (!input) {
+                    return;
+                }
+
+                input.type = input.type === 'password' ? 'text' : 'password';
+            });
+        });
+    </script>
 </body>

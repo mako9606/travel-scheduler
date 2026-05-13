@@ -47,11 +47,21 @@
 }
 
 input[type="text"],
-input[type="email"],
-input[type="password"]{
+input[type="email"]{
     display: block;
     width: 100%;
     padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #595959;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+}
+
+.password-input-wrap input[type="password"],
+.password-input-wrap input[type="text"]{
+    display: block;
+    width: 100%;
+    padding: 8px 44px 8px 10px;
     font-size: 14px;
     border: 1px solid #595959;
     box-sizing: border-box;

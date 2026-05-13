@@ -233,3 +233,37 @@ label {
     border: 2px solid #592d13;
     color: #592d13;
 }
+
+/* パスワード👁表示切り替え */
+.password-input-wrap{
+    position: relative;
+    width: 100%;
+}
+
+form .password-input-wrap input[type="password"],
+form .password-input-wrap input[type="text"]{
+    width: 100%;
+    padding-right: 44px;
+    box-sizing: border-box;
+}
+
+.password-input-wrap .toggle-password{
+    position: absolute;
+    right: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    color: #592d13;
+}
+
+.password-input-wrap .toggle-password:focus{
+    outline: none;
+}

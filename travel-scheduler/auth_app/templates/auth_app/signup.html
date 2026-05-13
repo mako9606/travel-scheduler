@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=5">
-    <link rel="stylesheet" href="{% static 'auth_app/signup.css' %}?v=10">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'auth_app/signup.css' %}?v=11">
 {% endblock %}
 
 {% block header %}
@@ -56,13 +56,15 @@
                 ※半角英数字8文字以上で入力してください。数字のみ・簡単すぎるパスワードは使用できません。
             </p>
 
-            <input
-                type="password"
-                id="id_password"
-                name="password"
-                placeholder="パスワード　入力"
-                required
-            >
+            <div class="password-input-wrap">
+                <input
+                    type="password"
+                    id="id_password"
+                    name="password"
+                    placeholder="パスワード　入力"
+                >
+                <button type="button" class="toggle-password" data-target="id_password">👁</button>
+            </div>
             {% if errors.password %}
                 <p class="signup-error">{{ errors.password }}</p>
             {% endif %}
@@ -70,13 +72,16 @@
 
         <div class="signup-field">
             <label for="id_password_confirm">パスワード再入力</label>
-            <input
-                type="password"
-                id="id_password_confirm"
-                name="password_confirm"
-                placeholder="パスワード　再入力"
-                required
-            >
+            
+            <div class="password-input-wrap">
+                <input
+                    type="password"
+                    id="id_password_confirm"
+                    name="password_confirm"
+                    placeholder="パスワード　再入力"
+                >
+                <button type="button" class="toggle-password" data-target="id_password">👁</button>
+            </div>
             {% if errors.password_confirm %}
                 <p class="signup-error">{{ errors.password_confirm }}</p>
             {% endif %}
@@ -91,4 +96,21 @@
         </div>
 
     </form>
+
+    <!-- 👁 目のマーク表示 -->
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.preventDefault();
+
+                const input = document.getElementById(btn.dataset.target);
+
+                if (!input) {
+                    return;
+                }
+
+                input.type = input.type === 'password' ? 'text' : 'password';
+            });
+        });
+    </script>
 {% endblock %}

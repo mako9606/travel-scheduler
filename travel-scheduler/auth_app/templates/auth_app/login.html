@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-    <link rel="stylesheet" href="{% static 'auth_app/login.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'auth_app/login.css' %}?v=2">
 {% endblock %}
 
 {% block header %}
@@ -38,13 +38,16 @@
 
     <div class="login-field">
         <label for="id_password">パスワード</label>
-        <input
-            type="password"
-            id="id_password"
-            name="password"
-            placeholder="パスワード　入力"
-            autocomplete="current-password"
-        >
+        <div class="password-input-wrap">
+            <input
+                type="password"
+                id="id_password"
+                name="password"
+                placeholder="パスワード　入力"
+                autocomplete="current-password"
+            >
+            <button type="button" class="toggle-password" data-target="id_password">👁</button>
+        </div>
     </div>
 
     <div class="login-actions">
@@ -54,4 +57,21 @@
 
     <a href="{% url 'auth_app:signup' %}" class="btn register-btn">アカウント登録</a>
 </form>
+
+<!-- 👁 目のマーク表示 -->
+<script>
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+        btn.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const input = document.getElementById(btn.dataset.target);
+
+            if (!input) {
+                return;
+            }
+
+            input.type = input.type === 'password' ? 'text' : 'password';
+        });
+    });
+</script>
 {% endblock %}
