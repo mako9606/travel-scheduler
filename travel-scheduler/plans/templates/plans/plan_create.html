@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-<form method="POST" class="container">
+<form method="POST" class="container" novalidate>
     {% csrf_token %}
 
     <label>旅行タイトル <span class="required-mark">＊必須</span></label>
