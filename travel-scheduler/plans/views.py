@@ -76,9 +76,15 @@ def plan_edit(request, pk):
 
         plan.plan_name = plan_name
 
+        start_date = None
+        end_date = None
+        
+        # 旅行タイトルチェック
         if not plan_name:
             plan_name_error = "旅行タイトルを入力してください。"
-        elif not all([start_year, start_month, start_day, end_year, end_month, end_day]):
+
+        # 日付チェック
+        if not all([start_year, start_month, start_day, end_year, end_month, end_day]):
             date_error = "出発日と帰宅日を入力してください。"
         else:
             try:
@@ -96,15 +102,17 @@ def plan_edit(request, pk):
                 
                 if end_date < start_date:
                     date_error = "帰宅日は出発日以降の日付を選択してください。"
-                else:
-                    plan.plan_name = plan_name
-                    plan.start_date = start_date
-                    plan.end_date = end_date
-                    plan.save()
-                    return redirect("plans:plan_detail", pk=plan.pk)
-
+            
             except ValueError:
                 date_error = "正しい日付を入力してください。"
+
+        # エラーがない時だけ保存
+        if not plan_name_error and not date_error:
+            plan.plan_name = plan_name
+            plan.start_date = start_date
+            plan.end_date = end_date
+            plan.save()
+            return redirect("plans:plan_detail", pk=plan.pk)
 
     return render(request, "plans/plan_edit.html", {
         "plan": plan,
