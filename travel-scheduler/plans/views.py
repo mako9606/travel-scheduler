@@ -65,18 +65,25 @@ def plan_edit(request, pk):
         else:
             try:
                 plan.plan_name = plan_name
-                plan.start_date = date(
+                start_date = date(
                     int(start_year),
                     int(start_month),
                     int(start_day),
                 )
-                plan.end_date = date(
+                end_date = date(
                     int(end_year),
                     int(end_month),
                     int(end_day),
                 )
-                plan.save()
-                return redirect("plans:plan_detail", pk=plan.pk)
+                
+                if end_date < start_date:
+                    error_message = "帰宅日は出発日以降の日付を選択してください。"
+                else:
+                    plan.plan_name = plan_name
+                    plan.start_date = start_date
+                    plan.end_date = end_date
+                    plan.save()
+                    return redirect("plans:plan_detail", pk=plan.pk)
 
             except ValueError:
                 error_message = "正しい日付を入力してください。"
@@ -265,6 +272,10 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
             )
         except ValueError:
             form.add_error(None, "正しい日付を入力してください。")
+            return self.form_invalid(form)
+        
+        if end_date < start_date:
+            form.add_error(None, "帰宅日は出発日以降の日付を選択してください。")
             return self.form_invalid(form)
 
         form.instance.start_date = start_date
