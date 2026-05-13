@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
-    <link rel="stylesheet" href="{% static 'auth_app/signup.css' %}?v=11">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=7">
+    <link rel="stylesheet" href="{% static 'auth_app/signup.css' %}?v=12">
 {% endblock %}
 
 {% block header %}
@@ -63,7 +63,7 @@
                     name="password"
                     placeholder="パスワード　入力"
                 >
-                <button type="button" class="toggle-password" data-target="id_password">👁</button>
+                <button type="button" class="toggle-password" data-target="id_password"></button>
             </div>
             {% if errors.password %}
                 <p class="signup-error">{{ errors.password }}</p>
@@ -80,7 +80,7 @@
                     name="password_confirm"
                     placeholder="パスワード　再入力"
                 >
-                <button type="button" class="toggle-password" data-target="id_password">👁</button>
+                <button type="button" class="toggle-password" data-target="id_password_confirm"></button>
             </div>
             {% if errors.password_confirm %}
                 <p class="signup-error">{{ errors.password_confirm }}</p>
@@ -99,7 +99,33 @@
 
     <!-- 👁 目のマーク表示 -->
     <script>
+        const eyeOpenIcon = `
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3"
+                    fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        `;
+
+        const eyeClosedIcon = `
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3"
+                    fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M4 20L20 4"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round"/>
+            </svg>
+        `;
+
         document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.innerHTML = eyeOpenIcon;
+            btn.setAttribute('aria-label', 'パスワードを表示');
+
             btn.addEventListener('click', (event) => {
                 event.preventDefault();
 
@@ -109,7 +135,15 @@
                     return;
                 }
 
-                input.type = input.type === 'password' ? 'text' : 'password';
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.innerHTML = eyeClosedIcon;
+                    btn.setAttribute('aria-label', 'パスワードを非表示');
+                } else {
+                    input.type = 'password';
+                    btn.innerHTML = eyeOpenIcon;
+                    btn.setAttribute('aria-label', 'パスワードを表示');
+                }
             });
         });
     </script>
