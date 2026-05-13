@@ -87,22 +87,48 @@ def account(request):
 @login_required
 def edit_email(request):
     user = request.user
-    
+
     if request.method == "POST":
         form = AccountEditForm(request.POST, instance=user)
+
         if form.is_valid():
+            changed_fields = form.changed_data
+
+            # 何も変更していない場合は、更新モーダルを出さずにアカウント画面へ戻る
+            if not changed_fields:
+                return redirect("account:account")
+
+            if "first_name" in changed_fields and "email" in changed_fields:
+                update_message_lines = [
+                    "アカウント名",
+                    "メールアドレスを",
+                    "更新しました。"
+                ]
+            elif "first_name" in changed_fields:
+                update_message_lines = [
+                    "アカウント名を",
+                    "更新しました。"
+                ]
+            elif "email" in changed_fields:
+                update_message_lines = [
+                    "メールアドレスを",
+                    "更新しました。"
+                ]
+
             form.save()
-            return render(request, "account/edit_email.html",{
-                "form" : form,
-                "show_modal" : True,
+
+            return render(request, "account/edit_email.html", {
+                "form": form,
+                "show_modal": True,
+                "update_message_lines": update_message_lines,
             })
-    
+
     else:
         form = AccountEditForm(instance=user)
-        
-    return render(request, "account/edit_email.html",{
-        "form" : form
-    })    
+
+    return render(request, "account/edit_email.html", {
+        "form": form
+    })  
     
 #パスワード編集画面　パスワード編集チェック
 @login_required
