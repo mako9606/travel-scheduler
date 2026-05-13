@@ -21,9 +21,9 @@
     <label>旅行タイトル <span class="required-mark">＊必須</span></label>
     {{ form.plan_name }}
 
-    {% if form.plan_name.errors %}
-        <p class="form-error">{{ form.plan_name.errors.0 }}</p>
-    {% endif %}
+    {% for error in form.plan_name.errors %}
+        <p class="form-error">{{ error }}</p>
+    {% endfor %}
 
     <label>出発日 <span class="required-mark">＊必須</span></label>
     <div class="date-picker-row">
@@ -91,13 +91,9 @@
         </div>
     </div>
 
-    {% if form.non_field_errors %}
-        <div class="form-error">
-            {% for error in form.non_field_errors %}
-                <p>{{ error }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
+    {% for error in form.non_field_errors %}
+        <p class="form-error">{{ error }}</p>
+    {% endfor %}
 
     <button type="submit" class="btn">完了</button>
 </form>
