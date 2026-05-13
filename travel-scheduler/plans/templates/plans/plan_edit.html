@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=2">
-    <link rel="stylesheet" href="{% static 'plans/plan_edit.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'plans/plan_edit.css' %}?v=4">
 {% endblock %}
 
 {% block header %}
@@ -25,8 +25,8 @@
                 <label>旅行タイトル <span class="required-mark">＊必須</span></label>
                 <input type="text" name="plan_name" value="{{ plan.plan_name }}">
 
-                {% if error_message %}
-                    <p class="form-error">{{ error_message }}</p>
+                {% if plan_name_error %}
+                    <p class="form-error">{{ plan_name_error }}</p>
                 {% endif %}
             </div>
 
@@ -97,6 +97,9 @@
                 </div>
             </div>
         
+            {% if date_error %}
+                <p class="form-error">{{ date_error }}</p>
+            {% endif %}
 
             <div class="edit-action-buttons">
                 <button type="submit" class="btn">完了</button>
