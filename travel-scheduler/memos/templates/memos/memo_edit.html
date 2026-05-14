@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-    <form method="post" class="memo-paper">
+    <form method="post" class="memo-paper" data-submit-once="true">
         {% csrf_token %}
 
         {% if memo %}
@@ -36,4 +36,8 @@
             {% endif %}
         </div>
     </form>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'submit_once.js' %}?v=1"></script>
 {% endblock %}

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=5">
     <link rel="stylesheet" href="{% static 'plans/schedule_edit.css' %}?v=5">
 {% endblock %}
 
@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}    
-    <form method="POST" action="" class="schedule-form">
+    <form method="POST" action="" class="schedule-form" data-submit-once="true">
         {% csrf_token %}
 
         <div class="detail-tab">{{ day_schedule.date|date:"n/j" }}</div> 
@@ -100,6 +100,7 @@
 {% endblock %} 
 
 {% block js %}
+<script src="{% static 'submit_once.js' %}?v=1"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const arrival = document.getElementById("id_arrival_time");
