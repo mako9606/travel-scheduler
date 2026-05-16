@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=2">
-    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=5">
 {% endblock %}
 
 {% block header %}
@@ -55,4 +55,33 @@
         {% include "destinations/destination_detail.html" with destination=modal_destination day=day is_owner=is_owner is_registered=False source="search" %}
     {% endif %}
 
+    {% if messages %}
+        <div class="success-modal-overlay">
+            <div class="success-modal-box">
+                <button type="button" class="success-modal-close">×</button>
+
+                <p class="success-modal-message">
+                    {% for message in messages %}
+                        {{ message }}{% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const successModal = document.querySelector(".success-modal-overlay");
+    const successClose = document.querySelector(".success-modal-close");
+
+    if (successModal && successClose) {
+        successClose.addEventListener("click", () => {
+            successModal.remove();
+        });
+    }
+});
+</script>
 {% endblock %}

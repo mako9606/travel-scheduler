@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DetailView, DeleteView
 from django.views import View
@@ -971,6 +972,8 @@ def schedule_create(request):
                 )
                 
             sync_destination_fee_costs(schedule)
+            
+            messages.success(request, "プランに追加しました。")
 
             return redirect(
                 reverse("plans:plan_detail", kwargs={"pk": day_schedule.plan.id})

@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'layout.css' %}?v=5">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=39">
-<link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=5">
+<link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=40">
+<link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=6">
 {% endblock %}
 
 {% block header %}
@@ -899,6 +899,18 @@
 
         chart.style.background = `conic-gradient(${segments.join(", ")})`;
     });
-</script>
+    </script>
 
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const successModal = document.querySelector(".success-modal-overlay");
+        const successClose = document.querySelector(".success-modal-close");
+
+        if (successModal && successClose) {
+            successClose.addEventListener("click", () => {
+                successModal.remove();
+            });
+        }
+    });
+    </script>
 {% endblock %}

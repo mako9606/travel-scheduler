@@ -4,6 +4,7 @@ from .models import Destination, MapPin
 from .forms import DestinationForm, MapPinForm
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 # destination_search.html  
 def destination_search(request):
@@ -104,10 +105,12 @@ def destination_create(request):
                     )
 
                 if day:
+                    messages.success(request, "目的地を登録しました。")
                     return redirect(
                         f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}?day_schedule_id={day.id}"
                     )
 
+                messages.success(request, "目的地を登録しました。")
                 return redirect("destinations:destination_search")
     
     else:
