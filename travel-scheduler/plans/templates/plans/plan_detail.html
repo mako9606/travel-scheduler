@@ -22,6 +22,20 @@
 {% endblock %}
 
 {% block content %}
+    {% if messages %}
+        <div class="success-modal-overlay">
+            <div class="success-modal-box">
+                <button type="button" class="success-modal-close">×</button>
+
+                <p class="success-modal-message">
+                    {% for message in messages %}
+                        {{ message }}{% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    {% endif %}
+
     <form method="POST" class="container{% if is_shortcut %} plan-detail-shortcut{% endif %}">
         {% csrf_token %}
 
