@@ -7,7 +7,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=8">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=51">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=52">
 <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=8">
 {% endblock %}
 
@@ -29,9 +29,7 @@
                     <button type="button" class="success-modal-close">×</button>
 
                     <div class="success-modal-body">
-                        <p class="success-modal-message">
-                            {{ message|linebreaksbr }}
-                        </p>
+                        <p class="success-modal-message">{{ message|linebreaksbr }}</p>
                     </div>
                 </div>
             </div>

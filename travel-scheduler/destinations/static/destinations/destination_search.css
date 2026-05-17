@@ -238,5 +238,5 @@ input[type="text"]{
 
 /* 2行メッセージ用 */
 .success-modal-box.two-line .success-modal-message{
-    white-space: pre-line;
+    white-space: normal;
 }
