@@ -687,13 +687,18 @@ a.schedule-time-link .schedule-time{
     padding: 24px 18px 24px;
 }
 
+.success-modal-box.two-line .success-modal-body{
+    padding-top: 0;
+}
+
 .success-modal-box.two-line .success-modal-message{
     white-space: pre-line;
 }
 
 .success-modal-box.two-line .success-modal-close{
-    top: 20px;
+    top: 8px;
 }
+
 
 /* タブ中身　～map~ */
 .tab-map{
