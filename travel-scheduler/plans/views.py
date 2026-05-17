@@ -1126,6 +1126,8 @@ def schedule_remove(request, pk):
     plan = day.plan
 
     schedule.delete()
+
+    messages.success(request, "プランから外しました。")
     
     return redirect(
         f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?day_schedule_id={day.id}"
