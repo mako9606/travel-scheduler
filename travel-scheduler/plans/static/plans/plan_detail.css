@@ -648,7 +648,6 @@ a.schedule-time-link .schedule-time{
 
 .success-modal-box{
     background: #f7f7f7;
-    padding: 24px 16px 24px;
     width: calc(100% - 72px);
     max-width: 232px;
     text-align: center;
@@ -656,23 +655,30 @@ a.schedule-time-link .schedule-time{
     border-color: #592d13;
     transform: translateY(-70px);
     box-sizing: border-box;
+    padding: 0;
 }
 
 .success-modal-close{
     position: absolute;
     top: 8px;
     right: 10px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
     color: #592d13;
     font-size: 20px;
+    line-height: 1;
     cursor: pointer;
     text-decoration: none;
     border: none;
     background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .success-modal-body{
     width: 100%;
-    padding-top: 12px;
 }
 
 .success-modal-message{
@@ -680,24 +686,14 @@ a.schedule-time-link .schedule-time{
     color: #592d13;
     margin: 0;
     line-height: 1.7;
+    padding: 42px 16px 22px;
     white-space: nowrap;
 }
 
 /* 2行メッセージ用 */
-.success-modal-box.two-line{
-    padding: 24px 18px 24px;
-}
-
-.success-modal-box.two-line .success-modal-body{
-    padding-top: 0;
-}
-
 .success-modal-box.two-line .success-modal-message{
+    padding: 42px 18px 22px;
     white-space: pre-line;
-}
-
-.success-modal-box.two-line .success-modal-close{
-    top: 8px;
 }
 
 
