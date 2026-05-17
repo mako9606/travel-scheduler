@@ -44,7 +44,12 @@
         {% if day %}
             <a href="{% url 'plans:plan_detail' day.plan.id %}?day_schedule_id={{ day.id }}"
                 class="back-btn">
-                ←プランに戻る
+                ← プランに戻る
+            </a>
+        {% else %}
+            <a href="{% url 'destinations:destination_search' %}"
+                class="back-btn">
+                ← 検索画面に戻る
             </a>
         {% endif %}
 

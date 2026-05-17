@@ -40,6 +40,11 @@
         <div class="map-screen">
 
             <div class="map-search-section">
+                <a href="{% url 'destinations:destination_edit' destination.id %}{% if day_schedule_id or from_page or schedule_id or from_create %}?{% endif %}{% if day_schedule_id %}day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}{% if day_schedule_id %}&{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if day_schedule_id or from_page %}&{% endif %}schedule_id={{ schedule_id }}{% endif %}{% if from_create %}{% if day_schedule_id or from_page or schedule_id %}&{% endif %}from_create={{ from_create }}{% endif %}"
+                    class="back-btn map-return-btn">
+                    ← 設定・編集画面に戻る
+                </a>
+
                 <div class="search-row">
                     <input type="text"
                         name="q"

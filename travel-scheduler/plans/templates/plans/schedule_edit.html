@@ -94,7 +94,11 @@
             </div>
 
             <button type="submit" class="btn">完了</button>
-        
+
+            <a href="{% url 'plans:plan_detail' plan.id %}?day_schedule_id={{ day_schedule.id }}"
+                class="back-btn">
+                保存せずプランに戻る
+            </a>     
         </div> 
     </form>
 {% endblock %} 
