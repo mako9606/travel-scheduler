@@ -441,6 +441,7 @@ def map_pin_edit(request, destination_id):
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     from_page = request.GET.get("from") or request.POST.get("from")
     schedule_id = request.GET.get("schedule_id") or request.POST.get("schedule_id")
+    from_create = request.GET.get("from_create") or request.POST.get("from_create")
     
      # GETパラメータから選択ピン取得
     selected_pin = None
@@ -488,6 +489,8 @@ def map_pin_edit(request, destination_id):
                     params.append(f"from={from_page}")
                 if schedule_id:
                     params.append(f"schedule_id={schedule_id}")
+                if from_create:
+                    params.append(f"from_create={from_create}")
 
                 if params:
                     url += "?" + "&".join(params)
@@ -522,6 +525,8 @@ def map_pin_edit(request, destination_id):
                     params.append(f"from={from_page}")
                 if schedule_id:
                     params.append(f"schedule_id={schedule_id}")
+                if from_create:
+                    params.append(f"from_create={from_create}")
 
                 if params:
                     url += "?" + "&".join(params)
@@ -544,6 +549,7 @@ def map_pin_edit(request, destination_id):
             "day_schedule_id": day_schedule_id,
             "from_page": from_page,
             "schedule_id": schedule_id,
+            "from_create": from_create,
             "form": form,
             "rename_error": rename_error,
             "show_pin_edit_modal": True,

@@ -691,6 +691,9 @@ a.schedule-time-link .schedule-time{
     white-space: pre-line;
 }
 
+.success-modal-box.two-line .success-modal-close{
+    top: 20px;
+}
 
 /* タブ中身　～map~ */
 .tab-map{
