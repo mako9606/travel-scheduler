@@ -684,7 +684,7 @@ a.schedule-time-link .schedule-time{
 
 /* 1行メッセージ用 */
 .success-modal-box:not(.two-line){
-    max-width: 280px;
+    max-width: 260px;
 }
 
 .success-modal-box:not(.two-line) .success-modal-message{
