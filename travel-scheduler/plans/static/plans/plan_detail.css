@@ -655,13 +655,7 @@ a.schedule-time-link .schedule-time{
     position: relative;
     border-color: #592d13;
     transform: translateY(-70px);
-}
-
-.success-modal-message{
-    font-size: 16px;
-    color: #592d13;
-    margin: 12px 0 0;
-    line-height: 1.7;
+    box-sizing: border-box;
 }
 
 .success-modal-close{
@@ -676,16 +670,27 @@ a.schedule-time-link .schedule-time{
     background: transparent;
 }
 
+.success-modal-body{
+    width: 100%;
+    padding-top: 12px;
+}
+
+.success-modal-message{
+    font-size: 16px;
+    color: #592d13;
+    margin: 0;
+    line-height: 1.7;
+}
+
+/* 2行メッセージ用 */
 .success-modal-box.two-line{
-    min-height: 0;
     padding: 24px 18px 24px;
 }
 
 .success-modal-box.two-line .success-modal-message{
-    margin: 12px 0 0;
-    line-height: 1.7;
     white-space: pre-line;
 }
+
 
 /* タブ中身　～map~ */
 .tab-map{

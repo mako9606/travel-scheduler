@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}?v=7">
-    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=10">
+    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=12">
 {% endblock %}
 
 {% block header %}
@@ -21,9 +21,11 @@
                 <div class="success-modal-box {{ message.tags }}">
                     <button type="button" class="success-modal-close">×</button>
 
-                    <p class="success-modal-message">
-                        {{ message }}
-                    </p>
+                    <div class="success-modal-body">
+                        <p class="success-modal-message">
+                            {{ message|linebreaksbr }}
+                        </p>
+                    </div>
                 </div>
             </div>
         {% endfor %}
