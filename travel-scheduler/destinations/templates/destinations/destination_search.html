@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=5">
-    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=7">
 {% endblock %}
 
 {% block header %}
@@ -28,7 +28,7 @@
             </div>
         </div>
     {% endif %}
-    
+
     <form method="GET" class="destination-search-form"
         action="{% url 'destinations:destination_search' %}">
 
