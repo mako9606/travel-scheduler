@@ -114,7 +114,7 @@
                             formaction="{% url 'plans:schedule_remove' schedule_id %}"
                             formmethod="post"
                         >
-                            予定からはずす
+                            プランからはずす
                         </button>
 
                         <a href="{% url 'destinations:destination_edit' destination.id %}?day_schedule_id={{ day.id }}&schedule_id={{ schedule_id }}" class="small-edit-btn">編集</a>
@@ -125,7 +125,7 @@
                         編集
                     </a>
                     <a href="{% url 'plans:schedule_create' %}?day_schedule_id={{ day.id }}&destination_id={{ destination.id }}" class="btn">
-                        予定に設定
+                        プランに追加
                     </a>
                 {% else %} <!-- プラン外の目的地検索画面→詳細画面を見た時のボタン -->
                     <a href="{% url 'destinations:destination_edit' destination.id %}" class="small-edit-btn">編集</a>
