@@ -183,7 +183,7 @@ def destination_edit(request, pk):
                 if from_create == "1":
                     success_message = "目的地を登録しました。"
                 else:
-                    success_message = "目的地の内容を変更しました。"
+                    success_message = "目的地の内容を\n変更しました。"
 
                 if day:
                     messages.success(request, success_message)

@@ -662,6 +662,7 @@ a.schedule-time-link .schedule-time{
     color: #592d13;
     margin: 12px 0 0;
     line-height: 1.7;
+    white-space: pre-line;
 }
 
 .success-modal-close{
