@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=5">
-    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=21">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=22">
 {% endblock %}
 
 {% block header %}
@@ -41,6 +41,12 @@
             <input type="hidden" name="from_create" value="{{ from_create }}">
         {% endif %}
 
+        {% if day %}
+            <a href="{% url 'plans:plan_detail' day.plan.id %}?day_schedule_id={{ day.id }}"
+                class="back-btn">
+                プランに戻る
+            </a>
+        {% endif %}
 
         <label>目的地名 <span class="required-mark">＊必須</span></label>
         {{ form.name }}
