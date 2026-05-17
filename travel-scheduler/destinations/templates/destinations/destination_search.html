@@ -36,7 +36,7 @@
             <input type="hidden" name="day_schedule_id" value="{{ day.id }}">
 
             <a href="{% url 'plans:plan_detail' day.plan.id %}?day_schedule_id={{ day.id }}"
-                class="back-btn">
+                class="back-btn plan-return-btn">
                 ←プランに戻る
             </a>
         {% endif %}
