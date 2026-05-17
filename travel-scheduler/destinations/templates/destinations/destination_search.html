@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
-    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=7">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=7">
+    <link rel="stylesheet" href="{% static 'destinations/destination_search.css' %}?v=8">
 {% endblock %}
 
 {% block header %}
@@ -16,17 +16,17 @@
 
 {% block content %} 
     {% if messages %}
-        <div class="success-modal-overlay">
-            <div class="success-modal-box">
-                <button type="button" class="success-modal-close">×</button>
+        {% for message in messages %}
+            <div class="success-modal-overlay">
+                <div class="success-modal-box {{ message.tags }}">
+                    <button type="button" class="success-modal-close">×</button>
 
-                <p class="success-modal-message">
-                    {% for message in messages %}
-                        {{ message }}{% if not forloop.last %}<br>{% endif %}
-                    {% endfor %}
-                </p>
+                    <p class="success-modal-message">
+                        {{ message }}
+                    </p>
+                </div>
             </div>
-        </div>
+        {% endfor %}
     {% endif %}
 
     <form method="GET" class="destination-search-form"

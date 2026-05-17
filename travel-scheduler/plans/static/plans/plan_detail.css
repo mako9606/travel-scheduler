@@ -662,7 +662,6 @@ a.schedule-time-link .schedule-time{
     color: #592d13;
     margin: 12px 0 0;
     line-height: 1.7;
-    white-space: pre-line;
 }
 
 .success-modal-close{
@@ -675,6 +674,17 @@ a.schedule-time-link .schedule-time{
     text-decoration: none;
     border: none;
     background: transparent;
+}
+
+.success-modal-box.two-line{
+    min-height: 0;
+    padding: 34px 18px 26px;
+}
+
+.success-modal-box.two-line .success-modal-message{
+    margin: 0;
+    line-height: 1.7;
+    white-space: pre-line;
 }
 
 /* タブ中身　～map~ */

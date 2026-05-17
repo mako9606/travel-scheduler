@@ -216,7 +216,6 @@ input[type="text"]{
     color: #592d13;
     margin: 12px 0 0;
     line-height: 1.7;
-    white-space: pre-line;
 }
 
 .success-modal-close{
@@ -229,4 +228,15 @@ input[type="text"]{
     text-decoration: none;
     border: none;
     background: transparent;
+}
+
+.success-modal-box.two-line{
+    min-height: 0;
+    padding: 34px 18px 26px;
+}
+
+.success-modal-box.two-line .success-modal-message{
+    margin: 0;
+    line-height: 1.7;
+    white-space: pre-line;
 }

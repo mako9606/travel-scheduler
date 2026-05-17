@@ -182,16 +182,26 @@ def destination_edit(request, pk):
 
                 if from_create == "1":
                     success_message = "目的地を登録しました。"
+                    success_message_tag = ""
                 else:
                     success_message = "目的地の内容を\n変更しました。"
+                    success_message_tag = "two-line"
 
                 if day:
-                    messages.success(request, success_message)
-                    return redirect(
-                    f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}?day_schedule_id={day.id}"
-                )
+                    if success_message_tag:
+                        messages.success(request, success_message, extra_tags=success_message_tag)
+                    else:
+                        messages.success(request, success_message)
 
-                messages.success(request, success_message)
+                    return redirect(
+                        f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}?day_schedule_id={day.id}"
+                    )
+
+                if success_message_tag:
+                    messages.success(request, success_message, extra_tags=success_message_tag)
+                else:
+                    messages.success(request, success_message)
+
                 return redirect("destinations:destination_search")
     
     else:
