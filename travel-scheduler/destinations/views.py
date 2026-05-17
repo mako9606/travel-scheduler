@@ -5,8 +5,39 @@ from .forms import DestinationForm, MapPinForm
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.db.models import Q
 
-# destination_search.html  
+# destination_search.html
+def has_duplicate_destination(user, name, address, exclude_pk=None):
+    if not user.is_authenticated:
+        return False
+
+    name = (name or "").strip()
+    address = (address or "").strip()
+
+    duplicate_query = Q()
+
+    if name:
+        duplicate_query |= Q(name__iexact=name)
+
+    if address:
+        duplicate_query |= Q(address__iexact=address)
+
+    if not name and not address:
+        return False
+
+    destinations = Destination.objects.filter(
+        user=user
+    ).filter(
+        duplicate_query
+    )
+
+    if exclude_pk:
+        destinations = destinations.exclude(pk=exclude_pk)
+
+    return destinations.exists()
+
+
 def destination_search(request):
     day_schedule_id = request.GET.get("day_schedule_id")
     day = None
@@ -57,7 +88,7 @@ def destination_create(request):
     
     from_page = request.GET.get("from") or request.POST.get("from")
     schedule_id = request.GET.get("schedule_id") or request.POST.get("schedule_id")
-
+    duplicate_destination_exists = False
     
     lat = request.GET.get("lat")
     lng = request.GET.get("lng")
@@ -70,6 +101,12 @@ def destination_create(request):
             
             latitude = form.cleaned_data.get("latitude")
             longitude = form.cleaned_data.get("longitude")
+            
+            duplicate_destination_exists = has_duplicate_destination(
+                request.user,
+                form.cleaned_data.get("name"),
+                form.cleaned_data.get("address"),
+            )
 
             if action != "save_and_map" and (latitude is None or longitude is None):
                 form.add_error(None, "GoogleMapから場所を設定してください。")
@@ -129,6 +166,7 @@ def destination_create(request):
             "day": day,
             "from_page": from_page,
             "schedule_id": schedule_id,
+            "duplicate_destination_exists": duplicate_destination_exists,
         }
     ) 
     
@@ -147,6 +185,7 @@ def destination_edit(request, pk):
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
     schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule_id") 
     from_create = request.GET.get("from_create") or request.POST.get("from_create")
+    duplicate_destination_exists = False
     
     if request.method == "POST":
         old_name = destination.name
@@ -155,6 +194,13 @@ def destination_edit(request, pk):
         if form.is_valid():
             latitude = form.cleaned_data.get("latitude")
             longitude = form.cleaned_data.get("longitude")
+            
+            duplicate_destination_exists = has_duplicate_destination(
+                request.user,
+                form.cleaned_data.get("name"),
+                form.cleaned_data.get("address"),
+                exclude_pk=destination.pk,
+            )
 
             if latitude is None or longitude is None:
                 form.add_error(None, "GoogleMapから場所を設定してください。")
@@ -215,6 +261,13 @@ def destination_edit(request, pk):
             )
         else:
             form = DestinationForm(instance=destination)
+            
+        duplicate_destination_exists = has_duplicate_destination(
+            request.user,
+            destination.name,
+            destination.address,
+            exclude_pk=destination.pk,
+        )
 
     return render(
         request,
@@ -226,6 +279,7 @@ def destination_edit(request, pk):
             "from_page": from_page,
             "schedule_id": schedule_id,
             "from_create": from_create,
+            "duplicate_destination_exists": duplicate_destination_exists,
         }
     )
 

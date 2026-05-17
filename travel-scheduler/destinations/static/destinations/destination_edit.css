@@ -194,3 +194,11 @@ form[action*="delete"] {
 #destination-form .destination-return-btn{
     margin-top: -24px;
 }
+
+.duplicate-notice{
+    margin: 8px 0 14px;
+    color: #447d37;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.5;
+}

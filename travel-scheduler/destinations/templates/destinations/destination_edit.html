@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
-    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=23">
+    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=24">
 {% endblock %}
 
 {% block header %}
@@ -65,6 +65,13 @@
 
         {% if form.address.errors %}
             <p class="form-error">{{ form.address.errors.0 }}</p>
+        {% endif %}
+
+        {% if duplicate_destination_exists %}
+            <p class="duplicate-notice">
+                ＊同じ名前または同じ住所の目的地が登録されています。<br>
+                　必要に応じて既存の目的地も確認してください。
+            </p>
         {% endif %}
 
         <label>MAP <span class="required-mark">＊必須</span></label>
