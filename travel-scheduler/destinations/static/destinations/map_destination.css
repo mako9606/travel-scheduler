@@ -24,6 +24,11 @@
     z-index: 20;
 }
 
+.map-search-section .map-return-btn{
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
 .search-row{
     display: flex;
     align-items: center;
