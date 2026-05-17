@@ -8,6 +8,10 @@
     margin-right: auto;
 }
 
+.destination-search-form .plan-return-btn{
+    margin-bottom: 14px;
+}
+
 .search-row{
     display: flex;
     align-items: center;
