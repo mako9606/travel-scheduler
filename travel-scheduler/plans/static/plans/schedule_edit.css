@@ -35,8 +35,7 @@
     background-color: #ffffff;
     border: 1px solid #ccc;
     box-sizing: border-box;
-    height: calc(100dvh - 170px);
-    overflow: visible;
+    min-height: calc(100dvh - 170px);
 }
 
 .tab-content.active label{
