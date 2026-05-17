@@ -36,8 +36,7 @@
     border: 1px solid #ccc;
     box-sizing: border-box;
     height: calc(100dvh - 170px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
 }
 
 .tab-content.active label{
