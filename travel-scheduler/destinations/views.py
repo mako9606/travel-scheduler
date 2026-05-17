@@ -86,6 +86,7 @@ def destination_create(request):
                     url = reverse("destinations:map_destination", kwargs={"pk": destination.id})
 
                     params = []
+                    params.append("from_create=1")
                     if day:
                         params.append(f"day_schedule_id={day.id}")
                     if from_page:
@@ -144,8 +145,9 @@ def destination_edit(request, pk):
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     from_page = request.GET.get("from") or request.POST.get("from")
     day = get_object_or_404(DaySchedule, pk=day_schedule_id) if day_schedule_id else None
-    schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule_id")
-
+    schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule_id") 
+    from_create = request.GET.get("from_create") or request.POST.get("from_create")
+    
     if request.method == "POST":
         old_name = destination.name
         form = DestinationForm(request.POST, instance=destination)
@@ -174,15 +176,23 @@ def destination_edit(request, pk):
 
                 if action == "save_and_set" and day:
                     return redirect(
-                        f"{reverse('plans:schedule_create')}?day_schedule_id={day.id}&destination_id={destination.id}"
+                        reverse("plans:schedule_create")
+                        + f"?day_schedule_id={day.id}&destination_id={destination.id}"
                     )
+
+                if from_create == "1":
+                    success_message = "目的地を登録しました。"
+                else:
+                    success_message = "目的地の内容を変更しました。"
 
                 if day:
+                    messages.success(request, success_message)
                     return redirect(
-                        f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}?day_schedule_id={day.id}"
-                    )
+                    f"{reverse('plans:plan_detail', kwargs={'pk': day.plan.id})}?day_schedule_id={day.id}"
+                )
 
-                return redirect(reverse('destinations:destination_search'))
+                messages.success(request, success_message)
+                return redirect("destinations:destination_search")
     
     else:
         if lat and lng:
@@ -205,6 +215,7 @@ def destination_edit(request, pk):
             "day": day,
             "from_page": from_page,
             "schedule_id": schedule_id,
+            "from_create": from_create,
         }
     )
 
@@ -313,6 +324,7 @@ def map_destination(request, pk):
     day_schedule_id = request.GET.get("day_schedule_id") or request.POST.get("day_schedule_id")
     from_page = request.GET.get("from") or request.POST.get("from")
     schedule_id = request.GET.get("schedule_id") or request.POST.get("schedule_id")
+    from_create = request.GET.get("from_create") or request.POST.get("from_create")
 
     current_lat = request.POST.get("lat") or request.GET.get("lat") or destination.latitude
     current_lng = request.POST.get("lng") or request.GET.get("lng") or destination.longitude
@@ -334,6 +346,7 @@ def map_destination(request, pk):
                 "day_schedule_id": day_schedule_id,
                 "from_page": from_page,
                 "schedule_id": schedule_id,
+                "from_create": from_create,
                 "current_lat": current_lat,
                 "current_lng": current_lng,
                 "q": q,
@@ -362,6 +375,8 @@ def map_destination(request, pk):
                 params.append(f"from={from_page}")
             if schedule_id:
                 params.append(f"schedule_id={schedule_id}")
+            if from_create:
+                params.append(f"from_create={from_create}")
 
             if params:
                 url += "?" + "&".join(params)
@@ -375,6 +390,7 @@ def map_destination(request, pk):
         "day_schedule_id": day_schedule_id,
         "from_page": from_page,
         "schedule_id": schedule_id,
+        "from_create": from_create,
         "current_lat": current_lat,
         "current_lng": current_lng,
         "q": q,

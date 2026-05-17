@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=19">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=20">
 {% endblock %}
 
 {% block header %}
@@ -36,6 +36,11 @@
         {% if schedule_id %}
             <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
         {% endif %}
+
+        {% if from_create %}
+            <input type="hidden" name="from_create" value="{{ from_create }}">
+        {% endif %}
+
 
         <label>目的地名 <span class="required-mark">＊必須</span></label>
         {{ form.name }}

@@ -33,6 +33,10 @@
             <input type="hidden" name="schedule_id" value="{{ schedule_id }}">
         {% endif %}
 
+        {% if from_create %}
+            <input type="hidden" name="from_create" value="{{ from_create }}">
+        {% endif %}
+
         <div class="map-screen">
 
             <div class="map-search-section">
@@ -88,7 +92,7 @@
                     {% endif %}
                 </div>
 
-                <a href="{% url 'destinations:map_pin_edit' destination.id %}{% if selected_pin or day_schedule_id or from_page or schedule_id %}?{% endif %}{% if selected_pin %}pin_id={{ selected_pin.id }}{% endif %}{% if day_schedule_id %}{% if selected_pin %}&{% endif %}day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}{% if selected_pin or day_schedule_id %}&{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if selected_pin or day_schedule_id or from_page %}&{% endif %}schedule_id={{ schedule_id }}{% endif %}"
+                <a href="{% url 'destinations:map_pin_edit' destination.id %}{% if selected_pin or day_schedule_id or from_page or schedule_id or from_create %}?{% endif %}{% if selected_pin %}pin_id={{ selected_pin.id }}{% endif %}{% if day_schedule_id %}{% if selected_pin %}&{% endif %}day_schedule_id={{ day_schedule_id }}{% endif %}{% if from_page %}{% if selected_pin or day_schedule_id %}&{% endif %}from={{ from_page }}{% endif %}{% if schedule_id %}{% if selected_pin or day_schedule_id or from_page %}&{% endif %}schedule_id={{ schedule_id }}{% endif %}{% if from_create %}{% if selected_pin or day_schedule_id or from_page or schedule_id %}&{% endif %}from_create={{ from_create }}{% endif %}"
                     class="edit-btn map-edit-btn">
                     ピン編集
                 </a>
