@@ -682,6 +682,15 @@ a.schedule-time-link .schedule-time{
     line-height: 1.7;
 }
 
+/* 1行メッセージ用 */
+.success-modal-box:not(.two-line){
+    max-width: 280px;
+}
+
+.success-modal-box:not(.two-line) .success-modal-message{
+    white-space: nowrap;
+}
+
 /* 2行メッセージ用 */
 .success-modal-box.two-line .success-modal-message{
     white-space: normal;
