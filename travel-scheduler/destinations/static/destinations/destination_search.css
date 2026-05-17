@@ -9,6 +9,8 @@
 }
 
 .destination-search-form .plan-return-btn{
+    display: inline-block;
+    margin-top: -24px;
     margin-bottom: 14px;
 }
 

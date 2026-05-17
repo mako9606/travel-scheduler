@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
-    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=22">
+    <link rel="stylesheet" href="{% static 'destinations/destination_edit.css' %}?v=23">
 {% endblock %}
 
 {% block header %}
@@ -43,12 +43,12 @@
 
         {% if day %}
             <a href="{% url 'plans:plan_detail' day.plan.id %}?day_schedule_id={{ day.id }}"
-                class="back-btn">
+                class="back-btn destination-return-btn">
                 ← プランに戻る
             </a>
         {% else %}
             <a href="{% url 'destinations:destination_search' %}"
-                class="back-btn">
+                class="back-btn destination-return-btn">
                 ← 検索画面に戻る
             </a>
         {% endif %}
