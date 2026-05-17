@@ -650,7 +650,7 @@ a.schedule-time-link .schedule-time{
     background: #f7f7f7;
     padding: 24px 16px 24px;
     width: calc(100% - 72px);
-    max-width: 200px;
+    max-width: 232px;
     text-align: center;
     position: relative;
     border-color: #592d13;
@@ -680,6 +680,7 @@ a.schedule-time-link .schedule-time{
     color: #592d13;
     margin: 0;
     line-height: 1.7;
+    white-space: nowrap;
 }
 
 /* 2行メッセージ用 */
