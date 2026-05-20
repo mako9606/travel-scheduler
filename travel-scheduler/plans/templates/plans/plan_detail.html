@@ -423,6 +423,9 @@
         let planMap = null;
         const planMapPoints = {{ map_points_json|safe }};
 
+        const PLAN_MAP_SINGLE_ZOOM = 12;
+        const PLAN_MAP_MAX_INITIAL_ZOOM = 12;
+
         function buildPlanPinIcon(fillColor) {
             const svg = `
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40">
@@ -491,10 +494,16 @@
                 });
 
                 if (planMapPoints.length > 1) {
+                    google.maps.event.addListenerOnce(planMap, "bounds_changed", function () {
+                        if (planMap.getZoom() > PLAN_MAP_MAX_INITIAL_ZOOM) {
+                            planMap.setZoom(PLAN_MAP_MAX_INITIAL_ZOOM);
+                        }
+                    });
+                    
                     planMap.fitBounds(bounds);
                 } else if (planMapPoints.length === 1) {
                     planMap.setCenter(firstPoint);
-                    planMap.setZoom(13);
+                    planMap.setZoom(PLAN_MAP_SINGLE_ZOOM);
                 }
             }
 
@@ -502,7 +511,7 @@
 
             if (planMapPoints.length === 1) {
                 planMap.setCenter(firstPoint);
-                planMap.setZoom(13);
+                planMap.setZoom(PLAN_MAP_SINGLE_ZOOM);
             }
         }
 
