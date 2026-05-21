@@ -222,13 +222,13 @@ def plan_share(request, token):
             # すでに別のログインユーザーが使用済み
             if member.viewer_user_id and member.viewer_user_id != user.id:
                 return render_share(
-                    "この共有リンクはすでに使用されています。送信者から新しいURLを受け取ってください。"
+                    "この共有リンクはすでに使用されています。\n送信者から新しいURLを受け取ってください。"
                 )
 
             # アカウントなし閲覧で使用済みのURLを、別ユーザーのログイン閲覧に使わせない
             if member.viewer_session_key and not member.viewer_user_id:
                 return render_share(
-                    "この共有リンクはすでに使用されています。送信者から新しいURLを受け取ってください。"
+                    "この共有リンクはすでに使用されています。\n送信者から新しいURLを受け取ってください。"
                 )
 
             login(request, user)
@@ -254,7 +254,7 @@ def plan_share(request, token):
             # すでにログインユーザーが使用済み
             if member.viewer_user_id:
                 return render_share(
-                    "この共有リンクはすでに使用されています。送信者から新しいURLを受け取ってください。"
+                    "この共有リンクはすでに使用されています。\n送信者から新しいURLを受け取ってください。"
                 )
 
             if not request.session.session_key:
@@ -263,7 +263,7 @@ def plan_share(request, token):
             # 別ブラウザ・別端末からの再利用を防ぐ
             if member.viewer_session_key and member.viewer_session_key != request.session.session_key:
                 return render_share(
-                    "この共有リンクはすでに使用されています。送信者から新しいURLを受け取ってください。"
+                    "この共有リンクはすでに使用されています。\n送信者から新しいURLを受け取ってください。"
                 )
 
             member.member_name = username

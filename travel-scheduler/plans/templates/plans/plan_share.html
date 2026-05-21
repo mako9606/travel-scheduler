@@ -33,7 +33,7 @@
                 {% csrf_token %}
 
                 {% if error_message %}
-                    <p class="error-message">{{ error_message }}</p>
+                    <p class="error-message">{{ error_message|linebreaksbr }}</p>
                 {% endif %}
         
                 <h1>{{ plan.plan_name }}を閲覧しますか？</h1>
