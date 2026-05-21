@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'layout.css' %}?v=8">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=54">
+<link rel="stylesheet" href="{% static 'layout.css' %}?v=9">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=55">
 <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=8">
 {% endblock %}
 
@@ -81,7 +81,7 @@
                 <p class="detail-value">{{ total_cost }}円</p>
             </div>
 
-            <div class="detail-row">
+            <div class="detail-row detail-row-share">
                 <p class="detail-label">メンバーとの共有</p>
                 <p class="detail-value">{{ share_status }}</p>
             </div>

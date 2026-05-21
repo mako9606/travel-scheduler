@@ -270,6 +270,11 @@ form.container{
     color: #592d13;
 }
 
+.detail-row-share .detail-label{
+    white-space: nowrap;
+    min-width: 145px;
+}
+
 .revoke-btn{
     font-size: 15px;
     color: #990000;

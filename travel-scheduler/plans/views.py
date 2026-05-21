@@ -9,7 +9,7 @@ from django.views import View
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Max, Sum
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.utils import timezone
 
 from datetime import date, timedelta
@@ -145,12 +145,66 @@ def plan_delete(request, pk):
 
 
 def plan_share(request, token):
-    member = get_object_or_404(PlanShareMember, token=token)
-    plan = member.plan
+    member = (
+        PlanShareMember.objects
+        .select_related("plan", "viewer_user")
+        .filter(token=token)
+        .first()
+    )
 
+    # プラン削除後など、共有メンバー自体が存在しない場合
+    if member is None:
+        return render(request, "plans/plan_share.html", {
+            "member": None,
+            "plan": None,
+            "is_valid": False,
+            "share_deleted": True,
+        })
+
+    plan = member.plan
     is_valid = member.is_active and member.expires_at >= timezone.now()
 
-    if request.method == "POST" and is_valid:
+    def render_share(error_message=""):
+        return render(request, "plans/plan_share.html", {
+            "member": member,
+            "plan": plan,
+            "is_valid": is_valid,
+            "share_deleted": False,
+            "error_message": error_message,
+        })
+
+    def set_shared_session(viewer_name):
+        request.session["shared_plan_id"] = plan.id
+        request.session["shared_member_id"] = member.id
+        request.session["shared_viewer_name"] = viewer_name
+
+    def redirect_to_shared_plan():
+        return redirect(
+            f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?shared=1"
+        )
+
+    if not is_valid:
+        return render_share()
+
+    # すでに許可済みのログインユーザーなら、そのまま閲覧
+    if (
+        request.user.is_authenticated
+        and member.viewer_user_id
+        and member.viewer_user_id == request.user.id
+    ):
+        set_shared_session(member.member_name or request.user.username)
+        return redirect_to_shared_plan()
+
+    # アカウントなし閲覧で、同じブラウザなら再閲覧OK
+    if (
+        not request.user.is_authenticated
+        and member.viewer_session_key
+        and request.session.session_key == member.viewer_session_key
+    ):
+        set_shared_session(member.member_name)
+        return redirect_to_shared_plan()
+
+    if request.method == "POST":
         action = request.POST.get("action")
 
         if action == "login":
@@ -158,66 +212,72 @@ def plan_share(request, token):
             password = request.POST.get("password", "")
 
             if not email or not password:
-                return render(request, "plans/plan_share.html", {
-                    "member": member,
-                    "plan": plan,
-                    "is_valid": is_valid,
-                    "error_message": "メールアドレスとパスワードを入力してください。",
-                })
+                return render_share("メールアドレスとパスワードを入力してください。")
 
             user = authenticate(request, username=email, password=password)
 
             if user is None:
-                return render(request, "plans/plan_share.html", {
-                    "member": member,
-                    "plan": plan,
-                    "is_valid": is_valid,
-                    "error_message": "メールアドレスまたはパスワードが正しくありません。",
-                })
+                return render_share("メールアドレスまたはパスワードが正しくありません。")
+
+            # すでに別のログインユーザーが使用済み
+            if member.viewer_user_id and member.viewer_user_id != user.id:
+                return render_share(
+                    "この共有リンクはすでに使用されています。送信者から新しいURLを受け取ってください。"
+                )
+
+            # アカウントなし閲覧で使用済みのURLを、別ユーザーのログイン閲覧に使わせない
+            if member.viewer_session_key and not member.viewer_user_id:
+                return render_share(
+                    "この共有リンクはすでに使用されています。送信者から新しいURLを受け取ってください。"
+                )
 
             login(request, user)
-            
-            if member.member_name == "":
-                member.member_name = user.username
-                member.save(update_fields=["member_name"])
 
-            request.session["shared_plan_id"] = plan.id
-            request.session["shared_member_id"] = member.id
-            request.session["shared_viewer_name"] = user.username
+            member.member_name = user.username
+            member.viewer_user = user
+            member.viewer_session_key = ""
+            member.save(update_fields=[
+                "member_name",
+                "viewer_user",
+                "viewer_session_key",
+            ])
 
-            return redirect(
-                f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?shared=1"
-            )
-
+            set_shared_session(user.username)
+            return redirect_to_shared_plan()
 
         if action == "view":
             username = request.POST.get("username", "").strip()
 
             if not username:
-                return render(request, "plans/plan_share.html", {
-                    "member": member,
-                    "plan": plan,
-                    "is_valid": is_valid,
-                    "error_message": "アカウント名を入力してください。",
-                })
+                return render_share("アカウント名を入力してください。")
 
-            if member.member_name == "":
-                member.member_name = username
-                member.save(update_fields=["member_name"])
+            # すでにログインユーザーが使用済み
+            if member.viewer_user_id:
+                return render_share(
+                    "この共有リンクはすでに使用されています。送信者から新しいURLを受け取ってください。"
+                )
 
-            request.session["shared_plan_id"] = plan.id
-            request.session["shared_member_id"] = member.id
-            request.session["shared_viewer_name"] = username
+            if not request.session.session_key:
+                request.session.create()
 
-            return redirect(
-                f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?shared=1"
-            )
-        
-    return render(request, 'plans/plan_share.html', {
-        'member': member,
-        'plan': member.plan,
-        "is_valid": is_valid,
-    })
+            # 別ブラウザ・別端末からの再利用を防ぐ
+            if member.viewer_session_key and member.viewer_session_key != request.session.session_key:
+                return render_share(
+                    "この共有リンクはすでに使用されています。送信者から新しいURLを受け取ってください。"
+                )
+
+            member.member_name = username
+            member.viewer_session_key = request.session.session_key
+            member.save(update_fields=[
+                "member_name",
+                "viewer_session_key",
+            ])
+
+            set_shared_session(username)
+            return redirect_to_shared_plan()
+
+    return render_share()
+    
 
 # share_revoke.html
 @login_required
@@ -341,7 +401,18 @@ class PlanDetailView(DetailView):
     template_name = "plans/plan_detail.html"
     
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        try:
+            self.object = self.get_object()
+        except Http404:
+            if request.GET.get("shared") == "1":
+                return render(request, "plans/plan_share.html", {
+                    "member": None,
+                    "plan": None,
+                    "is_valid": False,
+                    "share_deleted": True,
+                })
+
+            return redirect("plans:plan_list")
 
         is_owner = request.user.is_authenticated and self.object.user == request.user
         

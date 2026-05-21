@@ -41,6 +41,15 @@ class PlanShareMember(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(default=default_expires_at)
+    
+    viewer_user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="shared_plan_members",
+    )
+    viewer_session_key = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return f"{self.plan.plan_name} - {self.member_name}"
