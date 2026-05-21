@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-    <link rel="stylesheet" href="{% static 'auth_app/home.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'auth_app/home.css' %}?v=7">
 {% endblock %}
 
 {% block header %}
@@ -26,6 +26,31 @@
             <div class="swipe-track">
                 <!-- 左ページ -->
                 <section class="page" data-shortcut-name="{% if left_shortcut %}{{ left_shortcut.name }}{% endif %}">
+                    {% if show_home_guide %}
+                        <div class="home-guide" id="homeGuide">
+                            <div class="home-guide-body">
+                                <p class="home-guide-text">
+                                    💡 まずプランリスト✈️から<br>
+                                        プランを作成しましょう<br>
+                                        目的地は目的地検索や＋ボタンから登録できます。
+                                </p>
+
+                                <div class="home-guide-actions">
+                                    <form method="POST" class="home-guide-hide-form">
+                                        {% csrf_token %}
+                                        <button type="submit" name="home_guide_action" value="hide" class="home-guide-link">
+                                            今後表示しない
+                                        </button>
+                                    </form>
+
+                                    <button type="button" class="home-guide-link" id="homeGuideClose">
+                                        閉じる
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
                     {% if left_shortcut and left_shortcut.url %}
                         <iframe
                             src="{{ left_shortcut.url }}{% if '?' in left_shortcut.url %}&{% else %}?{% endif %}shortcut=1"
@@ -58,6 +83,15 @@
 {% block js %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    const homeGuide = document.getElementById("homeGuide");
+    const homeGuideClose = document.getElementById("homeGuideClose");
+
+    if (homeGuide && homeGuideClose) {
+        homeGuideClose.addEventListener("click", function () {
+            homeGuide.remove();
+        });
+    }
+
     const swipeWrap = document.querySelector(".swipe-wrap");
     const pages = Array.from(document.querySelectorAll(".page[data-shortcut-name]"));
     const titleEl = document.querySelector(".header-title");

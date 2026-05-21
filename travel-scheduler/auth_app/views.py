@@ -10,6 +10,9 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
+from plans.models import Plan
+from .models import HomeGuideSetting
+
 def login_view(request):
     if request.method == "POST":
         email = request.POST["username"]
@@ -115,7 +118,13 @@ def signup_view(request):
 
 @login_required
 def home_view(request):
-    print(request.user, request.user.is_authenticated)
+    
+    if request.method == "POST" and request.POST.get("home_guide_action") == "hide":
+        HomeGuideSetting.objects.update_or_create(
+            user=request.user,
+            defaults={"hide_home_guide": True}
+        )
+        return redirect("auth_app:home")
     
     shortcuts = (
         UserShortcut.objects
@@ -153,11 +162,21 @@ def home_view(request):
                 defaults={"shortcut_type": default_type},
             )
     
+    has_plans = Plan.objects.filter(user=request.user).exists()
+
+    guide_setting = HomeGuideSetting.objects.filter(user=request.user).first()
+
+    show_home_guide = (
+        not has_plans
+        and not (guide_setting and guide_setting.hide_home_guide)
+    )
+    
     return render(
         request,
         "auth_app/home.html",
         {
             "left_shortcut": left_shortcut,
             "right_shortcut": right_shortcut,
+            "show_home_guide": show_home_guide,
         }
     )
