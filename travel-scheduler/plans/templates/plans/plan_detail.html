@@ -144,7 +144,7 @@
 
             <div class="memo-paper">
                 {% if show_owner_controls and request.GET.memo_edit %}
-                    <textarea name="plan_memo" class="memo-textarea" placeholder="メモ　入力　画面">{{ object.memo|default_if_none:'' }}</textarea>
+                    <textarea name="plan_memo" class="memo-textarea" placeholder="この旅行のメモを入力">{{ object.memo|default_if_none:'' }}</textarea>
 
                     <button type="submit" class="memo-complete-btn">完了</button>
                 
