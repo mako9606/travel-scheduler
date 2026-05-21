@@ -53,7 +53,7 @@
 
 .home-guide{
     position: absolute;
-    top: 74px;
+    top: 68px;
     left: 12px;
     right: 12px;
     z-index: 20;
@@ -75,6 +75,7 @@
 
 .home-guide-actions{
     display: flex;
+    align-items: center;
     gap: 18px;
     margin-top: 8px;
     padding-top: 6px;
@@ -83,14 +84,21 @@
 
 .home-guide-hide-form{
     margin: 0;
+    display: flex;
+    align-items: center;
 }
 
 .home-guide-link{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0;
     border: none;
     background: transparent;
     color: #592d13;
     font-size: 11px;
     font-weight: 700;
+    line-height: 1;
+    font-family: inherit;
     cursor: pointer;
 }
