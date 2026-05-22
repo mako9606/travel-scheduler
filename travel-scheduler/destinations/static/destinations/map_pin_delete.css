@@ -47,24 +47,25 @@
     position: relative;
 }
 
-/* 横線 */
-.modal-message::after{
-    content: "";
-    position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 0;
-    height: 1.5px;
-    background: #8b5e3c;
-}
-
 /* ボタン2つの行 */
 .delete-actions{
     display: flex;
     width: 100%;
     position: relative;
+    padding-top: 12px;
     padding-bottom: 10px;
     box-sizing: border-box;
+}
+
+/* 横線 */
+.delete-actions::before{
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 0;
+    height: 1.5px;
+    background: #8b5e3c;
 }
 
 /* form が片側半分を持つように */
