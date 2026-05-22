@@ -96,7 +96,7 @@ input[type="email"]{
 }
 
 
-/* 有効期限外 */
+/* 共有URLを利用できない場合 */
 .share-container.is-invalid{
     width: 100%;
     padding: 170px 24px 0;
@@ -128,4 +128,10 @@ input[type="email"]{
     line-height: 1.6;
     font-weight: 500;
     color: #592d13;
+}
+
+.share-invalid-title{
+    min-height: 58px;
+    padding: 0;
+    box-sizing: border-box;
 }

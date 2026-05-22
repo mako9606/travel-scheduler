@@ -4,8 +4,8 @@
     <title>共有URL閲覧画面</title>
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
-    <link rel="stylesheet" href="{% static 'plans/plan_share.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=7">
+    <link rel="stylesheet" href="{% static 'plans/plan_share.css' %}?v=7">
 </head>
 
 <body>
@@ -54,7 +54,7 @@
     {% else %}
         <!--  削除済み・失効・期限切れなど、共有URLを利用できない場合　-->
         <div class="container">
-            <div class="page-title"></div>
+            <div class="page-title share-invalid-title"></div>
 
             <div class="share-container is-invalid">
                 <div class="form-container invalid-container">
