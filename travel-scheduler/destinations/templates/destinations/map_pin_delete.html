@@ -15,7 +15,13 @@
         <div class="form-container modal-box">
 
             <p class="modal-message">"{{ pin.name }}ピン"を削除しますか？</p>
-            
+            {% if used_count > 0 %}
+                <p class="field-error">
+                    使用中の目的地が {{ used_count }} 件あります。<br>
+                    削除すると未選択になります。
+                </p>
+            {% endif %}
+
             <div class="delete-actions">
                 <form method="POST">
                     {% csrf_token %}
@@ -32,13 +38,6 @@
 
                     {% if delete_error %}
                         <p class="field-error">{{ delete_error }}</p>
-                    {% endif %}
-
-                    {% if used_count > 0 %}
-                        <p class="field-error">
-                            使用中の目的地が {{ used_count }} 件あります。<br>
-                            削除すると未選択になります。
-                        </p>
                     {% endif %}
                     
                     <button type="submit" class="btn-delete">削除</button>
