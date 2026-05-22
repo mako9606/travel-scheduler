@@ -152,13 +152,13 @@ def plan_share(request, token):
         .first()
     )
 
-    # プラン削除後など、共有メンバー自体が存在しない場合
+    # プラン削除後など、共有URLを利用できない場合
     if member is None:
         return render(request, "plans/plan_share.html", {
             "member": None,
             "plan": None,
             "is_valid": False,
-            "share_deleted": True,
+            "error_message": "",
         })
 
     plan = member.plan
@@ -169,7 +169,6 @@ def plan_share(request, token):
             "member": member,
             "plan": plan,
             "is_valid": is_valid,
-            "share_deleted": False,
             "error_message": error_message,
         })
 
@@ -217,7 +216,7 @@ def plan_share(request, token):
             user = authenticate(request, username=email, password=password)
 
             if user is None:
-                return render_share("メールアドレスまたはパスワードが正しくありません。")
+                return render_share("メールアドレスまたはパスワードが\n正しくありません。")
 
             # すでに別のログインユーザーが使用済み
             if member.viewer_user_id and member.viewer_user_id != user.id:
@@ -409,7 +408,7 @@ class PlanDetailView(DetailView):
                     "member": None,
                     "plan": None,
                     "is_valid": False,
-                    "share_deleted": True,
+                    "error_message": "",
                 })
 
             return redirect("plans:plan_list")

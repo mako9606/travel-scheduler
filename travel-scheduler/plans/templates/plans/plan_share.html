@@ -9,20 +9,7 @@
 </head>
 
 <body>
-
-    {% if share_deleted %}
-        <div class="container">
-            <div class="page-title">共有プラン</div>
-
-            <div class="share-container is-invalid">
-                <div class="form-container invalid-container">
-                    <h1>このプランは削除されました。</h1>
-                    <h2>送信者に確認してください。</h2>
-                </div>
-            </div>
-        </div>
-
-    {% elif is_valid %}
+    {% if is_valid %}
         <!-- 有効期限内　-->
         <div class="container">
         <div class="page-title">{{ plan.plan_name }}</div>
@@ -65,17 +52,16 @@
         </div>
         </div>
     {% else %}
-        <!-- 有効期限外　-->
+        <!--  削除済み・失効・期限切れなど、共有URLを利用できない場合　-->
         <div class="container">
-        <div class="page-title">{{ plan.plan_name }}</div>
+            <div class="page-title"></div>
 
-        <div class="share-container is-invalid">
-
-            <div class="form-container invalid-container">
-                <h1>URLの有効期限が<br>切れています。</h1>
-                <h2>送信者から新しいURLを<br>受け取ってください。</h2>
+            <div class="share-container is-invalid">
+                <div class="form-container invalid-container">
+                    <h1>この共有URLは<br>利用できません。</h1>
+                    <h2>送信者に<br>確認してください。</h2>
+                </div>
             </div>
-        </div>
         </div>
     {% endif %}
 
