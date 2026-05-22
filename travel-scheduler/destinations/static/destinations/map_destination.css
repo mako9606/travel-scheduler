@@ -103,7 +103,8 @@
 }
 
 .map-pin-select{
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+    min-width: 0;
     position: relative;
     overflow: visible;
     z-index: 30;
@@ -111,7 +112,8 @@
 
 .map-pin-select-toggle{
     display: block;
-    min-width: 110px;
+    width: 100%;
+    min-width: 0;
     height: 42px;
     padding: 0 10px;
     border: 1px solid #999999;
@@ -121,6 +123,10 @@
     font-size: 16px;
     text-align: left;
     box-sizing: border-box;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .map-pin-options{
@@ -165,23 +171,23 @@
 }
 
 .current-pin-display{
-    min-width: 0;
-    flex: 1 1 auto;
+    flex: 0 0 28px;
+    min-width: 28px;
+    min-height: 42px;
+
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
 
-    min-height: 42px;
-    padding: 0 8px;
-    background: #ffffff;
-    border: 1px solid #d9d9d9;
-    border-radius: 6px;
+    padding: 0;
+    background: transparent;
+    border: none;
     box-sizing: border-box;
 }
 
 .current-pin-dot{
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     border: 2px solid #3b82f6;
     background: #3b82f6;
@@ -192,7 +198,7 @@
 .current-pin-name{
     min-width: 0;
     color: #592d13;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
