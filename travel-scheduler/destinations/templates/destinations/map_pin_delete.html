@@ -1,5 +1,4 @@
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -36,12 +35,13 @@
                     {% endif %}
 
                     {% if used_count > 0 %}
-                        <p class="field-error">使用中の目的地が {{ used_count }} 件あります</p>
+                        <p class="field-error">
+                            使用中の目的地が {{ used_count }} 件あります。<br>
+                            削除すると未選択になります。
+                        </p>
                     {% endif %}
-
-                    {% if used_count == 0 %}
-                        <button type="submit" class="btn-delete">削除</button>
-                    {% endif %}
+                    
+                    <button type="submit" class="btn-delete">削除</button>
 
                 </form>
                 

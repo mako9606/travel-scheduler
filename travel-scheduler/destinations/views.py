@@ -626,20 +626,10 @@ def map_pin_delete(request, destination_id, pin_id):
     schedule_id = request.POST.get("schedule_id") or request.GET.get("schedule_id")
 
     if request.method == "POST":
-        if used_count > 0:
-            return render(
-                request,
-                "destinations/map_pin_delete.html",
-                {
-                    "destination": destination,
-                    "pin": pin,
-                    "day_schedule_id": day_schedule_id,
-                    "from_page": from_page,
-                    "schedule_id": schedule_id,
-                    "used_count": used_count,
-                    "delete_error": "このピンは使用中のため削除できません",
-                }
-            )
+        Destination.objects.filter(
+            user=request.user,
+            selected_pin=pin
+        ).update(selected_pin=None)
 
         pin.delete()
 
