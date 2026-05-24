@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=8">
     <link rel="stylesheet" href="{% static 'plans/schedule_edit.css' %}?v=9">
 {% endblock %}
 
@@ -44,6 +44,16 @@
                     <label class="time-label">出発時間 <span class="required-mark">＊必須</span></label>
                     {{ form.departure_time }}
                 </div>
+
+                {% if form.non_field_errors %}
+                    <div class="form-error">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <p class="duplicate-notice schedule-time-notice"></p>
             </div>
 
             <div id="expense-blocks">
@@ -111,6 +121,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const departure = document.getElementById("id_departure_time");
     const durationText = document.querySelector(".duration-text");
     const expenseBlocks = document.getElementById("expense-blocks");
+    const scheduleNotice = document.querySelector(".schedule-time-notice");
+    const existingSchedules = {{ existing_schedules_json|default:"[]"|safe }};
 
     function updateDuration() {
         if (!arrival || !departure || !durationText) return;
@@ -129,7 +141,9 @@ document.addEventListener("DOMContentLoaded", function () {
         let diff = (dh * 60 + dm) - (ah * 60 + am);
 
         if (diff < 0) {
-            diff += 24 * 60;
+            durationText.textContent = "所要時間　〇〇分";
+            updateScheduleNotice();
+            return;
         }
 
         const hours = Math.floor(diff / 60);
@@ -142,8 +156,64 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             durationText.textContent = `所要時間　${minutes}分`;
         }
+        updateScheduleNotice();
+    }
+    
+    function timeToMinutes(value) {
+    if (!value) return null;
+
+    const [hour, minute] = value.split(":").map(Number);
+    return hour * 60 + minute;
+}
+
+function hasOverlap(startMinutes, endMinutes) {
+    if (startMinutes === null || endMinutes === null) return false;
+    if (endMinutes < startMinutes) return false;
+
+    return existingSchedules.some((schedule) => {
+        const existingStart = timeToMinutes(schedule.arrival);
+        const existingEnd = timeToMinutes(schedule.departure);
+
+        if (existingStart === null || existingEnd === null) return false;
+        if (existingEnd < existingStart) return false;
+
+        if (startMinutes === endMinutes) {
+            return existingStart < startMinutes && startMinutes < existingEnd;
+        }
+
+        return startMinutes < existingEnd && existingStart < endMinutes;
+    });
+}
+
+function updateScheduleNotice() {
+    if (!arrival || !departure || !scheduleNotice) return;
+
+    const arrivalMinutes = timeToMinutes(arrival.value);
+    const departureMinutes = timeToMinutes(departure.value);
+
+    const notices = [];
+
+    if (arrivalMinutes === null || departureMinutes === null) {
+        scheduleNotice.innerHTML = "";
+        return;
     }
 
+    if (departureMinutes < arrivalMinutes) {
+        scheduleNotice.innerHTML = "";
+        return;
+    }
+
+    if (arrivalMinutes === departureMinutes) {
+        notices.push("所要時間0分の予定として登録されます。");
+    }
+
+    if (hasOverlap(arrivalMinutes, departureMinutes)) {
+        notices.push("同じ時間帯に登録済みの予定があります。");
+    }
+
+    scheduleNotice.innerHTML = notices.join("<br>");
+    }
+    
     function updateAddButtons() {
         if (!expenseBlocks) return;
 

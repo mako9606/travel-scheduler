@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'layout.css' %}?v=3">
-    <link rel="stylesheet" href="{% static 'plans/plan_create.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'layout.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'plans/plan_create.css' %}?v=4">
 {% endblock %}
 
 {% block header %}
@@ -34,7 +34,7 @@
                 <button type="button" class="spinner-btn spinner-down" data-prefix="start" data-field="year">▼</button>
             </div>
             <span class="date-unit">年</span>
-            <input type="hidden" name="start_year" value="{{ selected_start_year|default_if_none:'' }}" data-year-min="{{ current_year }}">
+            <input type="hidden" name="start_year" value="{{ selected_start_year|default_if_none:'' }}" data-year-min="{{ year_min }}">
         </div>
 
         <div class="date-spinner-group spinner-month" data-prefix="start" data-field="month">
@@ -67,7 +67,7 @@
                 <button type="button" class="spinner-btn spinner-down" data-prefix="end" data-field="year">▼</button>
             </div>
             <span class="date-unit">年</span>
-            <input type="hidden" name="end_year" value="{{ selected_end_year|default_if_none:'' }}" data-year-min="{{ current_year }}">
+            <input type="hidden" name="end_year" value="{{ selected_end_year|default_if_none:'' }}" data-year-min="{{ year_min }}">
         </div>
 
         <div class="date-spinner-group spinner-month" data-prefix="end" data-field="month">
@@ -100,6 +100,6 @@
 {% endblock %}
 
 {% block js %}
-<script src="{% static 'submit_once.js' %}?v=1"></script>
-<script src="{% static 'plans/date_spinner.js' %}?v=2"></script>
+<script src="{% static 'submit_once.js' %}?v=2"></script>
+<script src="{% static 'plans/date_spinner.js' %}?v=3"></script>
 {% endblock %}

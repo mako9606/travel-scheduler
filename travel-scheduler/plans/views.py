@@ -42,7 +42,7 @@ def plan_edit(request, pk):
     plan = get_object_or_404(Plan, pk=pk, user=request.user)
 
     current_year = date.today().year
-    years = range(current_year - 10, current_year + 60)
+    years = range(2000, current_year + 61)
     months = range(1, 13)
     days = range(1, 32)
     
@@ -317,7 +317,8 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
 
         current_year = date.today().year
         context["current_year"] = current_year
-        context["years"] = range(current_year, current_year + 60)
+        context["year_min"] = 2000
+        context["years"] = range(2000, current_year + 61)
         context["months"] = range(1, 13)
         context["days"] = range(1, 32)
 
@@ -474,38 +475,11 @@ class PlanDetailView(DetailView):
             day = days_by_date.get(d)
 
             if day:
-                schedules_qs = (
+                schedules = (
                     Schedule.objects
                     .filter(day=day)
-                    .order_by("order")
+                    .order_by("arrival_time", "departure_time", "id")
                 )
-                # order 未初期化（0）のものだけ、arrival_time順で初期化
-                zero_order_schedules = (
-                    Schedule.objects
-                    .filter(day=day, order=0)
-                    .order_by("arrival_time")
-                )
-
-                if zero_order_schedules.exists():
-                    for idx, s in enumerate(zero_order_schedules):
-                        s.order = idx
-                        s.save(update_fields=["order"])
-                        
-                    schedules = (
-                        Schedule.objects
-                        .filter(day=day)
-                        .order_by("order")
-                    )
-                    print(
-                        "DEBUG",
-                        "date:", d,
-                        "day_id:", day.id if day else None,
-                        "schedule_day_ids:", list(schedules.values_list("day_id", flat=True)),
-                    )
- 
-                
-                else:
-                    schedules = schedules_qs
             else:
                 schedules = []
             
@@ -978,6 +952,26 @@ def sync_destination_fee_costs(schedule):
             amount=destination.admission_fee,
         )
 
+
+def build_existing_schedules_json(day_schedule, current_schedule=None):
+    schedules = Schedule.objects.filter(day=day_schedule)
+
+    if current_schedule:
+        schedules = schedules.exclude(pk=current_schedule.pk)
+
+    rows = []
+
+    for schedule in schedules:
+        if not schedule.arrival_time or not schedule.departure_time:
+            continue
+
+        rows.append({
+            "id": schedule.id,
+            "arrival": schedule.arrival_time.strftime("%H:%M"),
+            "departure": schedule.departure_time.strftime("%H:%M"),
+        })
+
+    return json.dumps(rows, ensure_ascii=False)
     
 # schedule_edit.html
 # 新規追加時
@@ -1063,6 +1057,7 @@ def schedule_create(request):
             "destination": destination,
             "plan": day_schedule.plan,
             "expense_rows": expense_rows,
+            "existing_schedules_json": build_existing_schedules_json(day_schedule),
         }
     )
 
@@ -1125,6 +1120,7 @@ def schedule_edit(request, pk):
             "destination": schedule.destination,
             "plan": day_schedule.plan,
             "expense_rows": expense_rows,
+            "existing_schedules_json": build_existing_schedules_json(day_schedule, schedule),
         })
 
     else:
@@ -1138,6 +1134,7 @@ def schedule_edit(request, pk):
             "destination": schedule.destination,
             "plan": day_schedule.plan,
             "expense_rows": expense_rows,
+            "existing_schedules_json": build_existing_schedules_json(day_schedule, schedule),
         }
     )
 

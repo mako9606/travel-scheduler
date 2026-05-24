@@ -52,7 +52,18 @@ class ScheduleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["arrival_time"].required = True
-        self.fields["departure_time"].required = True   
+        self.fields["departure_time"].required = True
+        
+    def clean(self):
+        cleaned_data = super().clean()
+
+        arrival_time = cleaned_data.get("arrival_time")
+        departure_time = cleaned_data.get("departure_time")
+
+        if arrival_time and departure_time and departure_time < arrival_time:
+            raise forms.ValidationError("出発時間は到着時間より後にしてください。")
+
+        return cleaned_data
         
          
 class CostForm(forms.ModelForm):
