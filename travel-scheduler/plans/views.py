@@ -12,7 +12,7 @@ from django.db.models import Max, Sum
 from django.http import JsonResponse, Http404
 from django.utils import timezone
 
-from datetime import date, timedelta
+from datetime import date, timedelta, time
 
 from .models import Plan, DaySchedule, Schedule, Cost, CostCategory, PlanShareMember
 from destinations.models import Destination
@@ -534,13 +534,34 @@ class PlanDetailView(DetailView):
             day = days_by_date.get(d)
 
             if day:
-                schedules = (
+                schedules = list(
                     Schedule.objects
                     .filter(day=day)
                     .order_by("order", "arrival_time", "departure_time", "id")
                 )
             else:
                 schedules = []
+
+            display_schedule_ids = [schedule.id for schedule in schedules]
+
+            time_ordered_schedule_ids = [
+                schedule.id
+                for schedule in sorted(
+                    schedules,
+                    key=lambda schedule: (
+                        schedule.arrival_time is None,
+                        schedule.arrival_time or time.max,
+                        schedule.departure_time is None,
+                        schedule.departure_time or time.max,
+                        schedule.id,
+                    )
+                )
+            ]
+
+            is_time_order_mismatch = (
+                len(schedules) >= 2
+                and display_schedule_ids != time_ordered_schedule_ids
+            )
             
             for schedule in schedules:
                 if schedule.arrival_time:
@@ -587,6 +608,7 @@ class PlanDetailView(DetailView):
                 "date": d,
                 "day": day,
                 "schedules": schedules,
+                "is_time_order_mismatch": is_time_order_mismatch,
             })
             
         selected_day_schedule_id = self.request.GET.get("day_schedule_id")

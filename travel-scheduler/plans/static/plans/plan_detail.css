@@ -418,6 +418,14 @@ form.container{
     );
 }
 
+.schedule-order-notice{
+    margin: 0 0 14px;
+    color: #447d37;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.5;
+}
+
 .schedule-item{
     display: flex;
     gap: 10px;
