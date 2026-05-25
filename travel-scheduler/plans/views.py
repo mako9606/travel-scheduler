@@ -37,10 +37,55 @@ def plan_list(request):
         }
     )
 
+
+def move_day_schedules_to_new_dates(plan, old_start_date, old_end_date, new_start_date):
+    old_days = list(
+        DaySchedule.objects
+        .filter(
+            plan=plan,
+            date__gte=old_start_date,
+            date__lte=old_end_date,
+        )
+        .order_by("date", "id")
+    )
+
+    old_day_ids = [day.id for day in old_days]
+
+    for old_day in old_days:
+        day_offset = (old_day.date - old_start_date).days
+        new_date = new_start_date + timedelta(days=day_offset)
+
+        target_day = (
+            DaySchedule.objects
+            .filter(plan=plan, date=new_date)
+            .exclude(pk__in=old_day_ids)
+            .first()
+        )
+
+        if target_day:
+            Schedule.objects.filter(day=old_day).update(day=target_day)
+
+            if old_day.memo:
+                if target_day.memo:
+                    target_day.memo = target_day.memo + "\n" + old_day.memo
+                else:
+                    target_day.memo = old_day.memo
+
+                target_day.save(update_fields=["memo"])
+
+            old_day.delete()
+
+        else:
+            old_day.date = new_date
+            old_day.save(update_fields=["date"])
+
+
 @login_required
 def plan_edit(request, pk):
     plan = get_object_or_404(Plan, pk=pk, user=request.user)
-
+    old_start_date = plan.start_date
+    old_end_date = plan.end_date
+    
     current_year = date.today().year
     years = range(2000, current_year + 61)
     months = range(1, 13)
@@ -109,6 +154,20 @@ def plan_edit(request, pk):
 
         # エラーがない時だけ保存
         if not plan_name_error and not date_error:
+            if (
+                old_start_date
+                and old_end_date
+                and start_date
+                and end_date
+                and (old_start_date != start_date or old_end_date != end_date)
+            ):
+                move_day_schedules_to_new_dates(
+                    plan,
+                    old_start_date,
+                    old_end_date,
+                    start_date,
+                )
+
             plan.plan_name = plan_name
             plan.start_date = start_date
             plan.end_date = end_date
@@ -478,7 +537,7 @@ class PlanDetailView(DetailView):
                 schedules = (
                     Schedule.objects
                     .filter(day=day)
-                    .order_by("arrival_time", "departure_time", "id")
+                    .order_by("order", "arrival_time", "departure_time", "id")
                 )
             else:
                 schedules = []
@@ -972,6 +1031,18 @@ def build_existing_schedules_json(day_schedule, current_schedule=None):
         })
 
     return json.dumps(rows, ensure_ascii=False)
+
+def reorder_day_schedules_by_time(day_schedule):
+    schedules = (
+        Schedule.objects
+        .filter(day=day_schedule)
+        .order_by("arrival_time", "departure_time", "id")
+    )
+
+    for index, schedule in enumerate(schedules):
+        if schedule.order != index:
+            schedule.order = index
+            schedule.save(update_fields=["order"])
     
 # schedule_edit.html
 # 新規追加時
@@ -1008,6 +1079,7 @@ def schedule_create(request):
             )
             schedule.order = (last_order or 0) + 1
             schedule.save()
+            reorder_day_schedules_by_time(day_schedule)
 
             for row in expense_rows:
                 category_id = row["category_id"]
@@ -1076,7 +1148,8 @@ def schedule_edit(request, pk):
         expense_rows, expense_has_error = build_expense_rows_from_post(request)
 
         if form.is_valid() and not expense_has_error:
-            form.save()
+            schedule = form.save()
+            reorder_day_schedules_by_time(day_schedule)
 
             schedule_costs.delete()
 
