@@ -7,7 +7,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'layout.css' %}?v=10">
-<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=56">
+<link rel="stylesheet" href="{% static 'plans/plan_detail.css' %}?v=57">
 <link rel="stylesheet" href="{% static 'destinations/destination_detail.css' %}?v=9">
 {% endblock %}
 
@@ -171,11 +171,7 @@
         {% for row in schedule_rows %}
             <div class="tab-content tab-schedule-{{ forloop.counter }}"{% if row.day %}data-day-id="{{ row.day.id }}"{% endif %}>
             <div class="schedule-tab-body">
-                {% if row.is_time_order_mismatch %}
-                    <p class="duplicate-notice schedule-order-notice">
-                        表示順が時系列順と異なっています。
-                    </p>
-                {% endif %}
+                <p class="duplicate-notice schedule-order-notice">{% if row.is_time_order_mismatch %}表示順が時系列順と異なっています。{% endif %}</p>
 
                 {% if row.day %}
                     {% for schedule in row.schedules %}
@@ -778,6 +774,77 @@
 
         <script>// 目的地の順番並び替え
             document.addEventListener("DOMContentLoaded", () => {
+
+                function timeTextToMinutes(text) {
+                    if (!text) return Number.MAX_SAFE_INTEGER;
+
+                    const parts = text.trim().split(":");
+                    if (parts.length !== 2) return Number.MAX_SAFE_INTEGER;
+
+                    const hour = Number(parts[0]);
+                    const minute = Number(parts[1]);
+
+                    if (Number.isNaN(hour) || Number.isNaN(minute)) {
+                        return Number.MAX_SAFE_INTEGER;
+                    }
+
+                    return hour * 60 + minute;
+                }
+
+                function getScheduleTimeKey(item) {
+                    const timeValues = item.querySelectorAll(".schedule-time-value");
+
+                    const arrivalText = timeValues[0] ? timeValues[0].textContent : "";
+                    const departureText = timeValues[1] ? timeValues[1].textContent : "";
+
+                    return {
+                        id: item.dataset.scheduleId,
+                        arrivalMinutes: timeTextToMinutes(arrivalText),
+                        departureMinutes: timeTextToMinutes(departureText),
+                    };
+                }
+
+                function updateScheduleOrderNotice(body) {
+                    const notice = body.querySelector(".schedule-order-notice");
+                    if (!notice) return;
+
+                    const items = Array.from(
+                        body.querySelectorAll(".schedule-item[data-schedule-id]")
+                    );
+
+                    if (items.length < 2) {
+                        notice.textContent = "";
+                        return;
+                    }
+
+                    const displayIds = items.map((item) => item.dataset.scheduleId);
+
+                    const timeOrderedIds = [...items]
+                        .sort((a, b) => {
+                            const aKey = getScheduleTimeKey(a);
+                            const bKey = getScheduleTimeKey(b);
+
+                            if (aKey.arrivalMinutes !== bKey.arrivalMinutes) {
+                                return aKey.arrivalMinutes - bKey.arrivalMinutes;
+                            }
+
+                            if (aKey.departureMinutes !== bKey.departureMinutes) {
+                                return aKey.departureMinutes - bKey.departureMinutes;
+                            }
+
+                            return Number(aKey.id) - Number(bKey.id);
+                        })
+                        .map((item) => item.dataset.scheduleId);
+
+                    const isMismatch = displayIds.some((id, index) => {
+                        return id !== timeOrderedIds[index];
+                    });
+
+                    notice.textContent = isMismatch
+                        ? "表示順が時系列順と異なっています。"
+                        : "";
+                }
+
                 document.querySelectorAll(".schedule-tab-body").forEach((body) => {
                     new Sortable(body, {
                         animation: 150,
@@ -793,6 +860,8 @@
                         onEnd: function () {
                             const items = body.querySelectorAll(".schedule-item[data-schedule-id]");
                             if (!items.length) return;
+
+                            updateScheduleOrderNotice(body);
 
                             const formData = new FormData();
 

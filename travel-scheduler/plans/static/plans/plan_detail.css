@@ -426,6 +426,10 @@ form.container{
     line-height: 1.5;
 }
 
+.schedule-order-notice:empty{
+    display: none;
+}
+
 .schedule-item{
     display: flex;
     gap: 10px;
