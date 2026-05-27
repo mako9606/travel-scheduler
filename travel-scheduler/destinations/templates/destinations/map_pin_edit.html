@@ -28,7 +28,7 @@
                     name="{{ form.name.html_name }}"
                     id="{{ form.name.id_for_label }}"
                     value="{{ form.name.value|default_if_none:'' }}"
-                    placeholder="ラベル名　入力">
+                    placeholder="ピン名　入力">
 
                 {% if form.name.errors %}
                     <div class="field-error">
@@ -73,10 +73,10 @@
             </form>
         </section>
 
-        <!-- ピンのラベル編集 -->
+        <!-- ピンの編集 -->
         {% if selected_pin %}
             <section class="pin-block pin-edit-section">
-                <h2 class="pin-block-title">ラベル名　編集</h2>
+                <h2 class="pin-block-title">ピン名　編集</h2>
 
                 <form method="POST"
                     action="{% url 'destinations:map_pin_edit' destination.id %}?pin_id={{ selected_pin.id }}"

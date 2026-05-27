@@ -22,7 +22,8 @@
                 {% else %}
                     {% url 'destinations:destination_create' %}
                 {% endif %}"
-        class="container">
+        class="container"
+        novalidate>
         {% csrf_token %}
 
         {% if day %}

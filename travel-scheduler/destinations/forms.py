@@ -20,6 +20,14 @@ class DestinationForm(forms.ModelForm):
             "longitude",
             "memo",
         ]
+        error_messages = {
+            "name": {
+                "required": "目的地名を入力してください",
+            },
+            "address": {
+                "required": "住所を入力してください",
+            },
+        }
         widgets = {
             "latitude": forms.HiddenInput(),
             "longitude": forms.HiddenInput(),
@@ -33,3 +41,8 @@ class MapPinForm(forms.ModelForm):
     class Meta:
         model = MapPin
         fields = ["name"]
+        error_messages = {
+            "name": {
+                "required": "ピン名を入力してください",
+            },
+        }
