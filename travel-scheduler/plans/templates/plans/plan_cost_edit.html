@@ -76,8 +76,12 @@
             <hr class="section-divider">
 
             <!-- 費用項目 新規/編集 -->
-            <form method="POST">
+            <form method="POST" novalidate>
                 {% csrf_token %}
+
+                <p class="form-note">
+                    項目を追加する場合は、カテゴリー・項目名・金額を入力してください。
+                </p>
 
                 <div class="form-group">
                     <label>カテゴリー選択</label>

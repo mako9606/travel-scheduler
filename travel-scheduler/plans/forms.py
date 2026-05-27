@@ -74,6 +74,10 @@ class CostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         plan = kwargs.pop("plan", None)
         super().__init__(*args, **kwargs)
+        
+        self.fields["category"].error_messages["required"] = "カテゴリーを選択してください"
+        self.fields["name"].error_messages["required"] = "項目名を入力してください"
+        self.fields["amount"].error_messages["required"] = "金額を入力してください"
 
         if plan:
             self.fields["category"].queryset = CostCategory.objects.filter(plan=plan)
@@ -81,4 +85,27 @@ class CostForm(forms.ModelForm):
 class CostCategoryForm(forms.ModelForm):
     class Meta:
         model = CostCategory
-        fields = ["name"]            
+        fields = ["name"]
+    
+    def __init__(self, *args, **kwargs):
+        self.plan = kwargs.pop("plan", None)
+        super().__init__(*args, **kwargs)
+
+    def clean_name(self):
+        name = self.cleaned_data.get("name", "").strip()
+
+        if not name:
+            return name
+
+        categories = CostCategory.objects.filter(
+            plan=self.plan,
+            name=name,
+        )
+
+        if self.instance and self.instance.pk:
+            categories = categories.exclude(pk=self.instance.pk)
+
+        if categories.exists():
+            raise forms.ValidationError("同じ名前のカテゴリーがあります")
+
+        return name

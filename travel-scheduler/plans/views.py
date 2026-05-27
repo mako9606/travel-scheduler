@@ -809,14 +809,14 @@ def cost_category_create(request, pk):
     plan = get_object_or_404(Plan, pk=pk)
 
     if request.method == "POST":
-        form = CostCategoryForm(request.POST)
+        form = CostCategoryForm(request.POST, plan=plan)
         if form.is_valid():
             category = form.save(commit=False)
             category.plan = plan
             category.save()
             return redirect(f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?cost_tab=1")
     else:
-        form = CostCategoryForm()
+        form = CostCategoryForm(plan=plan)
 
     return render(request, "plans/plan_cost_edit.html", {
         "category_form": form,
@@ -833,12 +833,12 @@ def cost_category_edit(request, pk, category_id):
     category = get_object_or_404(CostCategory, pk=category_id, plan=plan)
 
     if request.method == "POST":
-        form = CostCategoryForm(request.POST, instance=category)
+        form = CostCategoryForm(request.POST, instance=category, plan=plan)
         if form.is_valid():
             form.save()
             return redirect(f"{reverse('plans:plan_detail', kwargs={'pk': plan.id})}?cost_tab=1")
     else:
-        form = CostCategoryForm(instance=category)
+        form = CostCategoryForm(instance=category, plan=plan)
 
     return render(request, "plans/plan_cost_edit.html", {
         "category_form": form,
@@ -886,7 +886,7 @@ def plan_cost_edit(request, pk, cost_id=None):
     else:
         form = CostForm(plan=plan, instance=cost)
         
-    category_form = CostCategoryForm()
+    category_form = CostCategoryForm(plan=plan)
 
     return render(request, "plans/plan_cost_edit.html",{
             "form": form,
