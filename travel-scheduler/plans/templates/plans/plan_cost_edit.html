@@ -7,7 +7,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'layout.css' %}?v=1">
-    <link rel="stylesheet" href="{% static 'plans/plan_cost_edit.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'plans/plan_cost_edit.css' %}?v=6">
 {% endblock %}
 
 {% block header %}
@@ -80,7 +80,9 @@
                 {% csrf_token %}
 
                 <p class="form-note">
-                    項目を追加する場合は、カテゴリー・項目名・金額を入力してください。
+                    項目を追加する場合は、<br>
+                    カテゴリー・項目名・金額を<br>
+                    入力してください。
                 </p>
 
                 <div class="form-group">
