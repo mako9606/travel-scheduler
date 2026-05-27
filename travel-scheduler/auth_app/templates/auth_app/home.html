@@ -51,11 +51,23 @@
                         </div>
                     {% endif %}
                     
-                    {% if left_shortcut and left_shortcut.url %}
+                    {% if left_shortcut and left_shortcut.is_plan_shortcut and not has_plans %}
+                        <div class="empty-page">
+                            プランが登録されていません<br>
+                            まずはプランリスト🛫から<br>
+                            プランを作成しましょう<br>
+                        </div>
+                    {% elif left_shortcut and left_shortcut.url %}
                         <iframe
                             src="{{ left_shortcut.url }}{% if '?' in left_shortcut.url %}&{% else %}?{% endif %}shortcut=1"
                             class="shortcut-frame">
                         </iframe>
+                    {% elif left_shortcut and left_shortcut.is_plan_shortcut %}
+                        <div class="empty-page">
+                            プランが未選択です<br>
+                            ショートカットに表示したいプラン内から<br>
+                            ホーム画面に戻ってきてください
+                        </div>
                     {% else %}
                         <div class="empty-page">未選択です。<br>アカウント画面で設定してください。</div>
                     {% endif %}
@@ -63,11 +75,29 @@
 
                 <!-- 右ページ -->
                 <section class="page" data-shortcut-name="{% if right_shortcut %}{{ right_shortcut.name }}{% endif %}">
-                    {% if right_shortcut and right_shortcut.url %}
+                    {% if right_shortcut and right_shortcut.is_plan_shortcut and not has_plans %}
+                        <div class="empty-page">
+                            プランが登録されていません<br>
+                            まずはプランリスト🛫から<br>
+                            プランを作成しましょう<br>
+                        </div>
+                    {% elif right_shortcut and right_shortcut.is_plan_shortcut and not has_plans %}
+                        <div class="empty-page">
+                            プランが登録されていません<br>
+                            まずはプランリスト🛫から<br>
+                            プランを作成しましょう<br>
+                        </div>
+                    {% elif right_shortcut and right_shortcut.url %}
                         <iframe
                             src="{{ right_shortcut.url }}{% if '?' in right_shortcut.url %}&{% else %}?{% endif %}shortcut=1"
                             class="shortcut-frame">
                         </iframe>
+                    {% elif right_shortcut and right_shortcut.is_plan_shortcut %}
+                        <div class="empty-page">
+                            プランが未選択です<br>
+                            ショートカットに表示したいプラン内から<br>
+                            ホーム画面に戻ってきてください
+                        </div>
                     {% else %}
                         <div class="empty-page">未選択です。<br>アカウント画面で設定してください。</div>
                     {% endif %}

@@ -137,9 +137,18 @@ def home_view(request):
     right_shortcut = None
 
     for shortcut in shortcuts:
+        action_key = shortcut.shortcut_type.action_key
+
         data = {
             "name": shortcut.shortcut_type.display_name,
             "url": get_shortcut_url(shortcut),
+            "action_key": action_key,
+            "is_plan_shortcut": action_key in [
+                "plan_day",
+                "plan_memo",
+                "plan_map",
+                "plan_cost",
+            ],
         }
 
         if shortcut.position == 1:
@@ -152,6 +161,8 @@ def home_view(request):
         left_shortcut = {
             "name": "メモ",
             "url": reverse("memos:memo_list"),
+            "action_key": "memo",
+            "is_plan_shortcut": False,
         }
 
         default_type = ShortcutType.objects.filter(action_key="memo").first()
@@ -178,5 +189,6 @@ def home_view(request):
             "left_shortcut": left_shortcut,
             "right_shortcut": right_shortcut,
             "show_home_guide": show_home_guide,
+            "has_plans": has_plans,
         }
     )
