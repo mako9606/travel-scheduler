@@ -2,7 +2,8 @@
 
 document.addEventListener("DOMContentLoaded", function () {
     const DEFAULT_YEAR_MIN = 2000;
-    const YEAR_MAX = new Date().getFullYear() + 60;
+    const CURRENT_YEAR = new Date().getFullYear();
+    const YEAR_MAX = CURRENT_YEAR + 60;
 
     function getInput(prefix, field) {
         return document.querySelector(`input[name="${prefix}_${field}"]`);
@@ -88,9 +89,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const yearMin = getYearMin(prefix);
 
             if (value === null) {
-                value = yearMin;
+                value = CURRENT_YEAR;
+
+                if (value < yearMin) value = yearMin;
+                if (value > YEAR_MAX) value = YEAR_MAX;
             } else {
                 value += direction;
+                
                 if (value < yearMin) value = yearMin;
                 if (value > YEAR_MAX) value = YEAR_MAX;
             }
