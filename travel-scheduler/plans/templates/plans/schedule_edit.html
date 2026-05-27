@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}    
-    <form method="POST" action="" class="schedule-form" data-submit-once="true">
+    <form method="POST" action="" class="schedule-form" data-submit-once="true" novalidate>
         {% csrf_token %}
 
         <div class="detail-tab">{{ day_schedule.date|date:"n/j" }}</div> 
@@ -34,6 +34,9 @@
                     <label class="time-label">到着時間 <span class="required-mark">＊必須</span></label>
                     {{ form.arrival_time }}
                 </div>
+                {% if form.arrival_time.errors %}
+                    <p class="form-error">{{ form.arrival_time.errors.0 }}</p>
+                {% endif %}
 
                 <div class="duration-row">
                     <span class="duration-mark">↕</span>
@@ -44,6 +47,9 @@
                     <label class="time-label">出発時間 <span class="required-mark">＊必須</span></label>
                     {{ form.departure_time }}
                 </div>
+                {% if form.departure_time.errors %}
+                    <p class="form-error">{{ form.departure_time.errors.0 }}</p>
+                {% endif %}
 
                 {% if form.non_field_errors %}
                     <div class="form-error">

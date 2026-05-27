@@ -960,7 +960,7 @@ def build_expense_rows_from_post(request):
 
         # 項目名 or 金額が入っているのにカテゴリ未選択
         if (expense_item or expense) and not category_id:
-            error = "カテゴリを選んでください。"
+            error = "カテゴリーを選んでください。"
             has_error = True
 
         rows.append({

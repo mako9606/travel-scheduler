@@ -54,6 +54,9 @@ class ScheduleForm(forms.ModelForm):
         self.fields["arrival_time"].required = True
         self.fields["departure_time"].required = True
         
+        self.fields["arrival_time"].error_messages["required"] = "到着時間を選択してください"
+        self.fields["departure_time"].error_messages["required"] = "出発時間を選択してください"
+        
     def clean(self):
         cleaned_data = super().clean()
 
@@ -86,6 +89,11 @@ class CostCategoryForm(forms.ModelForm):
     class Meta:
         model = CostCategory
         fields = ["name"]
+        error_messages = {
+            "name": {
+                "required": "カテゴリー名を入力してください",
+            },
+        }
     
     def __init__(self, *args, **kwargs):
         self.plan = kwargs.pop("plan", None)
