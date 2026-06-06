@@ -171,6 +171,10 @@
         {% for row in schedule_rows %}
             <div class="tab-content tab-schedule-{{ forloop.counter }}"{% if row.day %}data-day-id="{{ row.day.id }}"{% endif %}>
             <div class="schedule-tab-body">
+                {% if show_owner_controls and row.schedules|length > 1 %}
+                    <p class="schedule-sort-hint">予定カードを長押しで並び替えできます。</p>
+                {% endif %}
+
                 <p class="duplicate-notice schedule-order-notice">{% if row.is_time_order_mismatch %}表示順が時系列順と異なっています。{% endif %}</p>
 
                 {% if row.day %}
@@ -856,6 +860,8 @@
                         delayOnTouchOnly: true,
                         touchStartThreshold: 5,
                         fallbackTolerance: 8,
+                        forceFallback: true,
+                        fallbackOnBody: true,
 
                         onEnd: function () {
                             const items = body.querySelectorAll(".schedule-item[data-schedule-id]");

@@ -430,6 +430,21 @@ form.container{
     display: none;
 }
 
+.schedule-row,
+.schedule-row *{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.schedule-sort-hint{
+    margin: 0 0 10px;
+    color: #447d37;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.5;
+}
+
 .schedule-item{
     display: flex;
     gap: 10px;
