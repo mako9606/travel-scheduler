@@ -438,7 +438,7 @@ form.container{
 }
 
 .schedule-sort-hint{
-    margin: 0 0 10px;
+    margin: -18px 0 10px;
     color: #447d37;
     font-size: 13px;
     font-weight: bold;
