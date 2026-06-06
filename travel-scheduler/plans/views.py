@@ -261,6 +261,18 @@ def plan_share(request, token):
     ):
         set_shared_session(member.member_name)
         return redirect_to_shared_plan()
+    
+    # 使用済みURLを別の人・別端末が開いた場合は、入力画面を出さずに利用不可表示
+    if (
+        member.viewer_user_id
+        or member.viewer_session_key
+    ):
+        return render(request, "plans/plan_share.html", {
+            "member": member,
+            "plan": plan,
+            "is_valid": False,
+            "error_message": "",
+        })
 
     if request.method == "POST":
         action = request.POST.get("action")
