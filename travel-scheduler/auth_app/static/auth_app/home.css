@@ -54,14 +54,14 @@
 .home-guide{
     position: absolute;
     top: 68px;
-    left: 28px;
-    right: 28px;
+    left: 20px;
+    right: 20px;
     z-index: 20;
     background: #d9ead3;
     border: 1px solid #b7d2b1;
     border-radius: 14px;
     box-sizing: border-box;
-    padding: 16px 18px 14px;
+    padding: 16px 16px 14px;
     color: #592d13;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
